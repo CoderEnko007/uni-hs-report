@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "footer-menu": "/components/FooterMenu",
+    "float-btn-group": "/components/floatBtnGroup",
+    "nav-bar": "/components/NavBar",
+    "spin-kit": "/components/SpinKit"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "nav-bar": "/components/NavBar",
+    "spin-kit": "/components/SpinKit"
+  }
+}

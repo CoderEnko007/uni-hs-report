@@ -1,0 +1,13 @@
+{
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#eff3f4",
+  "usingComponents": {
+    "nav-bar": "/components/NavBar",
+    "swiper-banner": "/components/SwiperBanner",
+    "cmd-notice-bar": "/components/cmd-notice-bar/cmd-notice-bar",
+    "x-modal": "/components/x-modal/x-modal",
+    "rank-board": "/components/RankBoard",
+    "tier-list": "/components/TierList",
+    "article-page": "/pages/index/components/articlePage"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "usingComponents": {
+    "load-more": "/components/load-more",
+    "search-bar": "/components/SearchBar",
+    "filter-menu": "/components/FilterMenu",
+    "heroes-panel": "/components/HeroesPanel",
+    "deck-cards": "/components/DeckCards"
+  },
+  "component": true
+}

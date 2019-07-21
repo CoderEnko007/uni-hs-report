@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "heroes-panel": "/components/HeroesPanel",
+    "decks-board": "/components/DecksBoard-v2"
+  },
+  "component": true
+}

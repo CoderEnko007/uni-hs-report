@@ -1,0 +1,13 @@
+{
+  "usingComponents": {
+    "nav-bar": "/components/NavBar",
+    "deck-cards": "/components/DeckCards",
+    "footer-menu": "/components/FooterMenu",
+    "win-rate-board": "/components/WinRateBoard",
+    "add-bubble": "/components/AddBubble",
+    "float-btn-group": "/components/floatBtnGroup",
+    "compare-deck-modal": "/components/compareDeckModal",
+    "zan-toast": "/components/toast",
+    "spin-kit": "/components/SpinKit"
+  }
+}

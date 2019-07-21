@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "nav-bar": "/components/NavBar",
+    "decks-list": "/pages/decks/components/DecksList",
+    "archetype-list": "/pages/decks/components/ArchetypeList"
+  }
+}

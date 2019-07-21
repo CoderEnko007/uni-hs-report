@@ -1,0 +1,307 @@
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.deck-item.data-v-435ff31c {
+  position: relative;
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  font-size: 14px;
+  background: #fff;
+}
+.deck-item .icon.data-v-435ff31c {
+    position: relative;
+    float: left;
+    width: 70rpx;
+    height: 100%;
+}
+.deck-item .icon ._img.data-v-435ff31c {
+      position: absolute;
+      width: 70rpx;
+      height: 70rpx;
+      top: 50%;
+      -webkit-transform: translateY(-50%);
+          -ms-transform: translateY(-50%);
+              transform: translateY(-50%);
+}
+.deck-item .tier-desc.data-v-435ff31c {
+    position: relative;
+    height: 100%;
+    margin-left: 90rpx;
+    border-bottom: 1rpx solid #eee;
+    padding: 27rpx 0;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+}
+.deck-item .tier-desc .desc-left.data-v-435ff31c {
+      float: left;
+}
+.deck-item .tier-desc .desc-left .name.data-v-435ff31c {
+        height: 37rpx;
+        line-height: 37rpx;
+        font-size: 13px;
+        color: #333;
+}
+.deck-item .tier-desc .desc-left .desc-meta.data-v-435ff31c {
+        height: 30rpx;
+        line-height: 30rpx;
+        margin-top: 4rpx;
+        font-size: 11px;
+        color: #999;
+}
+.deck-item .tier-desc .desc-right.data-v-435ff31c {
+      float: right;
+      margin-right: 40rpx;
+      text-align: right;
+}
+.deck-item .tier-desc .desc-right .name.data-v-435ff31c {
+        height: 22rpx;
+        line-height: 22rpx;
+        font-size: 11px;
+        color: #999;
+}
+.deck-item .tier-desc .desc-right .desc-meta.data-v-435ff31c {
+        height: 32rpx;
+        line-height: 32rpx;
+        margin-top: 10rpx;
+        font-size: 14px;
+        font-weight: bold;
+        /*color: #333;*/
+}
+.deck-item .iconfont.data-v-435ff31c {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    -webkit-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+            transform: translateY(-50%);
+    color: #999;
+    font-size: 14px;
+}
+.container.data-v-435ff31c {
+  width: 100%;
+  overflow: hidden;
+}
+.container .banner.data-v-435ff31c {
+    position: relative;
+    width: 100%;
+    height: 400rpx;
+    overflow: hidden;
+    background-size: 100%;
+}
+.container .banner.data-v-435ff31c:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.1)), to(rgba(0, 0, 0, 0.4)));
+      background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4));
+      background: -o-linear-gradient(top, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4));
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4));
+      z-index: 1;
+}
+.container .banner .overview.data-v-435ff31c {
+      width: 100%;
+      padding: 97rpx 0 40rpx;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+}
+.container .banner .overview .archetype-name.data-v-435ff31c {
+        position: relative;
+        width: 100%;
+        margin-left: 40rpx;
+        z-index: 2;
+}
+.container .banner .overview .archetype-name .icon.data-v-435ff31c {
+          float: left;
+          width: 88rpx;
+}
+.container .banner .overview .archetype-name .icon ._img.data-v-435ff31c {
+            position: absolute;
+            width: 88rpx;
+            height: 88rpx;
+            top: 50%;
+            -webkit-transform: translateY(-50%);
+                -ms-transform: translateY(-50%);
+                    transform: translateY(-50%);
+}
+.container .banner .overview .archetype-name .name.data-v-435ff31c {
+          height: 100%;
+          margin-left: 107rpx;
+          color: #fff;
+}
+.container .banner .overview .archetype-name .name .cname.data-v-435ff31c {
+            height: 50rpx;
+            line-height: 50rpx;
+            font-size: 25px;
+}
+.container .banner .overview .archetype-name .name .ename.data-v-435ff31c {
+            height: 24rpx;
+            line-height: 24rpx;
+            margin-top: 19rpx;
+            font-size: 12px;
+}
+.container .banner .overview .desc.data-v-435ff31c {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: justify;
+        -webkit-justify-content: space-between;
+            -ms-flex-pack: justify;
+                justify-content: space-between;
+        -webkit-flex-wrap: nowrap;
+            -ms-flex-wrap: nowrap;
+                flex-wrap: nowrap;
+        padding: 0 30rpx;
+        margin-top: 40rpx;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+}
+.container .banner .overview .desc .desc-item.data-v-435ff31c {
+          position: relative;
+          width: 172rpx;
+          height: 130rpx;
+          color: white;
+          text-align: center;
+          z-index: 2;
+}
+.container .banner .overview .desc .desc-item .item-name.data-v-435ff31c {
+            margin-top: 21rpx;
+            font-size: 13px;
+}
+.container .banner .overview .desc .desc-item .item-meta.data-v-435ff31c {
+            margin-top: 7rpx;
+            font-weight: bold;
+            font-size: 16px;
+}
+.container .pop-deck .no-data.data-v-435ff31c, .container .pop-deck .loading.data-v-435ff31c, .container .board-panel .no-data.data-v-435ff31c, .container .board-panel .loading.data-v-435ff31c {
+    padding: 0 30rpx;
+    font-size: 13px;
+    color: #999;
+    height: 80rpx;
+    text-align: center;
+    line-height: 80rpx;
+}
+.container .pop-deck .tier-desc.data-v-435ff31c, .container .board-panel .tier-desc.data-v-435ff31c {
+    border: none;
+}
+.container .bw-game-panel .board-panel.data-v-435ff31c, .container .pop-deck .board-panel.data-v-435ff31c {
+    margin-bottom: 10rpx;
+}
+.container .bw-game-panel .board-panel .board .deck-item .tier-desc .desc-left .name.data-v-435ff31c, .container .pop-deck .board-panel .board .deck-item .tier-desc .desc-left .name.data-v-435ff31c {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+          -ms-flex-align: center;
+              align-items: center;
+}
+.container .bw-game-panel .board-panel .board .deck-item .tier-desc .desc-left .name .name-meta.data-v-435ff31c, .container .pop-deck .board-panel .board .deck-item .tier-desc .desc-left .name .name-meta.data-v-435ff31c {
+        height: 24rpx;
+        line-height: 24rpx;
+        margin-left: 8px;
+        font-size: 19rpx;
+        color: #666;
+        border: 1rpx solid #ddd;
+        -webkit-border-radius: 12px;
+                border-radius: 12px;
+        padding: 3rpx 10rpx;
+}
+.container .card-list.data-v-435ff31c {
+    margin-bottom: 40rpx !important;
+}
+.container .card-list .core-cards .title.data-v-435ff31c, .container .card-list .pop-cards .title.data-v-435ff31c {
+      position: relative;
+      height: 33rpx;
+      line-height: 33rpx;
+      margin-bottom: 20rpx;
+      font-size: 12px;
+      color: #999;
+      text-align: center;
+}
+.container .card-list .core-cards .title.data-v-435ff31c:after, .container .card-list .core-cards .title.data-v-435ff31c:before, .container .card-list .pop-cards .title.data-v-435ff31c:after, .container .card-list .pop-cards .title.data-v-435ff31c:before {
+        position: absolute;
+        top: 50%;
+        background: #ddd;
+        content: "";
+        height: 1px;
+        width: 64rpx;
+}
+.container .card-list .core-cards .title.data-v-435ff31c:before, .container .card-list .pop-cards .title.data-v-435ff31c:before {
+        left: 420rpx;
+}
+.container .card-list .core-cards .title.data-v-435ff31c:after, .container .card-list .pop-cards .title.data-v-435ff31c:after {
+        right: 420rpx;
+}
+.container .card-list .pop-cards.data-v-435ff31c {
+      margin-top: 30rpx;
+}
+.container .headline.data-v-435ff31c {
+    margin: 0 30rpx;
+}
+.container .headline .more-btn.data-v-435ff31c {
+      position: relative;
+      float: right;
+      height: 100%;
+      line-height: 96rpx;
+      font-weight: normal;
+}
+.container .headline .more-btn .name.data-v-435ff31c {
+        margin-right: 10rpx;
+        color: #433e88;
+        font-size: 13px;
+}
+.container .headline .more-btn .iconfont.data-v-435ff31c {
+        color: #433e88;
+}
+.container .panel.data-v-435ff31c {
+    margin: 0 15px;
+}
+.container .separator.data-v-435ff31c {
+    width: 100%;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    border-bottom: 1rpx solid #eee;
+    margin: 20rpx 0;
+}
+.container .deck-item.data-v-435ff31c {
+    padding: 0 30rpx;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    background-color: #fff;
+}
+.container .deck-item.data-v-435ff31c:active {
+      background-color: #eee;
+}
+.container .deck-item .iconfont.data-v-435ff31c {
+      right: 30rpx;
+}
+

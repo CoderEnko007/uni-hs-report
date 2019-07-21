@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "nav-bar": "/components/NavBar",
+    "single-cards": "/pages/cards/pages/SingleCards",
+    "arena-cards": "/pages/cards/pages/ArenaCards"
+  }
+}

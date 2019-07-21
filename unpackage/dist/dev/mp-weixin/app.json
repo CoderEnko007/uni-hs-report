@@ -1,0 +1,72 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/trending/index",
+    "pages/decks/index",
+    "pages/decks/decksList/index",
+    "pages/decks/archetypeDetail/index",
+    "pages/decks/deckDetail/index",
+    "pages/decks/compareDeck/index",
+    "pages/cards/index",
+    "pages/cards/cardDetail/index",
+    "pages/mine/index",
+    "pages/mine/about/index",
+    "pages/mine/collection/index",
+    "pages/index/articleDetail/index"
+  ],
+  "subPackages": [],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "炉石传说情报站",
+    "navigationBarTextStyle": "black",
+    "navigationStyle": "custom"
+  },
+  "tabBar": {
+    "selectedColor": "#433e88",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/icons-v2/tabicon-1b.png",
+        "selectedIconPath": "static/icons-v2/tabicon-1a.png"
+      },
+      {
+        "pagePath": "pages/trending/index",
+        "text": "热门套牌",
+        "iconPath": "static/icons-v2/tabicon-2b.png",
+        "selectedIconPath": "static/icons-v2/tabicon-2a.png"
+      },
+      {
+        "pagePath": "pages/decks/index",
+        "text": "套牌",
+        "iconPath": "static/icons-v2/tabicon-3b.png",
+        "selectedIconPath": "static/icons-v2/tabicon-3a.png"
+      },
+      {
+        "pagePath": "pages/cards/index",
+        "text": "单卡",
+        "iconPath": "static/icons-v2/tabicon-4b.png",
+        "selectedIconPath": "static/icons-v2/tabicon-4a.png"
+      },
+      {
+        "pagePath": "pages/mine/index",
+        "text": "我的",
+        "iconPath": "static/icons-v2/tabicon-5b.png",
+        "selectedIconPath": "static/icons-v2/tabicon-5a.png"
+      }
+    ]
+  },
+  "permission": {},
+  "plugins": {
+    "sdkPlugin": {
+      "version": "2.2.0",
+      "provider": "wxc6b86e382a1e3294"
+    }
+  },
+  "navigateToMiniProgramAppIdList": [
+    "wx010ca9734f850748"
+  ],
+  "usingComponents": {},
+  "sitemapLocation": "sitemap.json"
+}

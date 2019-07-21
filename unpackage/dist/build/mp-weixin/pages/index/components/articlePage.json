@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "article-list": "/pages/index/components/articleList"
+  },
+  "component": true
+}

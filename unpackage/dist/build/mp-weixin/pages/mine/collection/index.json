@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "deck-list": "/components/DeckList",
+    "nav-bar": "/components/NavBar"
+  }
+}

@@ -1,0 +1,1 @@
+<view class="container _div data-v-868bf396"><article-list vue-id="1" list="{{dataList}}" loading="{{more}}" nodata="{{nodata}}" data-event-opts="{{[['^scrollToBottom',[['scrollToBottom']]]]}}" bind:scrollToBottom="__e" class="data-v-868bf396" bind:__l="__l"></article-list></view>
