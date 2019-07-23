@@ -1,8 +1,0 @@
-{
-  "usingComponents": {
-    "heroes-panel": "/components/HeroesPanel",
-    "deck-table": "/components/DeckTable",
-    "load-more": "/components/load-more"
-  },
-  "component": true
-}

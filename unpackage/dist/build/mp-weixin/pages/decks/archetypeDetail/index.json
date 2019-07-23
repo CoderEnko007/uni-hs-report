@@ -1,9 +1,0 @@
-{
-  "usingComponents": {
-    "deck-cards": "/components/DeckCards",
-    "deck-table": "/components/DeckTable",
-    "heroes-panel": "/components/HeroesPanel",
-    "nav-bar": "/components/NavBar",
-    "load-more": "/components/load-more"
-  }
-}

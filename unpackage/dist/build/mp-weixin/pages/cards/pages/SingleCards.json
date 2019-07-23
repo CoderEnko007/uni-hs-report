@@ -1,8 +1,0 @@
-{
-  "usingComponents": {
-    "search-bar": "/components/SearchBar",
-    "filter-menu": "/components/FilterMenu",
-    "card-list": "/components/CardList"
-  },
-  "component": true
-}

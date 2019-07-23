@@ -1,7 +1,0 @@
-{
-  "enablePullDownRefresh": true,
-  "usingComponents": {
-    "deck-list": "/components/DeckList",
-    "nav-bar": "/components/NavBar"
-  }
-}

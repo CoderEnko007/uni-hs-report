@@ -1,1 +1,0 @@
-<view class="group _div data-v-9aca6c3c"><view hidden="{{!(badgeCount>0)}}" class="badge__count _div data-v-9aca6c3c">{{badgeCount}}</view><button data-event-opts="{{[['tap',[['handleCompareClick',['$event']]]]]}}" bindtap="__e" class="data-v-9aca6c3c"><label class="_span data-v-9aca6c3c">对比</label></button></view>

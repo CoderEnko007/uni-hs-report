@@ -1,7 +1,0 @@
-{
-  "usingComponents": {
-    "nav-bar": "/components/NavBar",
-    "deck-cards": "/components/DeckCards",
-    "spin-kit": "/components/SpinKit"
-  }
-}

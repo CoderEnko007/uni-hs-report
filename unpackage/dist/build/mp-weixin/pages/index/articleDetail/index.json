@@ -1,8 +1,0 @@
-{
-  "usingComponents": {
-    "nav-bar": "/components/NavBar",
-    "u-parse": "/components/gaoyia-parse/parse",
-    "copy-right": "/components/copyRight",
-    "footer-menu": "/components/FooterMenu"
-  }
-}

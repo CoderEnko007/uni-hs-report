@@ -1,9 +1,0 @@
-{
-  "enablePullDownRefresh": true,
-  "usingComponents": {
-    "nav-bar": "/components/NavBar",
-    "decks-board": "/components/DecksBoard",
-    "heroes-panel": "/components/HeroesPanel",
-    "load-more": "/components/load-more"
-  }
-}
