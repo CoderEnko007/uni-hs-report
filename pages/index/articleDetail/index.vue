@@ -5,7 +5,9 @@
     <img :src="detail&&detail.cover" mode="aspectFill">
   </div>
   <div class="article-detail">
-    <div class="title">{{detail&&detail.title}}</div>
+    <div class="title">
+      <div><span class="top" v-show="detail&&detail.top">[置顶]</span>{{detail&&detail.title}}</div>
+    </div>
     <div class="meta">
       <div class="author">
         <img :src="detail&&detail.logo.path" mode="aspectFit">
@@ -132,6 +134,10 @@ export default {
   .title {
     font-size: 16px;
     font-weight: bold;
+    .top {
+      color: red;
+      margin-right: 5upx
+    }
   }
   .meta {
     display: flex;

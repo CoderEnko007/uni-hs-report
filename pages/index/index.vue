@@ -2,7 +2,7 @@
   <div class="container">
     <nav-bar background="#eff3f4"></nav-bar>
     <div class="swiper">
-      <div class="notice-bar">
+      <div class="notice-bar" v-show="noticeContent.display">
         <cmd-notice-bar scrollable :text="noticeText.text" mode="close" @click="handleNoticeClick"></cmd-notice-bar>
       </div>
       <SwiperBanner :banners="banners" :date="report_date" @swiperClick="handleBannerClick" v-if="banners"></SwiperBanner>
@@ -517,12 +517,12 @@
         if (pages[pages.length-1].route !== 'pages/index/index') {
           return
         }
-        let destWidth = 375 * 750 / uni.getSystemInfoSync().windowWidth
-        let destHeight = (this.canvasHeight * 375 / this.canvasWidth) * 750 / uni.getSystemInfoSync().windowWidth
+        let destWidth = this.canvasWidth//375 * 750 / uni.getSystemInfoSync().windowWidth
+        let destHeight = this.canvasHeight//(this.canvasHeight * 375 / this.canvasWidth) * 750 / uni.getSystemInfoSync().windowWidth
         uni.canvasToTempFilePath({
           canvasId: 'dailyReport',
-          destWidth: destWidth,
-          destHeight: destHeight,
+          destWidth: 3*destWidth,
+          destHeight: 3*destHeight,
           fileType: 'jpg',
           quality: 1,
           success(res) {

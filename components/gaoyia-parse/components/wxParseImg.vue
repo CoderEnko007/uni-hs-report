@@ -34,15 +34,15 @@ export default {
       }
     }
   },
-  watch: {
-    node: {
-      handler(val, oldVal) {
-        console.log('bbb', val)
-      },
-      deep: true,
-      immediate: true
-    }
-  },
+  // watch: {
+  //   node: {
+  //     handler(val, oldVal) {
+  //       console.log('bbb', val)
+  //     },
+  //     deep: true,
+  //     immediate: true
+  //   }
+  // },
   methods: {
     wxParseImgTap(e) {
       if (!this.preview) return;
@@ -64,7 +64,7 @@ export default {
       // 图片容器有30rpx左右边距时需要对宽度进行处理，否则图片会超出边界
       // const tempWidth = (imageWidth>imageheight)&&imageWidth>=375?(imageWidth-30):imageWidth
       // const tempHeight = imageWidth>imageheight&&imageWidth>=375?(imageheight-20):imageheight
-      console.log('before', imageheight, imageWidth)
+      // console.log('before', imageheight, imageWidth)
       let tempWidth = imageWidth;
       let tempHeight = imageheight;
       if (this.tdImgWidth) {
@@ -86,7 +86,7 @@ export default {
       const { styleStr } = this.node;
       const imageHeightStyle = mode === 'widthFix' ? '' : `height: ${tempHeight}px;`;
       this.newStyleStr = `${styleStr}; ${imageHeightStyle}; width: ${tempWidth}px; padding: 0 ${+padding}px;`;
-      console.log('after', imageWidth, imageheight, tempWidth, tempHeight)
+      // console.log('after', imageWidth, imageheight, tempWidth, tempHeight)
     },
     // 计算视觉优先的图片宽高
     wxAutoImageCal(originalWidth, originalHeight) {

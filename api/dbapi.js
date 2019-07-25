@@ -411,7 +411,8 @@ export function cancelUserCollection(data) {
     let tableObj = new wx.BaaS.TableObject(tableID.decksCollectionTableID)
     let query = new wx.BaaS.Query()
     query.compare('user_id', '=', data.user_id)
-    query.compare('id', '=', data.collection_id)
+    // query.compare('id', '=', data.collection_id)
+    query.compare('deck_id', '=', data.deck_id)
     tableObj.delete(query).then(res => {
       resolve(res.data)
     }, err => {
@@ -531,7 +532,7 @@ export function updateCustomerSetting(params, recordID) {
   })
 }
 
-export function getArticleList(params, limit=10, page=0, orderBy='-created_at') {
+export function getArticleList(params, limit=10, page=0, orderBy=['-top', '-created_at']) {
   return new Promise((resolve, reject) => {
     let MyContentGroup = new wx.BaaS.ContentGroup(params.contentGroupID)
     let query = new wx.BaaS.Query()

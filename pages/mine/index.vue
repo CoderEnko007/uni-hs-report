@@ -129,7 +129,7 @@ export default {
     handleHSVisionClick() {
       wx.navigateToMiniProgram({
         appId: 'wx010ca9734f850748',
-        path: `/pages/index/index`,
+        path: `/pages/index/main`,
         success(res) {
           // 打开成功
           console.log(res)

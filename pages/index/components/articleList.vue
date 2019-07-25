@@ -9,7 +9,7 @@
       <img :src="item.cover" mode="aspectFill">
     </div>
     <div class="title">
-      <p>{{item.title}}</p>
+      <div><span class="top" v-show="item.top">[置顶]</span>{{item.title}}</div>
     </div>
     <div class="desc">
       <p>{{item.description}}</p>
@@ -98,6 +98,10 @@ export default {
     font-size: 16px;
     font-weight: bold;
     margin: 18rpx 2rpx 0;
+    .top {
+      color: red;
+      margin-right: 5upx
+    }
   }
   .desc {
     font-size: 10px;

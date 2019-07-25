@@ -80,7 +80,6 @@ export default {
       })
     },
     handleDeckClick(item) {
-      console.log(item)
       uni.navigateTo({
         url: `/pages/decks/deckDetail/index?id=${item.id}&trending=1`
       })

@@ -40,13 +40,11 @@ export default {
   methods: {
     formatDeckList() {
       this.collectionList = []
-      console.log(this.deckList)
       for (let item of this.deckList) {
           item.image = utils.faction[item.faction].image
           let temp = this.decksName.filter(val => {
             return val.ename === item.deck_name
           })
-          console.log('aaa', item, temp)
           if (temp[0] && temp[0].cname) {
             item.cname = temp[0].cname
           } else {
@@ -57,7 +55,6 @@ export default {
             return parseInt(item.created_at/10000) === parseInt(val.created_at/10000)
           })
           if (temp.length <= 0) {
-            console.log(item.created_at)
             this.collectionList.push({
               created_at: item.created_at,
               format_time: utils.formatTime(new Date(item.created_at*1000)),
@@ -78,7 +75,6 @@ export default {
         this.deckList = res.list.filter(val => {
           return !(!val || val === "");
         })
-        console.log(this.deckList)
         this.formatDeckList()
         wx.hideLoading()
         wx.hideNavigationBarLoading()
@@ -95,9 +91,6 @@ export default {
         url: `/pages/decks/deckDetail/index?id=${item.id}&collected=1`
       })
     },
-  },
-  mounted() {
-    // this.decksName = this.$store.state.cards.decksName
   },
   onShow() {
     this.genUserCollection()

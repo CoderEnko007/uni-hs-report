@@ -9,6 +9,9 @@
 			Login() {
 				this.$store.dispatch('Login').then(res => {
 					console.log('success', res)
+          this.$store.dispatch('getCollectedDecks', res.result.data.id).then(res => {
+            // console.log('aaa', res)
+          })
 				}).catch(err => {
 					console.log('fail', err)
 				})

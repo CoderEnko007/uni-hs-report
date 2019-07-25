@@ -90,7 +90,6 @@
       <SpinKit :mode="'sk-spinner-pulse'"></SpinKit>
     </div>
     <div class="safe-panel" :style="{'height': 60+'rpx'}"></div>
-    <zan-toast />
     <div style="position: fixed; top: 9999999999999px; overflow: hidden">
       <canvas :style="{width: canvasWidth+'px', height: canvasHeight+'px', 'margin-left': '30rpx'}" canvas-id="deck-pic"></canvas>
     </div>
@@ -110,7 +109,6 @@ import {getDeckDetail, setUserCollection, cancelUserCollection, getArchetypeDeta
 import {getComponentByTag, iFanrTileImageURL, getImageInfoAsync} from "@/utils";
 import DeckCards from '@/components/DeckCards'
 import FooterMenu from '@/components/FooterMenu'
-import ZanToast from '@/components/toast'
 import NavBar from '@/components/NavBar'
 import WinRateBoard from '@/components/WinRateBoard'
 import AddBubble from '@/components/AddBubble'
@@ -149,7 +147,6 @@ export default {
     AddBubble,
     floatBtnGroup,
     compareDeckModal,
-    ZanToast,
     SpinKit,
     // BarChart
   },
@@ -191,6 +188,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'collectedDecks',
       'decksName',
       'navHeight',
       'userInfo',
@@ -370,7 +368,8 @@ export default {
       //  如果已收藏则取消收藏
         let data = {
             collection_id: this.deckDetail.id,
-            user_id: this.userInfo.id
+            user_id: this.userInfo.id,
+            deck_id: this.deckDetail.deck_id
         }
         this.$store.dispatch('cancelCollectedDeck', data).then(res => {
           wx.hideLoading()
@@ -403,9 +402,9 @@ export default {
           })
         } else {
           this.collectingFlag = false
-          this.toast.showZanToast({
+          wx.showToast({
             title: '请登录',
-            icon: 'fail'
+            icon: 'none'
           })
         }
       }
@@ -413,8 +412,12 @@ export default {
     checkDeckCollected() {
     //  检查当前卡组是否已收藏
       if (this.userInfo.id) {
-        let res = this.$store.state.cards.collectedDecks.filter(item => {
-          return item.id === this.recordID
+        let res = this.collectedDecks.filter(item => {
+          if (this.recordID) {
+            return item.id === this.recordID
+          } else {
+            return item.deck_id === this.deckID
+          }
         })
         this.deckCollected = res.length > 0;
       }
@@ -684,7 +687,6 @@ export default {
       this.$store.commit('setSecondDeck', this.deckDetail)
     },
     showColumn(canvasId,chartData){
-      console.log(chartData, this.cWidth, this.cHeight)
     	barChart=new uCharts({
     		$this:_this,
     		canvasId: canvasId,
@@ -715,7 +717,6 @@ export default {
     setTimeout(() => {
       this.$store.commit('setShowBubbleFlag', false)
     }, 4000)
-    this.toast = getComponentByTag(this, '_toast')
     this.recordID = this.$root.$mp.query.id
     this.deckID = this.$root.$mp.query.deckID
     this.deckMode = this.$root.$mp.query.mode?this.$root.$mp.query.mode:'Standard'
