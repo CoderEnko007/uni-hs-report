@@ -242,7 +242,7 @@
           this.noticeText.text = this.noticeContent.content
         } else {
           this.$store.dispatch('getNotice').then(res => {
-            this.noticeText.text = res.content
+            this.noticeText.text = res?res.content:null
           })
         }
       },
@@ -569,6 +569,12 @@
       this.genArchetypeList()
       this.$refs.articlePage.genDataList(true)
     },
+    onShareAppMessage(res) {
+      return {
+        title: '炉石传说情报站',
+        path: '/pages/index/index'
+      }
+    }
   }
 </script>
 

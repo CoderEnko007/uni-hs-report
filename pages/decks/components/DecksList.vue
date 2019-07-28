@@ -225,7 +225,6 @@
       },
       genPickerList() {
         this.selectedDeckIndex = 0
-        console.log(this.decksFilter.mode, this.decksFilter.last_30_days, this.selectedFaction)
         let filterDecksName = this.decksName.filter(v => {
           if (this.selectedFaction !== '' && v.faction !== this.selectedFaction) {
             return false
@@ -257,7 +256,6 @@
           id: this.selectedFaction,
           name: '其他'
         })
-        console.log(this.deckPickerList)
       },
       genDeckList(init) {
         if (init) {

@@ -261,6 +261,12 @@
         this.rangePicker.selectedItem = e.mp.detail.value
         this.genWinRateData()
       },
+      scrollToBottom() {
+        // console.log('scrollToBottom')
+      },
+      scrollToTop() {
+        // console.log('scrollToTop')
+      }
     },
     mounted() {
       this.genFactionIcons()

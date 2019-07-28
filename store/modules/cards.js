@@ -39,8 +39,8 @@ const cards = {
       state.archetypeList = list
     },
     SET_NOTICE: (state, noticeObj) => {
-      state.noticeContent.display = noticeObj.display
-      state.noticeContent.content = noticeObj.content
+      state.noticeContent.display = noticeObj&&noticeObj.display?noticeObj.display:false
+      state.noticeContent.content = noticeObj&&noticeObj.content?noticeObj.content:''
     },
     SHOW_NOTICE_BAR: (state, display) => {
       state.noticeContent.display = display
