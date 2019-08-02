@@ -48,7 +48,7 @@ export default {
         }
         for (let index in this.dataList) {
           if (this.dataList.hasOwnProperty(index)) {
-            this.dataList[index].date = utils.formatTime(new Date(this.dataList[index].created_at*1000), true)
+            this.dataList[index].date = utils.timesFun(this.dataList[index].created_at*1000)
           }
         }
         if (this.dataList.length >= res.meta.total_count) {

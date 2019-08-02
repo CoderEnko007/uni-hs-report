@@ -466,7 +466,6 @@ export default {
 @import '../../../style/common';
 .container {
   width: 100%;
-  overflow: hidden;
   .banner {
     position: relative;
     width: 100%;

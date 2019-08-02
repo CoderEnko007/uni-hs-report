@@ -157,7 +157,6 @@ export default {
 
 .container {
   width: 100%;
-  overflow: hidden;
   .header-container {
     position: relative;
     width: 100%;

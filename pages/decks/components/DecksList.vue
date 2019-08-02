@@ -46,7 +46,7 @@
         @itemClick="handleDeckClick"
         @scrollToBottom="scrollToBottom"
         :loading="more"
-        :nodata="!deckList.length"></DecksBoard>
+        :nodata="!more&&!deckList.length"></DecksBoard>
     </div>
   </div>
 </template>

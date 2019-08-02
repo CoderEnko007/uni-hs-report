@@ -17,8 +17,16 @@
             <img :src="detail&&detail.logo.path" mode="aspectFit">
             <span class="name">{{detail&&detail.author}}</span>
           </div>
-          <div class="date">
-            {{detail&&detail.date}}
+          <div class="info">
+            <div class="info-item">
+              <span class="icon iconfont">&#xe678;</span>
+              <span v-if="detail&&detail.visit_count">{{detail.visit_count}}</span>
+              <span v-else>0</span>
+            </div>
+            <div class="info-item">
+              <span class="icon iconfont">&#xe658;</span>
+              <span>{{detail&&detail.date}}</span>
+            </div>
           </div>
         </div>
         <div class="separator"></div>
@@ -30,6 +38,11 @@
             <img :src="item.cover" mode="aspectFit" v-if="item.cover">
             <p class="sub-title">{{item.title}}</p>
           </div>
+        </div>
+      </div>
+      <div class="other-block">
+         <div class="ads">
+          <ad unit-id="adunit-2bb4a9cea22fa148"></ad>
         </div>
         <copyRight></copyRight>
       </div>
@@ -83,7 +96,7 @@
           contentID: this.contentID
         }
         this.detail = await getArticleDetail(params)
-        this.detail.date = utils.formatTime(new Date(this.detail.created_at * 1000), true)
+        this.detail.date = utils.timesFun(this.detail.created_at*1000)
         this.mainArticleId = this.detail.id
       },
       async genSubArticle() {
@@ -93,7 +106,7 @@
           contentID: this.contentID,
           mainArticleId: this.mainArticleId,
         }
-        let res = await getArticleList(params, 10, 0, 'created_at')
+        let res = await getArticleList(params, 100, 0, 'created_at')
         this.subList = res.objects
       },
       handleSubArticleClick(item) {
@@ -150,7 +163,7 @@
   }
 
   .article-detail {
-    padding: 20rpx 30rpx 80rpx;
+    padding: 20rpx 30rpx 0;
 
     .title {
       font-size: 16px;
@@ -196,10 +209,17 @@
         }
       }
 
-      .date {
+      .info {
         line-height: 40rpx;
         font-size: 10px;
         color: $palette-text-gray;
+        .icon {
+          margin-right: 10upx;
+        }
+        .info-item {
+          display: inline-block;
+          margin-left: 20upx;
+        }
       }
     }
 
@@ -239,6 +259,10 @@
     height: 1rpx;
     margin-top: 15rpx;
     background-color: #eee;
+  }
+
+  .other-block {
+    padding-bottom: 80rpx;
   }
 
   .footer {

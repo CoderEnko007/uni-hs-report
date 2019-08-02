@@ -19,8 +19,16 @@
         <img :src="item.logo.path" mode="aspectFit">
         <span class="name">{{item.author}}</span>
       </div>
-      <div class="date">
-        {{item.date}}
+      <div class="info">
+        <div class="info-item">
+          <span class="icon iconfont">&#xe678;</span>
+          <span v-if="item.visit_count">{{item.visit_count}}</span>
+          <span v-else>0</span>
+        </div>
+        <div class="info-item">
+          <span class="icon iconfont">&#xe658;</span>
+          <span>{{item.date}}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -144,10 +152,17 @@ export default {
         white-space: nowrap;
       }
     }
-    .date {
+    .info {
       line-height: 40rpx;
       font-size: 10px;
       color: $palette-text-gray;
+      .icon {
+        margin-right: 10upx;
+      }
+      .info-item {
+        display: inline-block;
+        margin-left: 20upx;
+      }
     }
   }
 }

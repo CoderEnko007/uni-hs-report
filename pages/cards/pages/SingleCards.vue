@@ -40,7 +40,7 @@
                 @cardClick="handleCardClick"
                 @scrollToBottom="scrollToBottom"
                 :loading="more"
-                :nodata="!cardsList.length"></CardList>
+                :nodata="!more&&!cardsList.length"></CardList>
     </div>
   </div>
 </template>

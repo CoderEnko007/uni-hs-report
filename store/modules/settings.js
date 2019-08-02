@@ -11,7 +11,7 @@ const settings = {
     fbiVersion: null,
     fbiKey: null,
     fbiFlag: true,
-    arenaTableID: null,
+    arenaTableID: 70488,
     card_resource: null,
     adsOpenFlag: true,
   },
@@ -91,11 +91,13 @@ const settings = {
     setSystemSetting({commit, state}) {
       return new Promise((resolve, reject) => {
         getSetting().then(res => {
-          commit('SET_FBI_VERSION', res.objects[0].fbi_version)
-          commit('SET_FBI_KEY', res.objects[0].fbi_key)
-          commit('SET_FBI_FLAG', res.objects[0].fbi_card_switch)
-          commit('SET_CARD_RESOURCE', res.objects[0].card_resource)
-          commit('SET_ARENA_TABLEID', res.objects[0].arena_table_id)
+          if (res.objects.length > 0) {
+            commit('SET_FBI_VERSION', res.objects[0].fbi_version)
+            commit('SET_FBI_KEY', res.objects[0].fbi_key)
+            commit('SET_FBI_FLAG', res.objects[0].fbi_card_switch)
+            commit('SET_CARD_RESOURCE', res.objects[0].card_resource)
+            commit('SET_ARENA_TABLEID', res.objects[0].arena_table_id)
+          }
           resolve(res.objects)
         }).catch(err => {
           console.log(err)

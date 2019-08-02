@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="compare-container">
     <div class="modalMask" :class="{'maskFadeIn': changeModel, 'maskFadeOut': !changeModel && isModel}"></div>
     <div class="modalDialog" :class="{'fadeIn': changeModel, 'fadeOut': !changeModel && isModel}">
       <!--<div class="modalHeader">-->

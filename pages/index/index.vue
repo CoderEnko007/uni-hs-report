@@ -112,7 +112,7 @@
         // tab切换参数
         tabbar: [
           {id: 'report', text: '日报' },
-          {id: 'article', text: '周报' }
+          {id: 'article', text: '资讯' }
         ],
         activeIndex: 0,
         currentTab: 0,
@@ -163,7 +163,7 @@
       ]),
       contentHeight() {
         if (this.activeIndex == 0) {
-          return 578 + 60 * this.tierListNum + 10 + 'px'
+          return 578 + 60 * this.tierListNum + 25 + 'px'
         } else {
           return this.winHeight - this.navHeight - 41 + "px"
         }

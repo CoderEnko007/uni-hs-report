@@ -464,7 +464,9 @@ export function getAboutDescription() {
 export function getSetting() {
   return new Promise((resolve, reject) => {
     let tableObj = new wx.BaaS.TableObject(tableID.settingTableID)
-    tableObj.find().then(res => {
+    let query = new wx.BaaS.Query()
+    query.compare('provider', '=', 'wx')
+    tableObj.setQuery(query).find().then(res => {
       resolve(res.data)
     }, err => {
       reject(err)

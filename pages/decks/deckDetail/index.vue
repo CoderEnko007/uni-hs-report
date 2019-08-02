@@ -670,7 +670,6 @@ export default {
       this.$refs.cDeckModal.showModal()
     },
     handleClearDeckModal() {
-
       this.$store.commit('clearDecks')
     },
     handleDeckCompare() {
@@ -757,7 +756,6 @@ export default {
 
 .container {
   width: 100%;
-  overflow: hidden;
   .banner {
     position: relative;
     width: 100%;

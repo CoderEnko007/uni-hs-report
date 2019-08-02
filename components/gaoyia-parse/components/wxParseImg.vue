@@ -78,10 +78,12 @@ export default {
         tempWidth = (imageWidth-30)
         tempHeight = 345*imageheight/imageWidth
       }
-      if (tempHeight>500) {
-        tempHeight = 500
-        tempWidth = 500*tempWidth/imageheight
-      }
+      //  let parent = this.$parent;
+      //  console.log('aaa', parent)
+      // if (tempHeight>500) {
+      //   tempHeight = 500
+      //   tempWidth = 500*tempWidth/imageheight
+      // }
       const { padding, mode } = this.node.attr;
       const { styleStr } = this.node;
       const imageHeightStyle = mode === 'widthFix' ? '' : `height: ${tempHeight}px;`;
@@ -97,11 +99,11 @@ export default {
 
       if (originalWidth < 60 || originalHeight < 60) {
         const { src } = this.node.attr;
-	let parent = this.$parent;
-	while(!parent.preview || typeof parent.preview !== 'function') {
-		parent = parent.$parent;
-	}
-	parent.removeImageUrl(src);
+        let parent = this.$parent;
+        while(!parent.preview || typeof parent.preview !== 'function') {
+          parent = parent.$parent;
+        }
+        parent.removeImageUrl(src);
         this.preview = false;
       }
 

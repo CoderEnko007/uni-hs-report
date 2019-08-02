@@ -43,16 +43,19 @@
     <div class="feedback">
       <button open-type="feedback">问题反馈 | 意见建议</button>
     </div>
+    <x-modal :text='aliCodeText' :no-cancel='true' :no-title='true' confirm-text='确定' :hidden.sync='hideModal'></x-modal>
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import {getDeckList, getUserCollectionDecks, addCustomerSetting, getCustomerSetting, updateCustomerSetting} from "@/api/dbapi";
 import NavBar from '@/components/NavBar'
+import xModal from "@/components/x-modal/x-modal.vue"
 
 export default {
   components: {
     NavBar,
+    xModal,
   },
   data() {
     return {
@@ -61,6 +64,8 @@ export default {
       deckList: [],
       logo: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1g9QyXTPpyOMVypO.png',
       codeImg: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1g9oGSrxprEojAfB.jpg',
+      aliCodeText: '打开支付宝，首页搜索栏中直接粘贴，即可领取每日红包，金额随机',
+      hideModal: true,
     }
   },
   computed: {
@@ -144,12 +149,9 @@ export default {
     handleCopyBtn() {
       wx.setClipboardData({
         data: '558391916',
-        success: function (res) {
-          wx.showToast({
-            title: '打开支付宝，首页搜索栏中直接粘贴，即可领取每日红包，金额随机',
-            icon: 'none',
-            duration: 2500,
-          })
+        success: res => {
+          // wx.hideToast();
+          this.hideModal = false
         }
       })
     },
@@ -173,60 +175,61 @@ export default {
           duration: 2500
         })
       }
+    },
+    initVideoAd() {
+      if (wx.createRewardedVideoAd) {
+          this.videoAd = wx.createRewardedVideoAd({
+              adUnitId: 'adunit-e8e54c4290dbf4ad'
+          })
+          this.videoAd.onClose(async (status) => {
+              console.log('激励视频关闭', status)
+              if (status && status.isEnded || status === undefined) {
+                  let res = await getCustomerSetting(this.userInfo.id)
+                  console.log(res)
+                  let temp = ''
+                  if (res.meta.total_count > 0) {
+                      let ad_click_num = res.objects[0].ad_click_num + 1
+                      temp = await updateCustomerSetting({
+                          ad_click_num: ad_click_num,
+                      }, res.objects[0].id)
+                  } else {
+                      temp = await addCustomerSetting({}, this.userInfo.id)
+                  }
+                  console.log(temp)
+                  let now = new Date()
+                  try {
+                      wx.setStorageSync('ads_video_date', new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000)
+                  } catch (e) {
+                      console.log(e)
+                  }
+                  wx.showToast({
+                      title: '感谢！',
+                      icon: 'none',
+                      duration: 2500
+                  })
+              } else {
+                  wx.showToast({
+                      title: '没有完整播放视频哦，喵。。。',
+                      icon: 'none',
+                      duration: 2500
+                  })
+              }
+          })
+          this.videoAd.onError((res) => {
+              console.log('激励视频错误', res)
+              wx.showToast({
+                  title: '出了点小问题，无法播放激励视频',
+                  icon: 'none',
+                  duration: 2500
+              })
+          })
+      }
     }
   },
   onLoad() {
-    if (wx.createRewardedVideoAd) {
-      this.videoAd = wx.createRewardedVideoAd({
-        adUnitId: 'adunit-e8e54c4290dbf4ad'
-      })
-      this.videoAd.onClose(async (status) => {
-        console.log('激励视频关闭', status)
-        if (status && status.isEnded || status === undefined) {
-          let res = await getCustomerSetting(this.userInfo.id)
-          console.log(res)
-          let temp = ''
-          if (res.meta.total_count > 0) {
-            let ad_click_num = res.objects[0].ad_click_num + 1
-            temp = await updateCustomerSetting({
-              ad_click_num: ad_click_num,
-            }, res.objects[0].id)
-          } else {
-            temp = await addCustomerSetting({}, this.userInfo.id)
-          }
-          console.log(temp)
-          let now = new Date()
-          try {
-            wx.setStorageSync('ads_video_date', new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000)
-          } catch (e) {
-            console.log(e)
-          }
-          wx.showToast({
-            title: '感谢！',
-            icon: 'none',
-            duration: 2500
-          })
-        } else {
-          wx.showToast({
-            title: '没有完整播放视频哦，喵。。。',
-            icon: 'none',
-            duration: 2500
-          })
-        }
-      })
-      this.videoAd.onError((res) => {
-        console.log('激励视频错误', res)
-        wx.showToast({
-          title: '出了点小问题，无法播放激励视频',
-          icon: 'none',
-          duration: 2500
-        })
-      })
-    }
+    // this.initVideoAd()
   },
   onShow() {
-    // console.log('onShow', this.$store.state.cards.collectedDecks)
-    // this.deckList = this.$store.state.cards.collectedDecks
     this.genUserCollection()
   },
   onShareAppMessage(res) {
