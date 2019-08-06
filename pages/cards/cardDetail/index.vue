@@ -38,7 +38,7 @@
         </div>
       </div>
     </div>
-    <div class="entourage-block" v-if="genEntourage">
+    <div class="entourage-block" v-if="genEntourage.length>0">
       <div class="headline"><span class="title">衍生卡</span></div>
       <div class="card-list">
         <div class="card" v-for="(item, index) in genEntourage" :key="index" @click="handleEntourageClick(item.hsId)">

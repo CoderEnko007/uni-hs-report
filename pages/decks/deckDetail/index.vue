@@ -83,7 +83,8 @@
       <div class="data-chart">
         <div class="headline m-30"><span class="title">费用分布</span></div>
         <!-- <BarChart :chartData="costChartData" canvasId="costBar"></BarChart> -->
-        <canvas canvas-id="canvasColumn" id="canvasColumn" class="charts"></canvas>
+        <canvas canvas-id="canvasColumn" id="canvasColumn" class="charts" v-if="!costChartImg"></canvas>
+        <img class="charts" :src="costChartImg" mode="aspectFit" v-else>
       </div>
     </div>
     <div class="loading" v-else>
@@ -184,6 +185,7 @@ export default {
       cWidth:'',
       cHeight:'',
       pixelRatio:1,
+      costChartImg: null
     }
   },
   computed: {
@@ -343,16 +345,6 @@ export default {
           })
         }
       })
-    },
-    handleWinRateBarClick(bar) {
-      for(let index in utils.faction) {
-        if (utils.faction.hasOwnProperty(index)) {
-          if (utils.faction[index].shortName === bar.name) {
-            this.selectWinRate.name = utils.faction[index].name
-          }
-        }
-      }
-      this.selectWinRate.value = bar.value
     },
     handleCollection() {
       if (this.collectingFlag) {
@@ -710,7 +702,23 @@ export default {
         	}
         }
     	});
-    },
+      barChart.addEventListener('renderComplete', () => {
+        setTimeout(() => {
+          wx.canvasToTempFilePath({
+            width: _this.cWidth*_this.pixelRatio,
+            height: _this.cHeight*_this.pixelRatio,
+            canvasId: 'canvasColumn',
+            success(res) {
+              console.log(res.tempFilePath)
+              _this.costChartImg = res.tempFilePath
+            },
+            fail(err) {
+              console.log(err)
+            }
+          })
+        }, 1000)
+      });
+    }
   },
   async mounted() {
     setTimeout(() => {
