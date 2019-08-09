@@ -254,7 +254,7 @@ export default {
       'archetypeList',
     ]),
     detailLoaded(){
-      return this.archetypeDetail.update_time !== undefined
+      return this.archetypeDetail.archetype !== undefined
     },
     genArchetypeName() {
       return this.getDeckCName(this.archetypeDetail.archetype)
@@ -554,6 +554,7 @@ export default {
       height:80rpx;
       text-align: center;
       line-height:80rpx;
+      box-sizing: border-box;
     }
     .tier-desc {
       border: none;

@@ -13,6 +13,7 @@ const settings = {
     fbiFlag: true,
     arenaTableID: 70488,
     card_resource: null,
+    ifanr_arena_card_resource: false,
     adsOpenFlag: true,
   },
   mutations: {
@@ -51,6 +52,9 @@ const settings = {
     },
     SET_ARENA_TABLEID: (state, val) => {
       state.arenaTableID = val
+    },
+    SET_IFANR_ARENA_CARD_RESOURCE: (state, val) => {
+      state.ifanr_arena_card_resource = val
     }
   },
   actions: {
@@ -97,6 +101,7 @@ const settings = {
             commit('SET_FBI_FLAG', res.objects[0].fbi_card_switch)
             commit('SET_CARD_RESOURCE', res.objects[0].card_resource)
             commit('SET_ARENA_TABLEID', res.objects[0].arena_table_id)
+            commit('SET_IFANR_ARENA_CARD_RESOURCE', res.objects[0].ifanr_arena_card_resource)
           }
           resolve(res.objects)
         }).catch(err => {
