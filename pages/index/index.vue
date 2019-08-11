@@ -568,6 +568,7 @@
       this.genRankData()
       this.genArchetypeList()
       this.$refs.articlePage.genDataList(true)
+      this.$store.dispatch('getDecksName')
     },
     onShareAppMessage(res) {
       return {

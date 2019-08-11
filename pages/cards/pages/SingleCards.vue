@@ -74,16 +74,9 @@
         'fbiVersion',
         'fbiKey',
         'fbiFlag',
-        'card_resource'
+        'card_resource',
+        'series'
       ]),
-      obtainSeriesList() {
-        let array = this.$store.state.cards.series
-        array.unshift({id: 'all', name: '全部扩展包', mode: 'all'})
-        if (array.length%2) {
-          array.push({})
-        }
-        this.filterTabBar[4].items = array
-      },
     },
     data() {
       return {
@@ -113,6 +106,13 @@
       }
     },
     methods: {
+      genSeriesList() {
+        this.series.unshift({id: 'all', name: '全部扩展包', mode: 'all'})
+        if (this.series.length%2) {
+          this.series.push({})
+        }
+        this.filterTabBar[4].items = this.series
+      },
       genFilterMenuItems() {
         let array = []
         for (let key in utils.faction) {
@@ -244,8 +244,8 @@
       },
     },
     mounted() {
+      this.genSeriesList()
       this.genFilterMenuItems()
-      // this.obtainSeriesList()
       this.genCardsList(true)
     },
     // onReachBottom() {
