@@ -41,17 +41,24 @@
     <div class="entourage-block" v-if="genEntourage.length>0">
       <div class="headline"><span class="title">衍生卡</span></div>
       <div class="card-list">
-        <div class="card" v-for="(item, index) in genEntourage" :key="index" @click="handleEntourageClick(item.hsId)">
+        <div class="card" v-for="(item, index) in genEntourage" :key="index" @click="handleEntourageClick(item.hsId, index)">
           <img :src="item.image" mode="aspectFit">
         </div>
       </div>
     </div>
-    <div class="ads">
+    <!-- <div class="ads">
       <ad unit-id="adunit-038fb5d0b45f4699"></ad>
-    </div>
+    </div> -->
     <div style="height: 80rpx"></div>
     <div class="footer">
-      <FooterMenu></FooterMenu>
+      <!-- <FooterMenu></FooterMenu> -->
+      <div class="btn-group">
+        <button class="btn previous" @click="handlePrevious" :class="{'de-active': !prevBtnEnable}"><span>上一张</span></button>
+        <button class="btn next" @click="handleNext" :class="{'de-active': !nextBtnEnable}"><span>下一张</span></button>
+      </div>
+    </div>
+    <div class="float-btn">
+      <floatBtnGroup showShare="true"></floatBtnGroup>
     </div>
   </div>
 </template>
@@ -60,7 +67,7 @@ import { getCardPicture } from "@/utils";
 import { mapGetters } from 'vuex'
 import utils from '@/utils'
 import {genOrigImageURL, genCardsImageURL, gen512CardsImageURL} from '@/utils'
-import {getCardDetail} from "@/api/dbapi";
+import {getCardDetail, getCardsList} from "@/api/dbapi";
 import FooterMenu from '@/components/FooterMenu'
 import floatBtnGroup from '@/components/floatBtnGroup'
 import NavBar from '@/components/NavBar'
@@ -93,7 +100,7 @@ export default {
     FooterMenu,
     floatBtnGroup,
     NavBar,
-    SpinKit
+    SpinKit,
   },
   data() {
     return {
@@ -105,7 +112,8 @@ export default {
       showZhAudio: false,
       selectedAudio: '',
       audioPlaying: false,
-      imageLoaded: false
+      imageLoaded: false,
+      entourageList: null
     }
   },
   computed: {
@@ -114,7 +122,9 @@ export default {
       'fbiVersion',
       'fbiKey',
       'fbiFlag',
-      'card_resource'
+      'card_resource',
+      'cardsPageParams',
+      'entourageParams'
     ]),
     getEnAudio() {
       if (this.cardDetail.audios) {
@@ -153,7 +163,24 @@ export default {
             formatData.push({})
           }
         }
+        // this.entourageList = formatData
         return formatData
+      } else {
+        return null
+      }
+    },
+    prevBtnEnable() {
+      if (this.cardDetail.collectible) {
+        return this.cardsPageParams.offset>0
+      } else {
+        return this.entourageParams.index>0
+      }
+    },
+    nextBtnEnable() {
+      if (this.cardDetail.collectible) {
+        return this.cardsPageParams.offset<this.cardsPageParams.counts-1
+      } else {
+        return this.entourageParams.index<this.entourageParams.counts-1
       }
     }
   },
@@ -164,75 +191,82 @@ export default {
     genCardImage(hsId) {
       return getCardPicture(this, hsId, false, this.fbiFlag, this.fbiVersion, this.fbiKey)
     },
+    formatCardDetail(detail) {
+      this.cardDetail = detail
+      this.cardDetail.bgImg = genOrigImageURL(this.cardDetail.hsId)
+      // this.cardDetail.cardImg = gen512CardsImageURL(this.cardDetail.hsId)
+      // this.cardDetail.cardImg = this.cardDetail.img_card_link
+      if (this.card_resource === 'fbi') {
+        this.cardDetail.cardImg = this.genCardImage(this.cardDetail.hsId)
+      } else if (this.card_resource === 'hsreplay') {
+        this.cardDetail.cardImg = utils.genCardsImageURL(this.cardDetail.hsId)
+      } else {
+        this.cardDetail.cardImg = utils.genCardsImageURL(this.cardDetail.hsId)
+      }
+      // this.cardDetail.heroIcon = heroes[this.cardDetail.cardClass].image
+      for (let item of this.$store.state.cards.series) {
+        if(this.cardDetail.set_id === item.id) {
+          this.cardDetail.series = item.name
+          if (item.mode === 'Standard') {
+            this.cardDetail.series += '（标准）'
+          } else if (item.mode === 'Wild') {
+            this.cardDetail.series += '（狂野）'
+          }
+        }
+      }
+      if (heroes[this.cardDetail.cardClass]) {
+        this.cardDetail.type = heroes[this.cardDetail.cardClass].name+'-'+utils.type[this.cardDetail.type].name
+      } else {
+        this.cardDetail.type = utils.type[this.cardDetail.type].name
+      }
+      if (this.cardDetail.race) {
+        this.cardDetail.type += '-'+utils.race[this.cardDetail.race].name
+      }
+      
+      this.cardDetail.audios = [
+        {type: 'en', ename: 'audio_play_en', cname: '出场', src: this.cardDetail.audio_play_en!==""?JSON.parse(this.cardDetail.audio_play_en):""},
+        {type: 'en', ename: 'audio_attack_en', cname: '攻击', src: this.cardDetail.audio_attack_en!==""?JSON.parse(this.cardDetail.audio_attack_en):""},
+        {type: 'en', ename: 'audio_trigger_en', cname: '触发', src: this.cardDetail.audio_trigger_en!==""?JSON.parse(this.cardDetail.audio_trigger_en):""},
+        {type: 'en', ename: 'audio_death_en', cname: '阵亡', src: this.cardDetail.audio_death_en!==""?JSON.parse(this.cardDetail.audio_death_en):""},
+        {type: 'zh', ename: 'audio_play_zh', cname: '出场', src: this.cardDetail.audio_play_zh!==""?JSON.parse(this.cardDetail.audio_play_zh):""},
+        {type: 'zh', ename: 'audio_attack_zh', cname: '攻击', src: this.cardDetail.audio_attack_zh!==""?JSON.parse(this.cardDetail.audio_attack_zh):""},
+        {type: 'zh', ename: 'audio_trigger_zh', cname: '触发', src: this.cardDetail.audio_trigger_zh!==""?JSON.parse(this.cardDetail.audio_trigger_zh):""},
+        {type: 'zh', ename: 'audio_death_zh', cname: '阵亡', src: this.cardDetail.audio_death_zh!==""?JSON.parse(this.cardDetail.audio_death_zh):""},
+      ]
+      let audiosList = []
+      for (let item of this.cardDetail.audios) {
+        if (item.src) {
+          for (let index in item.src) {
+            if (item.src.hasOwnProperty(index)) {
+              let cname = index>0?item.cname+index:item.cname
+              audiosList.push({type: item.type, ename: item.ename, cname: cname, src:item.src[index]})
+            }
+          }
+        }
+      }
+      this.cardDetail.audios = audiosList
+      
+      if (this.cardDetail.audio_play_en || this.cardDetail.audio_attack_en
+        || this.cardDetail.audio_trigger_en || this.cardDetail.audio_death_en) {
+        this.showEnAudio = true
+      } else {
+        this.showEnAudio = false
+      }
+      if (this.cardDetail.audio_play_zh || this.cardDetail.audio_attack_zh
+        || this.cardDetail.audio_trigger_zh || this.cardDetail.audio_death_zh) {
+        this.showZhAudio = true
+      } else {
+        this.showZhAudio = false
+      }
+      wx.stopPullDownRefresh();
+      wx.hideNavigationBarLoading()
+    },
     initCardDetail() {
       this.showEnAudio = false
       this.showZhAudio = false
       wx.showNavigationBarLoading();
       getCardDetail({dbfId: parseInt(this.cardId), hsId: this.cardHsId}).then(res => {
-        this.cardDetail = res[0]
-        this.cardDetail.bgImg = genOrigImageURL(this.cardDetail.hsId)
-        // this.cardDetail.cardImg = gen512CardsImageURL(this.cardDetail.hsId)
-        // this.cardDetail.cardImg = this.cardDetail.img_card_link
-        if (this.card_resource === 'fbi') {
-          this.cardDetail.cardImg = this.genCardImage(this.cardDetail.hsId)
-        } else if (this.card_resource === 'hsreplay') {
-          this.cardDetail.cardImg = utils.genCardsImageURL(this.cardDetail.hsId)
-        } else {
-          this.cardDetail.cardImg = utils.genCardsImageURL(this.cardDetail.hsId)
-        }
-        // this.cardDetail.heroIcon = heroes[this.cardDetail.cardClass].image
-        for (let item of this.$store.state.cards.series) {
-          if(this.cardDetail.set_id === item.id) {
-            this.cardDetail.series = item.name
-            if (item.mode === 'Standard') {
-              this.cardDetail.series += '（标准）'
-            } else if (item.mode === 'Wild') {
-              this.cardDetail.series += '（狂野）'
-            }
-          }
-        }
-        if (heroes[this.cardDetail.cardClass]) {
-          this.cardDetail.type = heroes[this.cardDetail.cardClass].name+'-'+utils.type[this.cardDetail.type].name
-        } else {
-          this.cardDetail.type = utils.type[this.cardDetail.type].name
-        }
-        if (this.cardDetail.race) {
-          this.cardDetail.type += '-'+utils.race[this.cardDetail.race].name
-        }
-
-        this.cardDetail.audios = [
-          {type: 'en', ename: 'audio_play_en', cname: '出场', src: this.cardDetail.audio_play_en!==""?JSON.parse(this.cardDetail.audio_play_en):""},
-          {type: 'en', ename: 'audio_attack_en', cname: '攻击', src: this.cardDetail.audio_attack_en!==""?JSON.parse(this.cardDetail.audio_attack_en):""},
-          {type: 'en', ename: 'audio_trigger_en', cname: '触发', src: this.cardDetail.audio_trigger_en!==""?JSON.parse(this.cardDetail.audio_trigger_en):""},
-          {type: 'en', ename: 'audio_death_en', cname: '阵亡', src: this.cardDetail.audio_death_en!==""?JSON.parse(this.cardDetail.audio_death_en):""},
-          {type: 'zh', ename: 'audio_play_zh', cname: '出场', src: this.cardDetail.audio_play_zh!==""?JSON.parse(this.cardDetail.audio_play_zh):""},
-          {type: 'zh', ename: 'audio_attack_zh', cname: '攻击', src: this.cardDetail.audio_attack_zh!==""?JSON.parse(this.cardDetail.audio_attack_zh):""},
-          {type: 'zh', ename: 'audio_trigger_zh', cname: '触发', src: this.cardDetail.audio_trigger_zh!==""?JSON.parse(this.cardDetail.audio_trigger_zh):""},
-          {type: 'zh', ename: 'audio_death_zh', cname: '阵亡', src: this.cardDetail.audio_death_zh!==""?JSON.parse(this.cardDetail.audio_death_zh):""},
-        ]
-        let audiosList = []
-        for (let item of this.cardDetail.audios) {
-          if (item.src) {
-            for (let index in item.src) {
-              if (item.src.hasOwnProperty(index)) {
-                let cname = index>0?item.cname+index:item.cname
-                audiosList.push({type: item.type, ename: item.ename, cname: cname, src:item.src[index]})
-              }
-            }
-          }
-        }
-        this.cardDetail.audios = audiosList
-
-        if (this.cardDetail.audio_play_en || this.cardDetail.audio_attack_en
-          || this.cardDetail.audio_trigger_en || this.cardDetail.audio_death_en) {
-          this.showEnAudio = true
-        }
-        if (this.cardDetail.audio_play_zh || this.cardDetail.audio_attack_zh
-          || this.cardDetail.audio_trigger_zh || this.cardDetail.audio_death_zh) {
-          this.showZhAudio = true
-        }
-        wx.stopPullDownRefresh();
-        wx.hideNavigationBarLoading()
+        this.formatCardDetail(res[0])
       }).catch(err => {
         console.log(err)
         wx.stopPullDownRefresh();
@@ -268,11 +302,85 @@ export default {
         }
       })
     },
-    handleEntourageClick(hsId) {
+    handleEntourageClick(hsId, index) {
+      this.entourageList = this.genEntourage.filter(v => {
+        return v.hsId
+      })
+      this.$store.commit('setEntourageParams', {
+        list: this.entourageList,
+        index: index,
+        counts: this.entourageList.length
+      })
       if (hsId) {
         wx.navigateTo({
           url: `/pages/cards/cardDetail/index?hsId=${hsId}`
         })
+      }
+    },
+    handlePrevious() {
+      if (this.myAudio) {
+        this.myAudio.stop()
+      }
+      if (this.cardDetail.collectible) {
+        if (this.cardsPageParams.offset>0) {
+          getCardsList(this.cardsPageParams.filter, 21, null, this.cardsPageParams.offset-1).then(res => {
+              this.$store.commit('setCardsPageParams', {
+                filter: this.cardsPageParams.filter,
+                offset: this.cardsPageParams.offset-1,
+                counts: this.cardsPageParams.counts
+              })
+              this.formatCardDetail(res.objects[0])
+          })
+        }
+      } else {
+        if (this.entourageParams.index>0) {
+          this.cardHsId = this.entourageParams.list[this.entourageParams.index-1].hsId
+          this.showEnAudio = false
+          this.showZhAudio = false
+          getCardDetail({dbfId: null, hsId: this.cardHsId}).then(res => {
+            this.formatCardDetail(res[0])
+            this.$store.commit('setEntourageParams', {
+              list: this.entourageParams.list,
+              index: this.entourageParams.index-1,
+              counts: this.entourageParams.counts
+            })
+          }).catch(err => {
+            console.log(err)
+          })
+        }
+      }
+    },
+    handleNext() {
+      if (this.myAudio) {
+        this.myAudio.stop()
+      }
+      if (this.cardDetail.collectible) {
+        if (this.cardsPageParams.offset<this.cardsPageParams.counts-1) {
+          getCardsList(this.cardsPageParams.filter, 21, null, this.cardsPageParams.offset+1).then(res => {
+              this.$store.commit('setCardsPageParams', {
+                filter: this.cardsPageParams.filter,
+                offset: this.cardsPageParams.offset+1,
+                counts: this.cardsPageParams.counts
+              })
+              this.formatCardDetail(res.objects[0])
+          })
+        }
+      } else {
+        if (this.entourageParams.index<this.entourageParams.counts-1) {
+          this.cardHsId = this.entourageParams.list[this.entourageParams.index+1].hsId
+          this.showEnAudio = false
+          this.showZhAudio = false
+          getCardDetail({dbfId: null, hsId: this.cardHsId}).then(res => {
+            this.formatCardDetail(res[0])
+            this.$store.commit('setEntourageParams', {
+              list: this.entourageParams.list,
+              index: this.entourageParams.index+1,
+              counts: this.entourageParams.counts
+            })
+          }).catch(err => {
+            console.log(err)
+          })
+        }
       }
     }
   },
@@ -320,18 +428,19 @@ export default {
     if (res.from === 'button') {
       return {
         title: this.cardDetail.name,
-        path: `/pages/cards/cardDetail/main?id=${this.cardDetail.dbfId}`
+        path: `/pages/cards/cardDetail/index?id=${this.cardDetail.dbfId}`
       }
     } else {
       return {
         title: '炉石传说情报站',
-        path: '/pages/index/main'
+        path: '/pages/index/index'
       }
     }
   }
 }
 </script>
 <style lang="scss" scoped>
+@import '../../../style/color';
 .card-detail{
   .header {
     position: relative;
@@ -473,6 +582,32 @@ export default {
   .footer {
     position: fixed;
     bottom: 0;
+    box-shadow:0px 0px 4px #c0c0c0;
+    .btn-group {
+      position: relative;
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: space-around;
+      align-items: center;
+      width: 750rpx;
+      height: 90rpx;
+      background-color: #fff;
+      .btn {
+        width: 40%;
+        height: 60rpx;
+        line-height: 60rpx;
+        text-align: center;
+        border-radius: 10rpx;
+        background-color: $palette-blue;
+        color: #fff;
+        font-size: 13px;
+      }
+      .de-active {
+        background: rgba(67, 62, 136, .2);
+        color: rgba(67, 62, 136, .5);
+        border: 1rpx solid rgba(67, 62, 136, .5);
+      }
+    }
   }
 }
 .audio-play {
@@ -483,6 +618,11 @@ export default {
 }
 .headline {
   margin: 0 30rpx;
+}
+.float-btn {
+  position: fixed;
+  bottom: 50px;
+  right: 20px;
 }
 @keyframes audioPlay {
   0% {background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDIxIDc5LjE1NTc3MiwgMjAxNC8wMS8xMy0xOTo0NDowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTQgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjM0NEQ3RDg1NUQzQTExRTU4NkE2ODlDNENFMTkyNjMzIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjM0NEQ3RDg2NUQzQTExRTU4NkE2ODlDNENFMTkyNjMzIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MzQ0RDdEODM1RDNBMTFFNTg2QTY4OUM0Q0UxOTI2MzMiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MzQ0RDdEODQ1RDNBMTFFNTg2QTY4OUM0Q0UxOTI2MzMiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7APQCsAAAAW0lEQVR42mL8//8/g5mdKwO9ARPDAIFRi0ctHrV41OLhZzHTQFhcD8Rt9LYYZGkDEKfS22JGWscxCw7xBijNSW+LYZYzDVSq/jdagIxaPGrxqMWjFg+4xQABBgABTAhrvxCDdAAAAABJRU5ErkJggg==);}

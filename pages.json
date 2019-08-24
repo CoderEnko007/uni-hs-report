@@ -9,7 +9,7 @@
 		}, {
 			"path": "pages/trending/index",
 			"style": {
-        "enablePullDownRefresh": true
+				"enablePullDownRefresh": true
       }
 		}, {
 			"path": "pages/decks/index",
@@ -17,14 +17,22 @@
 		}, {
 			"path": "pages/decks/decksList/index",
 			"style": {
-        "enablePullDownRefresh": true
+				"enablePullDownRefresh": true
       }
 		}, {
 			"path": "pages/decks/archetypeDetail/index",
-			"style": {}
+			"style": {
+				"usingComponents": {
+					"ticket-report-wrapper": "plugin://sdkPlugin/ticket-report-wrapper"
+				}
+      }
 		}, {
 			"path": "pages/decks/deckDetail/index",
-			"style": {}
+			"style": {
+				"usingComponents": {
+					"ticket-report-wrapper": "plugin://sdkPlugin/ticket-report-wrapper"
+				}
+			}
 		}, {
 			"path": "pages/decks/compareDeck/index",
 			"style": {}

@@ -62,9 +62,9 @@
 			this.setNotice()
 			this.Login()
 		},
-		onShow: function() {
-			console.log('App Show')
-		},
+		onShow: function(options) {
+			wx.BaaS.reportTemplateMsgAnalytics(options)
+    },
 		onHide: function() {
 			console.log('App Hide')
 		}

@@ -70,14 +70,15 @@ export default {
   border-top: 1rpx solid $palette-bg-gray;
   background-color: #fff;
   border-bottom:1rpx solid $palette-bg-gray;
+  box-shadow:0px 0px 4px #c0c0c0;
   .like-block {
-    height: 80rpx;
+    height: 90rpx;
     width: 240rpx;
   }
   button {
     width: 240rpx;
-    height: 80rpx;
-    line-height: 80rpx;
+    height: 90rpx;
+    line-height: 90rpx;
     padding: 0;
     display: inline-block;
     background-color: white;

@@ -327,6 +327,7 @@ const type = {
   'SPELL': {name: '法术'},
   'WEAPON': {name: '武器'},
   'HERO': {name: '英雄'},
+  'HERO_POWER': {name: '英雄技能'}
 }
 
 const race = {

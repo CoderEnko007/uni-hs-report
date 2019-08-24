@@ -21,7 +21,7 @@ export default {
 .bubble {
   height: 23px;
   line-height: 23px;
-  background-color: #ffffffbb;
+  background-color: rgba(255,255,255,.7);
   border-radius: 10px;
   padding: 0 8px;
   overflow: hidden;
@@ -45,7 +45,7 @@ export default {
     content: '';
     border-style: solid;
     border-width: 19rpx;
-    border-color: transparent transparent #ffffffbb transparent;
+    border-color: transparent transparent rgba(255,255,255,.7) transparent;
     width: 0;
     height: 0;
     overflow: hidden;

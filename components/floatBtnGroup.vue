@@ -3,13 +3,14 @@
   <!--<button open-type="share" class="share"><img src="/static/icons-v2/share.png"></button>-->
   <!--<button open-type="contact" class="contact"><img src="/static/img/wechat.png"></button>-->
   <div class="badge__count" v-show="badgeCount>0">{{badgeCount}}</div>
-  <button @click="handleCompareClick"><span>对比</span></button>
+  <button @click="handleCompareClick" v-if="showCompare"><span>对比</span></button>
+  <button open-type="share" class="share" v-if="showShare"><img src="/static/icons-v2/share.png"></button>
 </div>
 </template>
 <script>
 export default {
   name: 'floatBtnGroup',
-  props: ['badgeCount'],
+  props: ['badgeCount', 'showCompare', 'showShare'],
   methods: {
     handleCompareClick() {
       this.$emit('onCompare')
@@ -18,10 +19,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+@import '../style/color';
 .group {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
   button::after {
     border: none;
   }
@@ -39,7 +38,7 @@ export default {
     background-color:#fff;
     /*box-shadow:0 4px 24px #eee;*/
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-    border:1rpx solid #eee;
+    // border:1rpx solid #eee;
     image {
       position: absolute;
       top: 50%;
@@ -67,6 +66,9 @@ export default {
     transform-origin:center;
     z-index:10;
     box-sizing:border-box;
+  }
+  .share {
+    background: $palette-blue;
   }
 }
 </style>

@@ -39,6 +39,7 @@
       <CardList :list="cardsList"
                 @cardClick="handleCardClick"
                 @scrollToBottom="scrollToBottom"
+                @scrollToTop="scrollToTop"
                 :loading="more"
                 :nodata="!more&&!cardsList.length"></CardList>
     </div>
@@ -102,7 +103,8 @@
         selectedFilterTabItem: null,
         page: 0,
         more: true,
-        cardsList: []
+        cardsList: [],
+        total_count: 0
       }
     },
     methods: {
@@ -177,7 +179,7 @@
       handleMaskClick() {
         this.selectedFilterTabItem = null
       },
-      handleCardClick(item) {
+      handleCardClick(item, index) {
         // 如果过滤器菜单打开则关闭
         if (this.selectedFilterTabItem!==null) {
           this.selectedFilterTabItem = null
@@ -186,6 +188,11 @@
         if (!item.dbfId) {
           return
         }
+        this.$store.commit('setCardsPageParams', {
+          filter: this.filter,
+          offset: index,
+          counts: this.total_count
+        })
         wx.navigateTo({
           url: `/pages/cards/cardDetail/index?id=${item.dbfId}`
         })
@@ -229,6 +236,7 @@
           if (this.cardsList.length >= res.meta.total_count) {
             this.more = false
           }
+          this.total_count = res.meta.total_count
           wx.hideNavigationBarLoading()
           wx.stopPullDownRefresh();
         }).catch(err => {
@@ -242,6 +250,11 @@
         this.page += 1
         this.genCardsList(false)
       },
+      scrollToTop() {
+        this.$store.dispatch('getSeriesData').then(res => {
+            this.genSeriesList()
+        })
+      }
     },
     mounted() {
       this.genSeriesList()
@@ -260,7 +273,7 @@
     onShareAppMessage(res) {
       return {
         title: '炉石传说情报站',
-        path: '/pages/index/main'
+        path: '/pages/index/index'
       }
     }
   }

@@ -4,7 +4,7 @@
     @scrolltoupper="scrollToTop"
     :style="{height: winHeight-navHeight-166+'px'}">
     <div class="card-list">
-      <div class="card" v-for="(item, index) in list" :key="index" @click="handleClick(item)">
+      <div class="card" v-for="(item, index) in list" :key="index" @click="handleClick(item, index)">
         <img :src="item.image" mode="aspectFit">
         <p>{{item.name}}</p>
       </div>
@@ -35,8 +35,8 @@
       ]),
     },
     methods: {
-      handleClick(item) {
-        this.$emit('cardClick', item)
+      handleClick(item, index) {
+        this.$emit('cardClick', item, index)
       },
       scrollToBottom(e) {
         // console.log('scroll to bottom', e)

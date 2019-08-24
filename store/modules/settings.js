@@ -15,6 +15,7 @@ const settings = {
     card_resource: null,
     ifanr_arena_card_resource: false,
     adsOpenFlag: true,
+    insertAdsFlag: true,
   },
   mutations: {
     setAdsOpenFlag: (state, val) => {
@@ -22,6 +23,9 @@ const settings = {
     },
     setShowBubbleFlag: (state, val) => {
       state.showBubble = val
+    },
+    SET_INSERT_ADS_FLAG: (state, val) => {
+      state.insertAdsFlag = val
     },
     SET_NAV_HEIGHT: (state, navHeight) => {
       state.navHeight = navHeight
@@ -58,6 +62,14 @@ const settings = {
     }
   },
   actions: {
+    resetInsertAdsFlag({commit, state}) {
+      return new Promise((reolve, reject) => {
+        commit('SET_INSERT_ADS_FLAG', false)
+        setTimeout(() => {
+          commit('SET_INSERT_ADS_FLAG', true)
+        }, 2000*60)
+      })
+    },
     setNavHeight({commit, state}) {
       return new Promise((resolve, reject) => {
         wx.getSystemInfo({

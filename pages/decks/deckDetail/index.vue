@@ -42,7 +42,7 @@
         </div>
       </div>
     </div>
-    <div class="btn-group" :style="{display: deckChecked?'block':'none'}">
+    <div class="btn-group footer" :style="{display: deckChecked?'block':'none'}">
       <FooterMenu showExportBtn="true" showCollectBtn="true"
                   :collected="deckCollected"
                   @collectClick="handleCollection"
@@ -69,7 +69,9 @@
       </div>
       <div class="deck-code m-30">
         <div class="code"><span>{{deckDetail.deck_code}}</span></div>
-        <button @click="copyDeckCode">复制神秘代码</button>
+        <ticket-report-wrapper style="float: right;">
+          <button @click="copyDeckCode">复制神秘代码</button>
+        </ticket-report-wrapper>
       </div>
       <div class="ads" v-if="adsOpenFlag">
         <ad unit-id="adunit-d6bb528c4e28a808"></ad>
@@ -94,7 +96,9 @@
     <div style="position: fixed; top: 9999999999999px; overflow: hidden">
       <canvas :style="{width: canvasWidth+'px', height: canvasHeight+'px', 'margin-left': '30rpx'}" canvas-id="deck-pic"></canvas>
     </div>
-    <floatBtnGroup @onCompare="openCompareDeckModal" :badgeCount="badgeCount"></floatBtnGroup>
+    <div class="float-btn">
+      <floatBtnGroup @onCompare="openCompareDeckModal" :badgeCount="badgeCount" showCompare="true"></floatBtnGroup>
+    </div>
     <compareDeckModal ref="cDeckModal"
                       @confirm="handleDeckCompare"
                       @clear="handleClearDeckModal"
@@ -618,10 +622,10 @@ export default {
       if (pages[pages.length-1].route !== 'pages/decks/deckDetail/index') {
         return
       }
-      // let destWidth = 219
-      // let destHeight = this.canvasHeight*219/this.canvasWidth
-      let destWidth = 219 * 750 / wx.getSystemInfoSync().windowWidth
-      let destHeight = (this.canvasHeight * 219 / this.canvasWidth) * 750 / wx.getSystemInfoSync().windowWidth
+      let destWidth = 219
+      let destHeight = this.canvasHeight*219/this.canvasWidth
+      // let destWidth = 219 * 750 / wx.getSystemInfoSync().windowWidth
+      // let destHeight = (this.canvasHeight * 219 / this.canvasWidth) * 750 / wx.getSystemInfoSync().windowWidth
       wx.canvasToTempFilePath({
         canvasId: 'deck-pic',
         destWidth: destWidth,
@@ -963,6 +967,7 @@ export default {
   .data-chart {
     width: 100%;
     overflow: hidden;
+    margin-bottom: 30rpx;
     /*margin: 20rpx;*/
     .chart-text {
       height:27px;
@@ -980,6 +985,17 @@ export default {
     box-sizing: border-box;
     border-bottom: 1rpx solid #eee;
     margin: 30rpx 0;
+  }
+  .footer {
+    position: fixed;
+    bottom: 0;
+    background-color: white;
+    z-index: 20;
+  }
+  .float-btn {
+    position: fixed;
+    bottom: 50px;
+    right: 20px;
   }
 }
 </style>

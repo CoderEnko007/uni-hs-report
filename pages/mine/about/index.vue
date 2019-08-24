@@ -74,7 +74,6 @@ export default {
       bannerImg: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gDPyMJP8arlwMXm.png',
       email: 'yf381966217@163.com',
       description: [],
-      interstitialAd: null,
     }
   },
   methods: {
@@ -165,16 +164,6 @@ export default {
           duration: 2500
         })
       })
-    }
-    if (wx.createInterstitialAd) {
-      this.interstitialAd = wx.createInterstitialAd({
-        adUnitId: 'adunit-6f9a474b5991f367'
-      })
-      if (this.interstitialAd) {
-        this.interstitialAd.show().catch((err) => {
-          console.error(err)
-        })
-      }
     }
   },
   onShareAppMessage(res) {

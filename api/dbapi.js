@@ -58,7 +58,7 @@ export function getSeriesData(mode, limit=20, orderBy='-order') {
   })
 }
 
-export function getCardsList(params, limit=20, page=0, orderBy='-set_id') {
+export function getCardsList(params, limit=20, page=0, offset=0, orderBy='-set_id') {
   //search, mode, cost, cardClass, rarity, type, mechanics, setId, race, ename, page=1, limit=20, orderBy='cost'
   return new Promise((resolve, reject) => {
     let tableObj = new wx.BaaS.TableObject(tableID.cardsTableID)
@@ -133,8 +133,9 @@ export function getCardsList(params, limit=20, page=0, orderBy='-set_id') {
       otherQuery.contains('text', params.search)
       searchQuery = wx.BaaS.Query.or(nameQuery, otherQuery)
     }
+    let tempOffset = offset?offset:page*limit
     let query = wx.BaaS.Query.and(collectibleQuery, validQuery, costQuery, factionQuery, modeQuery, typeQuery, rarityQuery, seriesQuery, searchQuery)
-    tableObj.setQuery(query).orderBy(['-set_id', 'cost']).limit(limit).offset(page*limit).find().then(res => {
+    tableObj.setQuery(query).orderBy(['-set_id', 'cost']).limit(limit).offset(tempOffset).find().then(res => {
       resolve(res.data)
     }, err => {
       reject(err)
@@ -535,7 +536,7 @@ export function updateCustomerSetting(params, recordID) {
   })
 }
 
-export function getArticleList(params, limit=10, page=0, orderBy=['-top', '-created_at']) {
+export function getArticleList(params, limit=10, page=0, orderBy=['-top', '-order', '-created_at']) {
   return new Promise((resolve, reject) => {
     let MyContentGroup = new wx.BaaS.ContentGroup(params.contentGroupID)
     let query = new wx.BaaS.Query()

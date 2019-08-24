@@ -105,6 +105,10 @@
               rank_range: 'All'
             },
             {
+              text: 'R10-R6分段',
+              rank_range: 'Six_Through_Ten'
+            },
+            {
               text: 'R5-R1分段',
               rank_range: 'One_Through_Five'
             },
@@ -229,12 +233,14 @@
         })
       },
       handleIconsClick(item) {
-        this.selectedFaction = {
-          id: item.id,
-          name: item.name,
-          data: []
+        if (this.selectedFaction.id !== item.id) {
+          this.selectedFaction = {
+            id: item.id,
+            name: item.name,
+            data: []
+          }
+          this.genWinRateData()
         }
-        this.genWinRateData()
       },
       handleOrderChange(item) {
         if (this.orderBy.indexOf(item.id) >= 0) {

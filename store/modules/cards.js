@@ -11,9 +11,25 @@ const cards = {
     noticeContent: {
       display: false,
       content: ''
+    },
+    cardsPageParams: {
+      filter: null,
+      offset: 0,
+      counts: 0
+    },
+    entourageParams: {
+      list: [],
+      index: 0,
+      counts: 0
     }
   },
   mutations: {
+    setCardsPageParams: (state, params) => {
+      state.cardsPageParams = params
+    },
+    setEntourageParams: (state, params) => {
+      state.entourageParams = params
+    },
     SET_SERIES: (state, series) => {
       state.series = series
     },

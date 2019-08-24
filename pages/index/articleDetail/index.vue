@@ -106,7 +106,8 @@
           contentID: this.contentID,
           mainArticleId: this.mainArticleId,
         }
-        let res = await getArticleList(params, 100, 0, 'created_at')
+        let orderBy = this.detail.sub_order?this.detail.sub_order:'created_at'
+        let res = await getArticleList(params, 100, 0, orderBy)
         this.subList = res.objects
       },
       handleSubArticleClick(item) {
@@ -118,16 +119,30 @@
         console.log('preview', src, e)
       },
       navigate(href, e) {
-        wx.setClipboardData({
-          data: href,
-          success: function(res) {
-            wx.showToast({
-              title: '不支持链接跳转，已复制到剪贴板',
-              icon: 'none',
-              duration: 2500,
-            })
-          }
-        })
+        console.log(href)
+        if (href.indexOf("http://AAE")===0) {
+          wx.setClipboardData({
+            data: href.replace('http://', ''),
+            success: function(res) {
+              wx.showToast({
+                title: '卡组代码已复制',
+                icon: 'none',
+                duration: 2500,
+              })
+            }
+          })
+        } else {
+          wx.setClipboardData({
+            data: href,
+            success: function(res) {
+              wx.showToast({
+                title: '不支持链接跳转，已复制到剪贴板',
+                icon: 'none',
+                duration: 2500,
+              })
+            }
+          })
+        }
       }
     },
     async mounted() {
@@ -234,7 +249,7 @@
       margin: 25rpx 0 0 0;
 
       .sub-card {
-        height: 60rpx;
+        min-height: 60rpx;
         margin-bottom: 25rpx;
 
         img {

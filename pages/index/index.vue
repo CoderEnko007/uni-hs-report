@@ -38,10 +38,15 @@
             <div class="content">
               <RankBoard :list="rankData[selectedGameType]" :mode="modeFilter.list[modeFilter.selectedItem].value"></RankBoard>
             </div>
+            <div class="data-vision" @click="handleHSVisionClick">
+              <img class="btn-img" src="/static/icons-v2/trending.png" mode="aspectFit">
+              <span class="text">职业强度趋势</span>
+              <span class="iconfont">&#xe600;</span>
+            </div>
           </div>
-          <div class="ads" style="margin: 15upx 0 0 0;">
+         <!-- <div class="ads" style="margin: 15upx 0 0 0;">
             <ad unit-id="adunit-900bbac5f4c50939"></ad>
-          </div>
+          </div> -->
           <div class="tier-panel">
             <div class="headline">
               <span class="title">强度排行</span>
@@ -52,13 +57,21 @@
                 </picker>
               </div>
               <div class="head-btn" @click="handleExport">
-                <span class="icon iconfont">&#xe69c;&nbsp</span>
+                <span class="icon iconfont">&#xe69c;&nbsp;</span>
                 <span>导出日报</span>
               </div>
             </div>
+           <!-- <div class="data-vision" style="margin: 0 30rpx;" @click="handleHSVisionTierClick">
+              <img class="btn-img" src="/static/icons-v2/trending.png" mode="aspectFit">
+              <span class="text">环境结构分布</span>
+              <span class="iconfont">&#xe600;</span>
+            </div> -->
             <div class="tier-content">
               <div class="tier-block" v-for="(tier, index) in tierList" :key="tier.name">
                 <TierList :tierData="tier" @itemClick="handleTierClick"></TierList>
+                <div class="ads" style="margin: 15upx 0 0 0;" v-if="index===0">
+                  <ad unit-id="adunit-900bbac5f4c50939"></ad>
+                </div>
               </div>
             </div>
           </div>
@@ -112,7 +125,7 @@
         // tab切换参数
         tabbar: [
           {id: 'report', text: '日报' },
-          {id: 'article', text: '资讯' }
+          {id: 'article', text: '周报&资讯' }
         ],
         activeIndex: 0,
         currentTab: 0,
@@ -144,6 +157,7 @@
           selectedItem: 0,
           list: [
             {text: '全分段', rank_range: 'All'},
+            {text: 'R10-R6分段', rank_range: 'Six_Through_Ten'},
             {text: 'R5-R1分段', rank_range: 'One_Through_Five'},
             {text: '传说分段', rank_range: 'Legend_Only'}
           ]
@@ -163,7 +177,7 @@
       ]),
       contentHeight() {
         if (this.activeIndex == 0) {
-          return 578 + 60 * this.tierListNum + 25 + 'px'
+          return 578 + 66 + 60 * this.tierListNum + 25 + 'px'
         } else {
           return this.winHeight - this.navHeight - 41 + "px"
         }
@@ -305,6 +319,26 @@
       handleRankRangeChange(e) {
         this.rangePicker.selectedItem = e.mp.detail.value
         this.genArchetypeList()
+      },
+      handleHSVisionClick() {
+        wx.navigateToMiniProgram({
+          appId: 'wx010ca9734f850748',
+          path: `/pages/rank/main`,
+          success(res) {
+            // 打开成功
+            console.log(res)
+          }
+        })
+      },
+      handleHSVisionTierClick() {
+        wx.navigateToMiniProgram({
+          appId: 'wx010ca9734f850748',
+          path: `/pages/structure/main`,
+          success(res) {
+            // 打开成功
+            console.log(res)
+          }
+        })
       },
       handleExport() {
         console.log('handleExport')
@@ -718,6 +752,31 @@
           padding: 3rpx 10rpx;
         }
       }
+    }
+    .data-vision {
+     position: relative;
+     margin-top: 10px;
+     background: #FAFAFA;
+     line-height: 45px;
+     border-radius: 24rpx;
+     img {
+       position: absolute;
+       top: 50%;
+       transform: translateY(-50%);
+       margin-left: 10px;
+       width: 52rpx;
+       height: 52rpx;
+     }
+     .text {
+       font-size: 16px;
+       margin-left: 44px;
+     }
+     .iconfont {
+       position: absolute;
+       top: 50%;
+       transform: translateY(-50%);
+       right: 10px;
+     }
     }
   }
 
