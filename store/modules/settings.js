@@ -4,6 +4,7 @@ const settings = {
   state: {
     navHeight: null,
     tabHeight: null,
+    barHeight: null,
     isIphoneX: false,
     winWidth: null,
     winHeight: null,
@@ -29,6 +30,9 @@ const settings = {
     },
     SET_NAV_HEIGHT: (state, navHeight) => {
       state.navHeight = navHeight
+    },
+    SET_BAR_HEIGHT: (state, barHeight) => {
+      state.barHeight = barHeight
     },
     SET_TAB_HEIGHT: (state, val) => {
       state.tabHeight = val
@@ -78,6 +82,7 @@ const settings = {
             let navHeight = res.statusBarHeight + 46;
             // let navHeight = res.statusBarHeight*2+25
             commit('SET_NAV_HEIGHT', navHeight)
+            commit('SET_BAR_HEIGHT', res.statusBarHeight)
             if (res.model === 'iPhone X') {
               commit('IS_IPHONE_X')
             }

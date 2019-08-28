@@ -44,9 +44,9 @@
               <span class="iconfont">&#xe600;</span>
             </div>
           </div>
-         <!-- <div class="ads" style="margin: 15upx 0 0 0;">
-            <ad unit-id="adunit-900bbac5f4c50939"></ad>
-          </div> -->
+         <div class="ads" style="margin: 15upx 0 0 0;">
+            <ad unit-id="adunit-900bbac5f4c50939" @error="handleAdError" @load="handleAdLoaded"></ad>
+          </div>
           <div class="tier-panel">
             <div class="headline">
               <span class="title">强度排行</span>
@@ -68,10 +68,7 @@
             </div> -->
             <div class="tier-content">
               <div class="tier-block" v-for="(tier, index) in tierList" :key="tier.name">
-                <TierList :tierData="tier" @itemClick="handleTierClick"></TierList>
-                <div class="ads" style="margin: 15upx 0 0 0;" v-if="index===0">
-                  <ad unit-id="adunit-900bbac5f4c50939"></ad>
-                </div>
+                <TierList :tierData="tier" @itemClick="handleTierClick" @onCollapse="handleCollapse"></TierList>
               </div>
             </div>
           </div>
@@ -165,6 +162,8 @@
         // canvas参数
         canvasWidth: 375,
         canvasHeight: 200,
+        adHeight: 107,
+	collapseHeight: 0
       }
     },
     computed: {
@@ -173,11 +172,13 @@
         'winHeight',
         'navHeight',
         'noticeContent',
-        'decksName'
+        'decksName',
+        'barHeight'
       ]),
       contentHeight() {
         if (this.activeIndex == 0) {
-          return 578 + 66 + 60 * this.tierListNum + 25 + 'px'
+          return 471 + this.adHeight + this.barHeight + 51 + 60 * this.tierListNum + 25 - this.collapseHeight + 'px'
+          // return 471 + 150 + 51 + 60 * this.tierListNum + 25 + 'px'
         } else {
           return this.winHeight - this.navHeight - 41 + "px"
         }
@@ -194,6 +195,14 @@
       },
     },
     methods: {
+      handleAdError(e) {
+        console.log('ad error', e)
+        this.adHeight = 0
+      },
+      handleAdLoaded(e) {
+        console.log('ad loaded', e)
+        this.adHeight = 107
+      },
       compareFunction(key) {
         return function(obj1, obj2) {
           let formatKey = key.replace('-', '')
@@ -353,7 +362,14 @@
           url: `/pages/decks/archetypeDetail/index?name=${item.archetype_name}`
         })
       },
-      
+      handleCollapse(obj) {
+        if (!obj.show) {
+          this.collapseHeight += obj.num*60
+        } else {
+          this.collapseHeight -= obj.num*60
+        }
+      },
+
       // canvas 绘图
       saveImageToPhotos () {
         let _this = this
@@ -596,11 +612,13 @@
       this.genRankData()
       this.genArchetypeList()
       this.genNotice()
+      this.$refs.articlePage.genDataList(true)
     },
     onPullDownRefresh() {
       this.genBanners()
       this.genRankData()
       this.genArchetypeList()
+      this.genNotice()
       this.$refs.articlePage.genDataList(true)
       this.$store.dispatch('getDecksName')
     },

@@ -11,6 +11,7 @@ const getters = {
   entourageParams: state => state.cards.entourageParams,
   navHeight: state => state.settings.navHeight,
   tabHeight: state => state.settings.tabHeight,
+  barHeight: state => state.settings.barHeight,
   isIphoneX: state => state.settings.isIphoneX,
   winWidth: state => state.settings.winWidth,
   winHeight: state => state.settings.winHeight,

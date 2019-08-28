@@ -64,9 +64,9 @@ export default {
       this.genDataList(false)
     }
   },
-  mounted() {
-    this.genDataList(true)
-  },
+  // mounted() {
+  //   this.genDataList(true)
+  // },
   scrollToBottom() {
     if (!this.more) return false
     this.page += 1
