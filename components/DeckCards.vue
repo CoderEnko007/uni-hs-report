@@ -5,7 +5,7 @@
          :key="index"
          @click="cardClick(card)"
          :style="{width: colNum?'100%':'47.8%', 'margin-top': smallSpacing?20+'rpx':5+'rpx'}">
-      <div class="frame" :class="{'display-none': !card.name || !card.diffFlag}"></div>
+      <div class="frame" :class="{'display-none': !card.diffFlag}"></div>
       <div :class="['card-gem', {
         'rarity-common': card.rarity==='FREE'||card.rarity==='COMMON',
         'rarity-rare': card.rarity==='RARE',

@@ -49,11 +49,15 @@
       <div class="footer">
         <FooterMenu :link="detail.link"></FooterMenu>
       </div>
+      <div class="float-btn">
+        <floatBtnGroup @onCompare="openCompareDeckModal" :badgeCount="badgeCount" showCompare="true"></floatBtnGroup>
+      </div>
+      <compareDeckModal ref="cDeckModal" :currentBtnDeActive=true></compareDeckModal>
     </div>
   </div>
 </template>
 <script>
-  import uParse from '@/components/gaoyia-parse/parse.vue'
+  import { mapGetters } from 'vuex'
   import {
     getArticleDetail,
     getArticleList
@@ -63,6 +67,9 @@
   import copyRight from '@/components/copyRight'
   import FooterMenu from '@/components/FooterMenu'
   import ArticleSkeleton from '@/components/ArticleSkeleton'
+  import floatBtnGroup from '@/components/floatBtnGroup'
+  import compareDeckModal from '@/components/compareDeckModal'
+  import uParse from '@/components/gaoyia-parse/parse.vue'
 
   export default {
     name: 'articleDetail',
@@ -71,7 +78,9 @@
       uParse,
       copyRight,
       FooterMenu,
-      ArticleSkeleton
+      ArticleSkeleton,
+      floatBtnGroup,
+      compareDeckModal
     },
     data() {
       return {
@@ -85,11 +94,24 @@
       }
     },
     computed: {
+      ...mapGetters([
+        'compareDeck1',
+        'compareDeck2',
+      ]),
+      badgeCount() {
+        let count = 0
+        count += this.compareDeck1?1:0
+        count += this.compareDeck2?1:0
+        return count
+      },
       dataReady() {
         return this.pageDelayFlag && this.detail
       }
     },
     methods: {
+      openCompareDeckModal() {
+        this.$refs.cDeckModal.showModal()
+      },
       async genArticleDetal() {
         let params = {
           groupID: this.groupID,
@@ -166,42 +188,34 @@
 </script>
 <style lang="scss" scoped>
   @import '../../../style/color';
-
   .banner {
     width: 100%;
     height: 335rpx;
-
     img {
       width: 100%;
       height: 100%;
     }
   }
-
   .article-detail {
     padding: 20rpx 30rpx 0;
-
     .title {
       font-size: 16px;
       font-weight: bold;
-
       .top {
         color: red;
         margin-right: 5upx
       }
     }
-
     .meta {
       display: flex;
       justify-content: space-between;
       flex-wrap: nowrap;
       width: 100%;
       margin: 20rpx 2rpx 0;
-
       .author {
         position: relative;
         height: 40rpx;
         width: 200rpx;
-
         img {
           position: absolute;
           top: 50%;
@@ -210,7 +224,6 @@
           width: 40rpx;
           height: 40rpx;
         }
-
         .name {
           position: absolute;
           left: 50rpx;
@@ -223,7 +236,6 @@
           white-space: nowrap;
         }
       }
-
       .info {
         line-height: 40rpx;
         font-size: 10px;
@@ -237,21 +249,17 @@
         }
       }
     }
-
     .content {
       padding: 20rpx 0 0;
     }
-
     .sub-article {
       color: #0e67fa;
       font-size: 16px;
       text-decoration: underline;
       margin: 25rpx 0 0 0;
-
       .sub-card {
         min-height: 60rpx;
         margin-bottom: 25rpx;
-
         img {
           display: inline-block;
           width: 60rpx;
@@ -259,7 +267,6 @@
           vertical-align: middle;
           margin-right: 10rpx;
         }
-
         .sub-title {
           line-height: 60rpx;
           display: inline-block;
@@ -268,27 +275,28 @@
       }
     }
   }
-
   .separator {
     width: 100%;
     height: 1rpx;
     margin-top: 15rpx;
     background-color: #eee;
   }
-
   .other-block {
     padding-bottom: 80rpx;
   }
-
   .footer {
     position: fixed;
     bottom: 0;
   }
-
   .skeleton-mask {
     position: absolute;
     width: 100%;
     background: white;
     // z-index: 1;
+  }
+  .float-btn {
+    position: fixed;
+    bottom: 50px;
+    right: 20px;
   }
 </style>

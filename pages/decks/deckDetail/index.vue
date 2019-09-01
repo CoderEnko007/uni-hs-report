@@ -99,18 +99,13 @@
     <div class="float-btn">
       <floatBtnGroup @onCompare="openCompareDeckModal" :badgeCount="badgeCount" showCompare="true"></floatBtnGroup>
     </div>
-    <compareDeckModal ref="cDeckModal"
-                      @confirm="handleDeckCompare"
-                      @clear="handleClearDeckModal"
-                      @addCompareDeck1="handleAddDeck1"
-                      @addCompareDeck2="handleAddDeck2"
-    ></compareDeckModal>
+    <compareDeckModal ref="cDeckModal" :deckDetail='deckDetail'></compareDeckModal>
   </div>
 </template>
 <script>
 import utils from '@/utils'
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import {getDeckDetail, setUserCollection, cancelUserCollection, getArchetypeDetail} from "@/api/dbapi";
+import {getDeckDetail, setUserCollection, cancelUserCollection, getArchetypeDetail, getDeckCardList} from "@/api/dbapi";
 import {getComponentByTag, iFanrTileImageURL, getImageInfoAsync} from "@/utils";
 import DeckCards from '@/components/DeckCards'
 import FooterMenu from '@/components/FooterMenu'
@@ -221,6 +216,19 @@ export default {
     },
   },
   methods: {
+    sortFunction() {
+      return function(a, b) {
+        if(a.cost===b.cost) {
+          if (a.name>=b.name) {
+            return 1
+          } else {
+            return -1
+          }
+        } else {
+          return a.cost-b.cost
+        }
+      }
+    },
     resetPageData() {
       this.deckDetail = Object.assign({}, defaultDetail)
       this.bannerImg = null
@@ -436,7 +444,6 @@ export default {
       // 相册授权
       wx.getSetting({
         success(res) {
-          console.log('getSetting', res)
           // 进行授权检测，未授权则进行弹层授权
           if (!res.authSetting['scope.writePhotosAlbum']) {
             wx.authorize({
@@ -463,7 +470,6 @@ export default {
             })
           } else {
             // 已授权则直接进行保存图片
-            console.log('PhotosAlbum已授权')
             _this.drawDeckCanvas()
           }
         },
@@ -478,7 +484,6 @@ export default {
       })
     },
     async drawDeckCanvas() {
-      console.log('drawDeckCanvas')
       let rarityColor = {
         common: '#5e5e5e',
         rare: '#1768c6',
@@ -532,7 +537,6 @@ export default {
       }
       ctx.fillText(mode, this.canvasWidth-32, 42)
       ctx.restore()
-      console.log('头部绘制完成')
 
       // 绘制卡牌主体部分
       let grd=ctx.createLinearGradient(27,0,136,0);
@@ -665,22 +669,6 @@ export default {
     openCompareDeckModal() {
       this.$refs.cDeckModal.showModal()
     },
-    handleClearDeckModal() {
-      this.$store.commit('clearDecks')
-    },
-    handleDeckCompare() {
-      console.log('开始对比卡组')
-      console.log(this.compareDeck1, this.compareDeck2)
-      wx.navigateTo({
-        url: `/pages/decks/compareDeck/index`
-      })
-    },
-    handleAddDeck1() {
-      this.$store.commit('setFirstDeck', this.deckDetail)
-    },
-    handleAddDeck2() {
-      this.$store.commit('setSecondDeck', this.deckDetail)
-    },
     showColumn(canvasId,chartData){
     	barChart=new uCharts({
     		$this:_this,
@@ -713,7 +701,6 @@ export default {
             height: _this.cHeight*_this.pixelRatio,
             canvasId: 'canvasColumn',
             success(res) {
-              console.log(res.tempFilePath)
               _this.costChartImg = res.tempFilePath
             },
             fail(err) {

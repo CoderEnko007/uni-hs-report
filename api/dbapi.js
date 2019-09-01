@@ -568,3 +568,16 @@ export function getArticleDetail(params) {
     })
   })
 }
+
+export function getDeckCardList(params) {
+  return new Promise((resolve, reject) => {
+    let tableObj = new wx.BaaS.TableObject(tableID.cardsTableID)
+    let query = new wx.BaaS.Query()
+    query.in('dbfId', params.list)
+    tableObj.setQuery(query).limit(30).find().then(res => {
+      resolve(res.data)
+    }, err => {
+      reject(err)
+    })
+  })
+}

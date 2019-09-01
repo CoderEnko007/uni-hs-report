@@ -341,6 +341,18 @@ const race = {
   'MECHANICAL': {name: '机械'}
 }
 
+const heroesID = {
+  'Druid': 274,
+  'Hunter': 31,
+  'Mage': 637,
+  'Paladin': 671,
+  'Priest': 813,
+  'Rogue': 930,
+  'Shaman': 1066,
+  'Warlock': 893,
+  'Warrior': 7
+}
+
 const gameMode = [
   {mode: 'standard', icon: '/static/icons-v2/standard_dragon.png', active_icon: '/static/icons-v2/standard_dragon_active.png', text: '标准'},
   {mode: 'wild', icon: '/static/icons-v2/wild.png', active_icon: '/static/icons-v2/wild_active.png', text: '狂野'},
@@ -371,6 +383,7 @@ export default {
   rarity,
   type,
   race,
+  heroesID,
   factionColors,
   image: {
     dustImage

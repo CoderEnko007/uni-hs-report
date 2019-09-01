@@ -655,7 +655,8 @@
       }
 
       .tier-desc {
-        border: none;
+        border-bottom: 1rpx solid #eee;
+        box-sizing: border-box;
       }
     }
 
