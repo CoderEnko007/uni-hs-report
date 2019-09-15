@@ -49,34 +49,50 @@
                   @exportClick="handleExport"
                   ref="btnGroup"></FooterMenu>
     </div>
-    <div class="card-list" v-if="deckDetail.card_list.length">
-      <div class="headline m-30"><span class="title">套牌组成</span></div>
-      <div class="m-30">
-        <DeckCards :cards="deckDetail.card_list" @cardClick="handleCardClick"></DeckCards>
+    <div v-if="deckDetail.card_list.length">
+      <div class="panel-tab">
+        <block v-for="(item,index) in tabbar" :key="index">
+          <div :id="index" :class="{'tab-item': true, 'tab-item-active': activeIndex==index}" @click="tabBarClick">
+            {{item.text}}
+          </div>
+        </block>
       </div>
-      <div class="rarity-panel m-30">
-        <div class="capsule" v-for="(item, index) in rarityChartData" :key="index" v-if="item.value>0">
-          <div class="icons" :style="{'background-color': item.color}"></div>
-          <span class="name">{{item.cname}}</span>
-          <span class="value">{{item.value}}</span>
+      <div class="card-list" :hidden="activeIndex != 0">
+        <div class="m-30">
+          <DeckCards :cards="deckDetail.card_list" @cardClick="handleCardClick"></DeckCards>
+        </div>
+        <div class="rarity-panel m-30">
+          <div class="capsule" v-for="(item, index) in rarityChartData" :key="index" v-if="item.value>0">
+            <div class="icons" :style="{'background-color': item.color}"></div>
+            <span class="name">{{item.cname}}</span>
+            <span class="value">{{item.value}}</span>
+          </div>
+        </div>
+        <div class="type-panel m-30">
+          <div class="capsule" v-for="(item, index) in typeChartData" :key="index" v-if="item.value>0">
+            <span class="name">{{item.cname}}</span>
+            <span class="value">{{item.value}}</span>
+          </div>
+        </div>
+        <div class="deck-code m-30">
+          <div class="code"><span>{{deckDetail.deck_code}}</span></div>
+          <ticket-report-wrapper style="float: right;">
+            <button @click="copyDeckCode">复制神秘代码</button>
+          </ticket-report-wrapper>
         </div>
       </div>
-      <div class="type-panel m-30">
-        <div class="capsule" v-for="(item, index) in typeChartData" :key="index" v-if="item.value>0">
-          <span class="name">{{item.cname}}</span>
-          <span class="value">{{item.value}}</span>
+      <div class="mulligan-list" :hidden="activeIndex != 1">
+        <div v-if="deckDetail.mulligan && deckDetail.mulligan!=='[]'">
+          <mulliganList :cList="deckDetail.card_list" :mData="deckDetail.mulligan"></mulliganList>
+        </div>
+        <div class="no-data" v-else>
+          数据已掉入混沌虚空之中
         </div>
       </div>
-      <div class="deck-code m-30">
-        <div class="code"><span>{{deckDetail.deck_code}}</span></div>
-        <ticket-report-wrapper style="float: right;">
-          <button @click="copyDeckCode">复制神秘代码</button>
-        </ticket-report-wrapper>
-      </div>
+      <div class="separator"></div>
       <div class="ads" v-if="adsOpenFlag">
         <ad unit-id="adunit-d6bb528c4e28a808"></ad>
       </div>
-      <div class="separator"></div>
       <div class="winrate-block m-30">
         <div class="headline"><span class="title">对阵各职业胜率</span></div>
         <WinRateBoard :list="winrateChartData"></WinRateBoard>
@@ -88,18 +104,18 @@
         <canvas canvas-id="canvasColumn" id="canvasColumn" class="charts" v-if="!costChartImg"></canvas>
         <img class="charts" :src="costChartImg" mode="aspectFit" v-else>
       </div>
+      <div class="safe-panel" :style="{'height': isIphoneX?90+'rpx':60+'rpx'}"></div>
+      <div style="position: fixed; top: 9999999999999px; overflow: hidden">
+        <canvas :style="{width: canvasWidth+'px', height: canvasHeight+'px', 'margin-left': '30rpx'}" canvas-id="deck-pic"></canvas>
+      </div>
+      <div class="float-btn" :style="{'bottom': isIphoneX?70+'px':50+'px'}">
+        <floatBtnGroup @onCompare="openCompareDeckModal" :badgeCount="badgeCount" showCompare="true"></floatBtnGroup>
+      </div>
+      <compareDeckModal ref="cDeckModal" :deckDetail='deckDetail'></compareDeckModal>
     </div>
     <div class="loading" v-else>
       <SpinKit :mode="'sk-spinner-pulse'"></SpinKit>
     </div>
-    <div class="safe-panel" :style="{'height': 60+'rpx'}"></div>
-    <div style="position: fixed; top: 9999999999999px; overflow: hidden">
-      <canvas :style="{width: canvasWidth+'px', height: canvasHeight+'px', 'margin-left': '30rpx'}" canvas-id="deck-pic"></canvas>
-    </div>
-    <div class="float-btn">
-      <floatBtnGroup @onCompare="openCompareDeckModal" :badgeCount="badgeCount" showCompare="true"></floatBtnGroup>
-    </div>
-    <compareDeckModal ref="cDeckModal" :deckDetail='deckDetail'></compareDeckModal>
   </div>
 </template>
 <script>
@@ -117,6 +133,7 @@ import compareDeckModal from '@/components/compareDeckModal'
 // import BarChart from '@/components/BarChart'
 import uCharts from '@/components/u-charts/u-charts.js';
 import SpinKit from '@/components/SpinKit'
+import mulliganList from '../components/mulliganList'
 
 let _this;
 let barChart=null;
@@ -148,6 +165,7 @@ export default {
     floatBtnGroup,
     compareDeckModal,
     SpinKit,
+    mulliganList,
     // BarChart
   },
   data() {
@@ -184,7 +202,14 @@ export default {
       cWidth:'',
       cHeight:'',
       pixelRatio:1,
-      costChartImg: null
+      costChartImg: null,
+      tabbar: [
+        {id: 'overview', text: '套牌组成'},
+        {id: 'mulligan', text: '调度建议'},
+      ],
+      activeIndex: 0,
+      currentTab: 0,
+      pageDelayFlag: false,
     }
   },
   computed: {
@@ -196,6 +221,7 @@ export default {
       'showBubble',
       'compareDeck1',
       'compareDeck2',
+      'isIphoneX'
     ]),
     badgeCount() {
       let count = 0
@@ -709,12 +735,13 @@ export default {
           })
         }, 1000)
       });
-    }
+    },
+    tabBarClick(e) {
+      this.activeIndex = e.currentTarget.id;
+      this.currentTab =this.activeIndex;
+    },
   },
   async mounted() {
-    setTimeout(() => {
-      this.$store.commit('setShowBubbleFlag', false)
-    }, 4000)
     this.recordID = this.$root.$mp.query.id
     this.deckID = this.$root.$mp.query.deckID
     this.deckMode = this.$root.$mp.query.mode?this.$root.$mp.query.mode:'Standard'
@@ -725,6 +752,13 @@ export default {
     this.trending = !!this.$root.$mp.query.trending
     this.collected = !!this.$root.$mp.query.collected
     await this.genDeckData()
+    setTimeout(() => {
+      this.pageDelayFlag = true
+      this.$store.commit('setShowBubbleFlag', true)
+      setTimeout(() => {
+        this.$store.commit('setShowBubbleFlag', false)
+      }, 4000)
+    }, 1000)
   },
   onLoad() {
     _this = this;
@@ -951,6 +985,55 @@ export default {
       }
     }
   }
+  .mulligan-list {
+    .no-data {
+      width: 100%;
+      line-height: 200rpx;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 14px;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+  }
+  .panel-tab {
+    width: 100%;
+    height: 89rpx;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    background-color: #fff;
+    border-bottom: 1rpx solid #eee;
+    z-index: 2;
+    .tab-item {
+      position: relative;
+      height: 100%;
+      width: 232rpx;
+      line-height: 89rpx;
+      font-size: 16px;
+      color: #666;
+      text-align: center;
+      &:after {
+        display: none;
+        content: '';
+        position: absolute;
+        width: 53rpx;
+        height: 4rpx;
+        bottom: 11rpx;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: $palette-blue;
+      }
+    }
+    .tab-item-active {
+      color: $palette-blue;
+      font-weight: bold;
+      &:after {
+        display: block;
+        animation: tabBottomIn .4s;
+      }
+    }
+  }
   .data-chart {
     width: 100%;
     overflow: hidden;
@@ -968,10 +1051,10 @@ export default {
   	background-color: #FFFFFF;
   }
   .separator {
-    width: 100%;
+    // width: 100%;
     box-sizing: border-box;
     border-bottom: 1rpx solid #eee;
-    margin: 30rpx 0;
+    margin: 15rpx 30rpx;
   }
   .footer {
     position: fixed;
@@ -983,6 +1066,10 @@ export default {
     position: fixed;
     bottom: 50px;
     right: 20px;
+  }
+  @keyframes tabBottomIn {
+    from {width: 100%; opacity: 0}
+    to {width: 53rpx; opacity: 1}
   }
 }
 </style>

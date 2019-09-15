@@ -27,7 +27,7 @@ export default {
   props: ['showCapsule', 'navTitle', 'background'],
   data() {
     return {
-      defaultTitle: '炉石传说情报站',
+      defaultTitle: 'HS炉石情报站',
       backImg: '/static/icons-v2/back.png',
       homeImg: '/static/icons-v2/home.png'
     }

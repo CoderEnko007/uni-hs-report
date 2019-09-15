@@ -342,15 +342,15 @@ const race = {
 }
 
 const heroesID = {
-  'Druid': 274,
-  'Hunter': 31,
-  'Mage': 637,
-  'Paladin': 671,
-  'Priest': 813,
-  'Rogue': 930,
-  'Shaman': 1066,
-  'Warlock': 893,
-  'Warrior': 7
+  'Druid': [274, 50484],
+  'Hunter': [31, 2826],
+  'Mage': [637, 39117, 2829],
+  'Paladin': [671, 53187, 46116, 2827],
+  'Priest': [813, 54816, 41887],
+  'Rogue': [930, 40195],
+  'Shaman': [1066, 55963, 53237, 40183],
+  'Warlock': [893, 51834, 47817],
+  'Warrior': [7, 2828]
 }
 
 const gameMode = [

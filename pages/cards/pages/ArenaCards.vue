@@ -57,9 +57,9 @@
             <!--</div>-->
         <!--</scroll-view>--> 
 
-        <load-more v-if="more" :loading=true />
-        <load-more v-else-if="!cardsList.length" :nodata=true />
-        <load-more v-else :nomore=true />
+        <load-more v-if="more" :loading='true' />
+        <load-more v-else-if="!cardsList.length" :nodata='true' />
+        <load-more v-else :nomore='true' />
       </scroll-view>
     </div>
   </div>

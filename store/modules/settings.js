@@ -8,7 +8,7 @@ const settings = {
     isIphoneX: false,
     winWidth: null,
     winHeight: null,
-    showBubble: true,
+    showBubble: false,
     fbiVersion: null,
     fbiKey: null,
     fbiFlag: true,
@@ -83,7 +83,8 @@ const settings = {
             // let navHeight = res.statusBarHeight*2+25
             commit('SET_NAV_HEIGHT', navHeight)
             commit('SET_BAR_HEIGHT', res.statusBarHeight)
-            if (res.model === 'iPhone X') {
+            console.log(res.model)
+            if (res.model.indexOf('iPhone X')>-1) {
               commit('IS_IPHONE_X')
             }
             resolve(navHeight)

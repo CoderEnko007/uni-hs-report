@@ -2,13 +2,13 @@
   <div class="archetype-container">
     <div class="headline">
       <span class="title">职业形态</span>
-      <div class="head-picker">
+      <div class="filter-picker">
         <picker mode="selector" :value="rangePicker.selectedItem" :range="rangePickerList" @change="handleRankRangeChange">
-          <span class='selector-item'>{{rangePicker.list[rangePicker.selectedItem].text}}</span>
+          <span class='selector-item'>标准模式 {{rangePicker.list[rangePicker.selectedItem].text}}</span>
           <span class="iconfont" :style="{'vertical-align': 'middle'}">&#xe668;</span>
         </picker>
       </div>
-      <span class="right-meta">标准模式</span>
+      <!-- <span class="right-meta">标准模式</span> -->
     </div>
     <div class="panel-faction">
       <HeroesPanel :dataList="factionIcons" :selected="selectedFaction.id" @itemClick="handleIconsClick"></HeroesPanel>
@@ -47,8 +47,8 @@
             </div>
           </div>
         </div>
-        <load-more v-if="loading" :loading=true />
-        <load-more v-else :nomore=true />
+        <load-more v-if="loading" :loading='true' />
+        <load-more v-else :nomore='true' />
       </scroll-view>
     </div>
   </div>
@@ -282,16 +282,29 @@
 </script>
 <style lang="scss" scoped>
   @import '../../../style/color';
-
   .archetype-container {
     .headline {
       margin: 0 30rpx;
+      .filter-picker {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        font-size: 10px;
+        height: 16px;
+        line-height: 16px;
+        border-radius: 10px;
+        text-align: center;
+        padding: 1px 6px;
+        background: $palette-blue;
+        color: #fff;
+        border: 1rpx solid $palette-blue;
+        font-weight: normal;
+      }
     }
-
     .panel-faction {
       margin: 0 30rpx 20rpx;
     }
-
     .panel-block {
       display: flex;
       justify-content: space-between;
@@ -301,20 +314,17 @@
       /*box-shadow: 0 3px 2px -3px #000;*/
       border-bottom: 1rpx solid #eee;
       box-sizing: border-box;
-
       .filter-item {
         position: relative;
         height: 100%;
         line-height: 86rpx;
         font-size: 13px;
-
         .table-name {
           width: 265rpx;
           color: #999;
           box-sizing: border-box;
           padding-left: 33rpx;
         }
-
         .picker-icon {
           position: absolute;
           top: 50%;
@@ -323,18 +333,15 @@
           height: 25rpx;
           margin-left: 10rpx;
         }
-
         .selector-item {
           text-align: center;
           font-size: 13px;
           color: $palette-blue;
         }
-
         .order-item {
           position: relative;
           width: 134rpx;
           text-align: center;
-
           img {
             position: absolute;
             width: 22rpx;
@@ -346,34 +353,28 @@
         }
       }
     }
-
     .panel-list {
       .table {
         display: table;
         width: 100%;
         border-collapse: collapse;
-
         .table-tr {
           display: table-row;
           width: 100%;
           font-size: 13px;
-
           .table-td {
             display: table-cell;
-
             span {
               height: 60rpx;
               line-height: 60rpx;
             }
           }
-
           .col-1st {
             position: relative;
             width: 265rpx;
             text-align: left;
             box-sizing: border-box;
             padding-left: 30rpx;
-
             img {
               position: absolute;
               width: 64rpx;
@@ -381,19 +382,16 @@
               top: 50%;
               transform: translateY(-50%);
             }
-
             .deckName {
               position: absolute;
               display: inline-block;
               top: 50%;
               transform: translateY(-50%);
               margin-left: 90rpx;
-
               p.cname {
                 height: 37rpx;
                 line-height: 37rpx;
               }
-
               p.ename {
                 width: 180rpx;
                 height: 30rpx;
@@ -406,33 +404,27 @@
               }
             }
           }
-
           .col-last {
             padding-right: 30rpx;
           }
-
           .col-other {
             width: 120rpx;
           }
         }
-
         .header {
           height: 86rpx;
           line-height: 86rpx;
           border-bottom: 1rpx solid #eee;
-
           .table-name {
             width: 265rpx;
             color: #999;
             box-sizing: border-box;
             padding-left: 33rpx;
           }
-
           .order {
             position: relative;
             font-size: 13px;
             color: #333;
-
             img {
               position: absolute;
               width: 22rpx;
@@ -445,25 +437,20 @@
             }
           }
         }
-
         .content {
           background-color: #fff;
           border-bottom: 1rpx solid #eee;
-
           &:active {
-            background: #eee;
+            background-color: #eee;
           }
-
           .table-td {
             height: 120rpx;
             line-height: 120rpx;
           }
         }
-
         .text-center {
           text-align: center;
         }
-
         .float-right {
           float: right;
           margin-right: 20px;

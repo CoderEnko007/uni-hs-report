@@ -114,6 +114,8 @@ export default {
       wx.getClipboardData({
         success: result => {
           let code = result.data.trim()
+          code = code.match(/AAE.*/i)
+          console.log(code)
           let decoded
           try{
             decoded = this.$deckstrings.decode(code);
@@ -130,7 +132,7 @@ export default {
           let faction = null
           for (let key in utils.heroesID) {
             if (utils.heroesID.hasOwnProperty(key)) {
-              if (decoded.heroes[0] === utils.heroesID[key]) {
+              if (utils.heroesID[key].indexOf(decoded.heroes[0])>=0) {
                 faction = key
               }
             }
@@ -170,6 +172,7 @@ export default {
         success: result => {
           // this.$emit('addCompareDeck2', {mode: 'clipboard', code: res.data})
           let code = result.data.trim()
+          code = code.match(/AAE.*/i)
           let decoded
           try{
             decoded = this.$deckstrings.decode(code);
@@ -186,7 +189,7 @@ export default {
           let faction = null
           for (let key in utils.heroesID) {
             if (utils.heroesID.hasOwnProperty(key)) {
-              if (decoded.heroes[0] === utils.heroesID[key]) {
+              if (utils.heroesID[key].indexOf(decoded.heroes[0])>=0) {
                 faction = key
               }
             }

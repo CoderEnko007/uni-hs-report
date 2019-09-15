@@ -160,10 +160,14 @@
     line-height: 24rpx;
     margin-left:8px;
     font-size: 19rpx;
-    color: #999;
+    color: #7e7e7e;
     border: 1rpx solid #ddd;
     border-radius: 12px;
     padding: 3rpx 10rpx;
+    // background: $palette-blue;
+    // color: #fff;
+    // font-weight: normal;
+    // border: 1rpx solid $palette-blue;
   }
   .right-meta {
     float: right;

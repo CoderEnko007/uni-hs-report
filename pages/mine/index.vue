@@ -36,8 +36,8 @@
       <div class="capsule" @click="handleCopyBtn"><span>支付宝推广红包</span></div>
       <div class="content" @click="handleClickCodeImg">
         <p>「炉石传说情报站」小程序由个人独立开发，源于兴趣，旨在免费为大家提供及时的卡组数据。</p>
-        <p>您的每一次广告点击获得的收入将用于支付昂贵的服务器费用，这对我来说很重要。</p>
-        <p style="font-weight: bold">点击此处打开赞赏码，长按扫描即可</p>
+        <p>您的赞助将用于支付昂贵的服务器费用，感谢您的支持</p>
+        <p style="font-weight: bold">点击此处打开赞赏码，长按扫描随意打赏</p>
       </div>
     </div>
     <div class="feedback">

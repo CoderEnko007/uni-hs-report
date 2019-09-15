@@ -21,7 +21,7 @@
           <div class="rank-panel">
             <div class="headline">
               <span class="title">职业排名</span>
-              <div class="mode-filter">
+              <div class="head-picker">
                 <picker mode="selector" :value="modeFilter.selectedItem" :range="modePickerList" @change="handleModeChange">
                   <span class='selector-item'>{{modeFilter.list[modeFilter.selectedItem].text}}</span>
                   <span class="iconfont" :style="{'vertical-align': 'middle'}">&#xe668;</span>
@@ -163,7 +163,7 @@
         canvasWidth: 375,
         canvasHeight: 200,
         adHeight: 107,
-	collapseHeight: 0
+        collapseHeight: 0
       }
     },
     computed: {
@@ -632,191 +632,171 @@
 </script>
 
 <style scoped lang="scss">
-  @import '../../style/color';
-
-  .container {
-    .panel-tab {
-      width: 100%;
-      height: 80rpx;
-      display: flex;
-      flex-wrap: nowrap;
-      justify-content: space-around;
-      background-color: #fff;
-      border-bottom: 1rpx solid #eee;
-      z-index: 2;
-
-      .tab-item {
-        position: relative;
+@import '../../style/color';
+.container {
+  .panel-tab {
+    width: 100%;
+    height: 80rpx;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    background-color: #fff;
+    border-bottom: 1rpx solid #eee;
+    z-index: 2;
+    .tab-item {
+      position: relative;
+      height: 100%;
+      width: 232rpx;
+      line-height: 80rpx;
+      font-size: 15px;
+      color: #666;
+      text-align: center;
+      &:after {
+        display: none;
+        content: '';
+        position: absolute;
+        width: 53rpx;
+        height: 4rpx;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: $palette-blue;
+      }
+    }
+    .tab-item-active {
+      color: $palette-blue;
+      font-weight: bold;
+      &:after {
+        display: block;
+        animation: tabBottomIn .4s;
+      }
+    }
+  }
+  .tab-container {
+    width: 100%;
+    z-index: 1;
+  }
+  .rank-panel {
+    padding: 0 30rpx;
+    .headline {
+      height: 96rpx;
+      .mode-filter {
+        display: inline-block;
+        height: 24rpx;
+        line-height: 24rpx;
+        margin-left: 8px;
+        font-size: 19rpx;
+        color: #999;
+        border: 1rpx solid #ddd;
+        border-radius: 12px;
+        padding: 3rpx 10rpx;
+      }
+      .btn-group {
+        position: absolute;
         height: 100%;
-        width: 232rpx;
-        line-height: 80rpx;
-        font-size: 15px;
-        color: #666;
-        text-align: center;
-
-        &:after {
-          display: none;
-          content: '';
-          position: absolute;
-          width: 53rpx;
-          height: 4rpx;
-          bottom: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          background-color: $palette-blue;
-        }
-      }
-
-      .tab-item-active {
-        color: $palette-blue;
-        font-weight: bold;
-
-        &:after {
-          display: block;
-          animation: tabBottomIn .4s;
-        }
-      }
-    }
-
-    .tab-container {
-      width: 100%;
-      z-index: 1;
-    }
-
-    .rank-panel {
-      padding: 0 30rpx;
-
-      .headline {
-        height: 96rpx;
-
-        .mode-filter {
-          display: inline-block;
-          height: 24rpx;
-          line-height: 24rpx;
-          margin-left: 8px;
-          font-size: 19rpx;
-          color: #999;
-          border: 1rpx solid #ddd;
-          border-radius: 12px;
-          padding: 3rpx 10rpx;
-        }
-
-        .btn-group {
-          position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        .btn-block {
+          position: relative;
           height: 100%;
-          top: 50%;
-          right: 0;
-          transform: translateY(-50%);
           display: flex;
           justify-content: space-between;
           flex-wrap: nowrap;
-
-          .btn-block {
-            position: relative;
+          .btn-img {
+            position: absolute;
+            width: 32rpx;
+            height: 32rpx;
+            top: 50%;
+            transform: translateY(-50%);
+          }
+          button {
             height: 100%;
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: nowrap;
-
-            .btn-img {
-              position: absolute;
-              width: 32rpx;
-              height: 32rpx;
-              top: 50%;
-              transform: translateY(-50%);
-            }
-
-            button {
-              height: 100%;
-              line-height: 96rpx;
-              margin-left: 40rpx;
-              font-size: 14px;
-              font-weight: normal;
-              color: #999;
-            }
-
-            .btn-active {
-              color: $palette-blue;
-              font-weight: bold;
-            }
-
-            .separator {
-              width: 25rpx;
-              height: 16px;
-              line-height: 96rpx;
-              text-align: center;
-              font-size: 14px;
-              color: #EEEEEE;
-            }
+            line-height: 96rpx;
+            margin-left: 40rpx;
+            font-size: 14px;
+            font-weight: normal;
+            color: #999;
+          }
+          .btn-active {
+            color: $palette-blue;
+            font-weight: bold;
+          }
+          .separator {
+            width: 25rpx;
+            height: 16px;
+            line-height: 96rpx;
+            text-align: center;
+            font-size: 14px;
+            color: #EEEEEE;
           }
         }
       }
     }
-
-    .tier-panel {
-      padding: 10px 0;
-
-      .headline {
-        padding: 0 30rpx;
-
-        .headline-meta {
-          height: 24rpx;
-          line-height: 24rpx;
-          margin-left: 8px;
-          font-size: 19rpx;
-          color: #999;
-          border: 1rpx solid #ddd;
-          border-radius: 12px;
-          padding: 3rpx 10rpx;
-        }
+  }
+  .tier-panel {
+    padding: 10px 0;
+    .headline {
+      padding: 0 30rpx;
+      .headline-meta {
+        height: 24rpx;
+        line-height: 24rpx;
+        margin-left: 8px;
+        font-size: 19rpx;
+        color: #999;
+        border: 1rpx solid #ddd;
+        border-radius: 12px;
+        padding: 3rpx 10rpx;
       }
     }
-    .data-vision {
-     position: relative;
-     margin-top: 10px;
-     background: #FAFAFA;
-     line-height: 45px;
-     border-radius: 24rpx;
-     img {
-       position: absolute;
-       top: 50%;
-       transform: translateY(-50%);
-       margin-left: 10px;
-       width: 52rpx;
-       height: 52rpx;
-     }
-     .text {
-       font-size: 16px;
-       margin-left: 44px;
-     }
-     .iconfont {
-       position: absolute;
-       top: 50%;
-       transform: translateY(-50%);
-       right: 10px;
-     }
-    }
+  }
+  .data-vision {
+   position: relative;
+   margin-top: 10px;
+   background: #FAFAFA;
+   line-height: 45px;
+   border-radius: 24rpx;
+   img {
+     position: absolute;
+     top: 50%;
+     transform: translateY(-50%);
+     margin-left: 10px;
+     width: 52rpx;
+     height: 52rpx;
+   }
+   .text {
+     font-size: 16px;
+     margin-left: 44px;
+   }
+   .iconfont {
+     position: absolute;
+     top: 50%;
+     transform: translateY(-50%);
+     right: 10px;
+   }
+  }
+}
+.head-btn {
+  position: absolute;
+  top: 50%;
+  right: 55rpx;
+  transform: translateY(-50%);
+  line-height: 30px;
+  font-size: 12px;
+  color: $palette-blue;
+}
+@keyframes tabBottomIn {
+  from {
+    width: 100%;
+    opacity: 0
   }
 
-  .head-btn {
-    position: absolute;
-    top: 50%;
-    right: 55rpx;
-    transform: translateY(-50%);
-    line-height: 30px;
-    font-size: 12px;
-    color: $palette-blue;
+  to {
+    width: 53rpx;
+    opacity: 1
   }
-
-  @keyframes tabBottomIn {
-    from {
-      width: 100%;
-      opacity: 0
-    }
-
-    to {
-      width: 53rpx;
-      opacity: 1
-    }
-  }
+}
 </style>

@@ -33,7 +33,7 @@
       <span class="desc">{{email}}</span>
     </div>
   </div>
-  <div class="block">
+  <!-- <div class="block">
     <div class="headline">
       <span class="title">用爱发电</span>
     </div>
@@ -41,10 +41,10 @@
       <span class="text">点击此处播放激励视频(15秒)</span>
       <span class="iconfont play">&#xe697;</span>
     </div>
-  </div>
-  <div class="ads" v-if="adsOpenFlag">
+  </div> -->
+  <!-- <div class="ads" v-if="adsOpenFlag">
     <ad unit-id="adunit-3df610deaf7d2cbd"></ad>
-  </div>
+  </div> -->
 </div>
 </template>
 <script>

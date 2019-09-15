@@ -176,7 +176,7 @@
         <DeckTable :selectedFaction="selectedFaction" :date="updateDate" :tableTitle="tableTitle" :tableData="selectedFaction.data"
           :tableName="'对阵'+selectedFaction.name" @itemClick="handleDeckItemClick"></DeckTable>
       </div>
-      <load-more :nomore=true />
+      <load-more :nomore='true' />
     </div>
   </div>
 </template>

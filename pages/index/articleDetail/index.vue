@@ -40,19 +40,20 @@
           </div>
         </div>
       </div>
-      <div class="other-block">
-         <div class="ads">
-          <ad unit-id="adunit-2bb4a9cea22fa148"></ad>
+      <div class="other-block" :style="{'padding-bottom': isIphoneX?110+'rpx':80+'rpx'}">
+        <div class="ads">
+          <!-- <ad unit-id="adunit-2bb4a9cea22fa148"></ad> -->
+          <ad unit-id="adunit-658c5ed4c9982d96" ad-type="video" ad-theme="white"></ad> 
         </div>
         <copyRight></copyRight>
       </div>
       <div class="footer">
         <FooterMenu :link="detail.link"></FooterMenu>
       </div>
-      <div class="float-btn">
+      <div class="float-btn" :style="{'bottom': isIphoneX?70+'px':50+'px'}">
         <floatBtnGroup @onCompare="openCompareDeckModal" :badgeCount="badgeCount" showCompare="true"></floatBtnGroup>
       </div>
-      <compareDeckModal ref="cDeckModal" :currentBtnDeActive=true></compareDeckModal>
+      <compareDeckModal ref="cDeckModal" :currentBtnDeActive='true'></compareDeckModal>
     </div>
   </div>
 </template>
@@ -97,6 +98,7 @@
       ...mapGetters([
         'compareDeck1',
         'compareDeck2',
+        'isIphoneX'
       ]),
       badgeCount() {
         let count = 0
