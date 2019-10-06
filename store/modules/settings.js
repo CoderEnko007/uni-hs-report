@@ -17,6 +17,7 @@ const settings = {
     ifanr_arena_card_resource: false,
     adsOpenFlag: true,
     insertAdsFlag: true,
+    adNotice: null,
   },
   mutations: {
     setAdsOpenFlag: (state, val) => {
@@ -63,7 +64,10 @@ const settings = {
     },
     SET_IFANR_ARENA_CARD_RESOURCE: (state, val) => {
       state.ifanr_arena_card_resource = val
-    }
+    },
+    SET_AD_NOTICE: (state, val) => {
+      state.adNotice = val
+    },
   },
   actions: {
     resetInsertAdsFlag({commit, state}) {
@@ -120,6 +124,7 @@ const settings = {
             commit('SET_CARD_RESOURCE', res.objects[0].card_resource)
             commit('SET_ARENA_TABLEID', res.objects[0].arena_table_id)
             commit('SET_IFANR_ARENA_CARD_RESOURCE', res.objects[0].ifanr_arena_card_resource)
+            commit('SET_AD_NOTICE', res.objects[0].ad_notice)
           }
           resolve(res.objects)
         }).catch(err => {

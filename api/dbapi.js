@@ -43,7 +43,7 @@ export function getRankData(time, mode, limit=20, orderBy='-win_rate') {
   })
 }
 
-export function getSeriesData(mode, limit=20, orderBy='-order') {
+export function getSeriesData(mode, limit=100, orderBy='-order') {
   return new Promise((resolve, reject) => {
     let tableObj = new wx.BaaS.TableObject(tableID.seriesTableID)
     let query = new wx.BaaS.Query()

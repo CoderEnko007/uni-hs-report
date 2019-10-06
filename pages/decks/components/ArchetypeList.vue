@@ -55,14 +55,10 @@
 </template>
 <script>
   import utils from '@/utils'
-  import {
-    mapGetters
-  } from 'vuex'
+  import { mapGetters } from 'vuex'
   import HeroesPanel from '@/components/HeroesPanel'
   import DeckTable from '@/components/DeckTable'
-  import {
-    getWinRateData
-  } from "@/api/dbapi";
+  import { getWinRateData } from "@/api/dbapi";
   import loadMore from '@/components/load-more.vue'
 
   export default {
@@ -80,45 +76,24 @@
         upOrder: '/static/icons-v2/rank-up.png',
         downOrder: '/static/icons-v2/rank-down.png',
         factionIcons: [],
-        selectedFaction: {
-          id: 'Druid',
-          name: '德鲁伊',
-          data: []
-        },
-        orderFilter: [{
-            id: 'games',
-            name: '对局数'
-          },
-          {
-            id: 'popularity',
-            name: '热度'
-          },
-          {
-            id: 'winrate',
-            name: '胜率'
-          },
+        selectedFaction: { id: 'Druid', name: '德鲁伊', data: [] },
+        orderFilter: [
+          { id: 'games', name: '对局数' },
+          { id: 'popularity', name: '热度' },
+          { id: 'winrate', name: '胜率' },
         ],
         rangePicker: {
           selectedItem: 0,
-          list: [{
-              text: '全分段',
-              rank_range: 'All'
-            },
-            {
-              text: 'R10-R6分段',
-              rank_range: 'Six_Through_Ten'
-            },
-            {
-              text: 'R5-R1分段',
-              rank_range: 'One_Through_Five'
-            },
-            {
-              text: '传说分段',
-              rank_range: 'Legend_Only'
-            }
+          list: [
+            { text: '全分段', rank_range: 'All' },
+            { text: 'R10-R6分段', rank_range: 'Six_Through_Ten' },
+            { text: 'R5-R1分段', rank_range: 'One_Through_Five' },
+            { text: '传说分段', rank_range: 'Legend_Only' }
           ]
         },
+        tempSelectedItem: 0,
         loading: true,
+        videoAd: null
       }
     },
     computed: {
@@ -142,6 +117,68 @@
       }
     },
     methods: {
+      async initVideoAds() {
+        if (wx.createRewardedVideoAd) {
+          this.videoAd = wx.createRewardedVideoAd({
+            adUnitId: 'adunit-6c39abb54de729f4'
+          })
+          this.videoAd.onClose(async (status) => {
+            console.log('激励视频关闭', status)
+            if (status && status.isEnded || status === undefined) {
+              let now = new Date()
+              try {
+                wx.setStorageSync('ads_video_date', new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000)
+              } catch (e) {
+                console.log(e)
+              }
+              this.rangePicker.selectedItem = this.tempSelectedItem
+              this.genWinRateData()
+            } else {
+              wx.showToast({
+                title: '没有完整播放视频哦，喵。。。',
+                icon: 'none',
+                duration: 2500
+              })
+            }
+          })
+          this.videoAd.onError((res) => {
+            console.log('激励视频错误', res)
+            this.rangePicker.selectedItem = this.tempSelectedItem
+            this.genWinRateData()
+            wx.showToast({
+              title: '出了点小问题，无法播放激励视频',
+              icon: 'none',
+              duration: 2500
+            })
+          })
+        }
+      },
+      async playVideoAds(index) {
+        this.tempSelectedItem = index
+        let videoAdUseable = true //wx.canIUse('createRewardedVideoAd')
+        if (videoAdUseable) {
+          if (this.videoAd) {
+            this.videoAd.show().catch(() => {
+              // 失败重试
+              this.videoAd.load()
+                .then(() => videoAd.show())
+                .catch(err => {
+                  console.log('激励视频 广告显示失败')
+                  this.rangePicker.selectedItem = this.tempSelectedItem
+                  this.genWinRateData()
+                })
+            })
+          }
+        } else {
+          wx.showToast({
+            title: '微信版本过低，无法播放激励视频',
+            icon: 'none',
+            duration: 2500
+          })
+          this.rangePicker.selectedItem = this.tempSelectedItem
+          this.genWinRateData()
+        }
+      },
       compareFunction(key) {
         return function(obj1, obj2) {
           let formatKey = key.replace('-', '')
@@ -264,8 +301,37 @@
         }
       },
       handleRankRangeChange(e) {
-        this.rangePicker.selectedItem = e.mp.detail.value
-        this.genWinRateData()
+        if (e.mp.detail.value!=='0' && e.mp.detail.value!==this.rangePicker.selectedItem) {
+          try {
+            let value = wx.getStorageSync('ads_video_date')
+            let now = new Date()
+            let today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000
+            if (today === value) {
+              // Do something with return value
+              this.rangePicker.selectedItem = e.mp.detail.value
+              this.genWinRateData()
+            } else {
+              wx.showModal({
+                title: '提示',
+                content: '播放完整激励视频即可解锁该功能, 限当日。（默认会播放声音，建议降低手机音量）',
+                success: res => {
+                  if (res.confirm) {
+                    this.playVideoAds(e.mp.detail.value)
+                  } else if (res.cancel) {
+                    console.log('用户点击取消')
+                  }
+                }
+              })
+            }
+          } catch (e) {
+            // Do something when catch error
+            this.rangePicker.selectedItem = e.mp.detail.value
+            this.genWinRateData()
+          }
+        } else {
+          this.rangePicker.selectedItem = e.mp.detail.value
+          this.genWinRateData()
+        }
       },
       scrollToBottom() {
         // console.log('scrollToBottom')
@@ -275,9 +341,11 @@
       }
     },
     mounted() {
+      console.log('mounted')
+      this.initVideoAds()
       this.genFactionIcons()
       this.genWinRateData()
-    },
+    }
   }
 </script>
 <style lang="scss" scoped>

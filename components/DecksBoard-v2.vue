@@ -14,16 +14,21 @@
         </div>
       </div>
       <div class="table-td" v-if="last_30_days"><span>{{item.real_game_count}}</span></div>
-      <div class="table-td" v-else><span>{{item.game_count}}</span></div>
+      <div class="table-td" v-else>
+        <span v-if="item.game_count">{{item.game_count}}</span>
+        <span v-else>N/A</span>
+      </div>
       <div class="table-td icons">
         <img :src="dustImage" mode="aspectFit">
         <span>{{item.dust_cost}}</span>
       </div>
       <div v-if="last_30_days && item.real_win_rate" class="table-td col-last" :class="{'color-green': item.real_win_rate>50, 'color-red': item.real_win_rate<50}">
-        <span>{{item.real_win_rate}}%</span>
+        <span v-if="item.real_win_rate&&item.real_win_rate!=='NaN'">{{item.real_win_rate}}%</span>
+        <span v-else>N/A</span>
       </div>
       <div v-else class="table-td col-last" :class="{'color-green': item.win_rate>=50, 'color-red': item.win_rate<50}">
-        <span>{{item.win_rate}}%</span>
+        <span v-if="item.win_rate&&item.win_rate!=='NaN'">{{item.win_rate}}%</span>
+        <span v-else>N/A</span>
       </div>
     </div>
   </div>

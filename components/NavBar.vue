@@ -78,7 +78,7 @@ export default {
   top: 0;
   background: #fff;
   color: #000000;
-  z-index: 999;
+  z-index: 9999;
   .nav-title {
     position: absolute;
     height:100%;

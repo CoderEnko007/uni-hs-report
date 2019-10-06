@@ -38,7 +38,9 @@
                    :style="{height: winHeight-navHeight-239+'px'}"
                    @scrolltolower="scrollToBottom">
         <div class="cards">
-          <DeckCards :cards="cardsList" :ifanrTile="ifanr_arena_card_resource" colNum="1" smallSpacing="false" @cardClick="handleCardClick"></DeckCards>
+          <div style="width: 302rpx;">
+            <DeckCards :cards="cardsList" :ifanrTile="ifanr_arena_card_resource" colNum="1" smallSpacing="false" @cardClick="handleCardClick"></DeckCards>
+          </div>
           <div class="data">
             <div class="data-block" v-for="(item, index) in cardsList" :key="index">
               <span>{{item.deck_pop}}%</span>

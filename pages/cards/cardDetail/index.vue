@@ -109,7 +109,7 @@ import { getCardPicture } from "@/utils";
 import { mapGetters } from 'vuex'
 import utils from '@/utils'
 import {genOrigImageURL, genCardsImageURL, gen512CardsImageURL} from '@/utils'
-import {getCardDetail, getCardsList, getDeckList} from "@/api/dbapi";
+import {getCardDetail, getCardsList, getDeckList, getSeriesData} from "@/api/dbapi";
 import FooterMenu from '@/components/FooterMenu'
 import floatBtnGroup from '@/components/floatBtnGroup'
 import NavBar from '@/components/NavBar'
@@ -198,6 +198,7 @@ export default {
       normalOrder: '/static/icons-v2/rank-normal.png',
       upOrder: '/static/icons-v2/rank-up.png',
       downOrder: '/static/icons-v2/rank-down.png',
+      standardSetList: []
     }
   },
   computed: {
@@ -415,6 +416,7 @@ export default {
       wx.hideNavigationBarLoading()
     },
     async initDeckList(mode) {
+      console.log(this.cardDetail)
       this.deckList = null
       this.totalDecks = 0
       this.selectedFaction = ''
@@ -428,8 +430,16 @@ export default {
           }
         }
       } else {
-        this.deckListMode = 'Standard'
-        this.rangePicker.selectedItem = 0
+        let res = this.standardSetList.filter(v => {
+          return v.setId === this.cardDetail.set_id
+        }).length>0?true:false
+        if (res) {
+          this.deckListMode = 'Standard'
+          this.rangePicker.selectedItem = 0
+        } else {
+          this.deckListMode = 'Wild'
+          this.rangePicker.selectedItem = 1
+        }
       }
       let deckRes = await getDeckList({mode: this.deckListMode, card: [this.cardDetail.dbfId]}, 1000, 0, '-game_count')
       this.deckList = utils.translateDeckName(deckRes.objects, this.decksName)
@@ -438,6 +448,7 @@ export default {
     async initCardDetail() {
       this.showEnAudio = false
       this.showZhAudio = false
+      this.standardSetList = await getSeriesData('Standard')
       let cardDetailRes = await getCardDetail({dbfId: parseInt(this.cardId), hsId: this.cardHsId})
       this.formatCardDetail(cardDetailRes[0])
     },

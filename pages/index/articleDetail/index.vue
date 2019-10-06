@@ -40,10 +40,16 @@
           </div>
         </div>
       </div>
-      <div class="other-block" :style="{'padding-bottom': isIphoneX?110+'rpx':80+'rpx'}">
-        <div class="ads">
-          <!-- <ad unit-id="adunit-2bb4a9cea22fa148"></ad> -->
-          <ad unit-id="adunit-658c5ed4c9982d96" ad-type="video" ad-theme="white"></ad> 
+      <div class="other-block" :style="{'padding-bottom': isIphoneX?155+'rpx':115+'rpx'}">
+        <div class="notice" v-if="showAdNotice">
+          <p>{{adNotice}}</p>
+        </div>
+        <div class="video-ads" v-if="adsType==='video'">
+          <ad unit-id="adunit-658c5ed4c9982d96" ad-type="video" ad-theme="white"></ad>
+        </div>
+        <div class="ads" v-else>
+          <ad unit-id="adunit-2bb4a9cea22fa148"></ad>
+          <!-- <ad unit-id="adunit-658c5ed4c9982d96" ad-type="video" ad-theme="white"></ad> -->
         </div>
         <copyRight></copyRight>
       </div>
@@ -59,10 +65,7 @@
 </template>
 <script>
   import { mapGetters } from 'vuex'
-  import {
-    getArticleDetail,
-    getArticleList
-  } from "../../../api/dbapi";
+  import { getArticleDetail, getArticleList, getSetting } from "../../../api/dbapi";
   import utils from '@/utils'
   import NavBar from '@/components/NavBar'
   import copyRight from '@/components/copyRight'
@@ -92,13 +95,16 @@
         mainArticleId: null,
         date: null,
         pageDelayFlag: false,
+        showAdNotice: false,
+        adsType: 'banner'
       }
     },
     computed: {
       ...mapGetters([
         'compareDeck1',
         'compareDeck2',
-        'isIphoneX'
+        'isIphoneX',
+        'adNotice',
       ]),
       badgeCount() {
         let count = 0
@@ -148,10 +154,11 @@
           wx.setClipboardData({
             data: href.replace('http://', ''),
             success: function(res) {
+              wx.hideToast()
               wx.showToast({
                 title: '卡组代码已复制',
                 icon: 'none',
-                duration: 2500,
+                duration: 1500,
               })
             }
           })
@@ -162,11 +169,16 @@
               wx.showToast({
                 title: '不支持链接跳转，已复制到剪贴板',
                 icon: 'none',
-                duration: 2500,
+                duration: 1500,
               })
             }
           })
         }
+      },
+      async getIfanrSettings() {
+        let res = await getSetting()
+        this.showAdNotice = res.objects[0].show_ad_notice
+        this.adsType = res.objects[0].article_ads_type
       }
     },
     async mounted() {
@@ -179,6 +191,7 @@
       this.groupID = this.$root.$mp.query.group_id
       await this.genArticleDetal()
       await this.genSubArticle()
+      await this.getIfanrSettings()
     },
     onShareAppMessage(res) {
       return {
@@ -284,11 +297,12 @@
     background-color: #eee;
   }
   .other-block {
-    padding-bottom: 80rpx;
+    padding-bottom: 100rpx;
   }
   .footer {
     position: fixed;
     bottom: 0;
+    z-index: 999;
   }
   .skeleton-mask {
     position: absolute;
@@ -300,5 +314,16 @@
     position: fixed;
     bottom: 50px;
     right: 20px;
+    z-index: 999;
+  }
+  .notice {
+    font-family: Helvetica, sans-serif;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.8;
+    margin: 0 30rpx;
+  }
+  .video-ads {
+    margin: 10rpx 0;
   }
 </style>

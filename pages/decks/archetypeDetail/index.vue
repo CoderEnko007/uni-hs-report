@@ -164,9 +164,9 @@
         <DeckCards :cards="archetypeDetail.pop_cards" @cardClick="handleCardClick"></DeckCards>
       </div>
     </div>
-    <div class="ads" v-if="adsOpenFlag">
+    <!-- <div class="ads" v-if="adsOpenFlag">
       <ad unit-id="adunit-5507cac6947d0ea4"></ad>
-    </div>
+    </div> -->
     <div class="matchup">
       <div class="headline"><span class="title">对抗情况</span></div>
       <div class="panel">
@@ -176,18 +176,17 @@
         <DeckTable :selectedFaction="selectedFaction" :date="updateDate" :tableTitle="tableTitle" :tableData="selectedFaction.data"
           :tableName="'对阵'+selectedFaction.name" @itemClick="handleDeckItemClick"></DeckTable>
       </div>
-      <load-more :nomore='true' />
     </div>
+    <div class="video-ads" v-if="adsType==='video'">
+      <ad unit-id="adunit-482444647f55f355" ad-type="video" ad-theme="white"></ad>
+    </div>
+    <load-more :nomore='true' />
   </div>
 </template>
 <script>
   import utils from '@/utils'
-  import {
-    mapGetters
-  } from 'vuex'
-  import {
-    getArchetypeDetail
-  } from "@/api/dbapi";
+  import { mapGetters} from 'vuex'
+  import { getArchetypeDetail, getSetting } from "@/api/dbapi";
   import DeckCards from '@/components/DeckCards'
   import DeckTable from '@/components/DeckTable'
   import HeroesPanel from '@/components/HeroesPanel'
@@ -246,23 +245,11 @@
         bannerImg: null,
         factionIcons: [],
         updateDate: null,
-        selectedFaction: {
-          id: 'Druid',
-          name: '德鲁伊',
-          data: []
-        },
-        tableTitle: [{
-            id: 'games',
-            name: '对局数'
-          },
-          {
-            id: 'popularity',
-            name: '热度'
-          },
-          {
-            id: 'winrate',
-            name: '胜率'
-          },
+        selectedFaction: { id: 'Druid', name: '德鲁伊', data: [] },
+        tableTitle: [
+          { id: 'games', name: '对局数' },
+          { id: 'popularity', name: '对局占比' },
+          { id: 'winrate', name: '胜率' },
         ],
         factions: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'],
         matchupDetail: {
@@ -279,7 +266,8 @@
         popDeck: Object.assign({}, defaultPopDeck),
         bestDeck: Object.assign({}, defaultBestDeck),
         bestMatchup: Object.assign({}, defaultBWGame),
-        worstMatchup: Object.assign({}, defaultBWGame)
+        worstMatchup: Object.assign({}, defaultBWGame),
+        adsType: 'video'
       }
     },
     computed: {
@@ -501,6 +489,22 @@
         wx.navigateTo({
           url: `/pages/decks/archetypeDetail/index?name=${this.bestMatchup.ename}`
         })
+      },
+      async getIfanrSettings() {
+        let res = await getSetting()
+        this.adsType = res.objects[0].arch_ads_type
+        if (this.adsType !== 'video') {
+          if (wx.createInterstitialAd) {
+            this.interstitialAd = wx.createInterstitialAd({
+              adUnitId: 'adunit-6f9a474b5991f367'
+            })
+            this.interstitialAd.onLoad(() => {})
+            this.interstitialAd.onError((err) => {})
+            this.interstitialAd.onClose(() => {
+                this.$store.dispatch('resetInsertAdsFlag')
+            })
+          }
+        }
       }
     },
     async mounted() {
@@ -518,16 +522,7 @@
       }
     },
     onLoad() {
-      if (wx.createInterstitialAd) {
-        this.interstitialAd = wx.createInterstitialAd({
-          adUnitId: 'adunit-6f9a474b5991f367'
-        })
-        this.interstitialAd.onLoad(() => {})
-        this.interstitialAd.onError((err) => {})
-        this.interstitialAd.onClose(() => {
-            this.$store.dispatch('resetInsertAdsFlag')
-        })
-      }
+      this.getIfanrSettings()
     },
     onShareAppMessage(res) {
       return {
@@ -541,234 +536,197 @@
   }
 </script>
 <style lang="scss" scoped>
-  @import '../../../style/color';
-  @import '../../../style/common';
-
-  .container {
+@import '../../../style/color';
+@import '../../../style/common';
+.container {
+  width: 100%;
+  .banner {
+    position: relative;
     width: 100%;
-
-    .banner {
-      position: relative;
+    height: 400rpx;
+    overflow: hidden;
+    background-size: 100%;
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, .1), rgba(0, 0, 0, .4));
+      z-index: 1;
+    }
+    .overview {
       width: 100%;
-      height: 400rpx;
-      overflow: hidden;
-      background-size: 100%;
-
-      &:after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, .1), rgba(0, 0, 0, .4));
-        z-index: 1;
-      }
-
-      .overview {
-        width: 100%;
-        padding: 97rpx 0 40rpx;
-        box-sizing: border-box;
-
-        .archetype-name {
-          position: relative;
-          width: 100%;
-          margin-left: 40rpx;
-          z-index: 2;
-
-          .icon {
-            float: left;
-            width: 88rpx;
-
-            img {
-              position: absolute;
-              width: 88rpx;
-              height: 88rpx;
-              top: 50%;
-              transform: translateY(-50%);
-            }
-          }
-
-          .name {
-            height: 100%;
-            margin-left: 107rpx;
-            color: #fff;
-
-            .cname {
-              height: 50rpx;
-              line-height: 50rpx;
-              font-size: 25px;
-            }
-
-            .ename {
-              height: 24rpx;
-              line-height: 24rpx;
-              margin-top: 19rpx;
-              font-size: 12px;
-            }
-          }
-        }
-
-        .desc {
-          display: flex;
-          justify-content: space-between;
-          flex-wrap: nowrap;
-          padding: 0 30rpx;
-          margin-top: 40rpx;
-          box-sizing: border-box;
-
-          .desc-item {
-            position: relative;
-            width: 172rpx;
-            height: 130rpx;
-            color: white;
-            text-align: center;
-            z-index: 2;
-
-            .item-name {
-              margin-top: 21rpx;
-              font-size: 13px;
-            }
-
-            .item-meta {
-              margin-top: 7rpx;
-              font-weight: bold;
-              font-size: 16px;
-            }
-          }
-        }
-      }
-    }
-
-    .pop-deck,
-    .board-panel {
-
-      .no-data,
-      .loading {
-        padding: 0 30rpx;
-        font-size: 13px;
-        color: #999;
-        height: 80rpx;
-        text-align: center;
-        line-height: 80rpx;
-        box-sizing: border-box;
-      }
-
-      .tier-desc {
-        border-bottom: 1rpx solid #eee;
-        box-sizing: border-box;
-      }
-    }
-
-    .bw-game-panel,
-    .pop-deck {
-      .board-panel {
-        margin-bottom: 10rpx;
-
-        .board {
-          .deck-item .tier-desc .desc-left .name {
-            display: flex;
-            align-items: center;
-
-            .name-meta {
-              height: 24rpx;
-              line-height: 24rpx;
-              margin-left: 8px;
-              font-size: 19rpx;
-              color: #666;
-              border: 1rpx solid #ddd;
-              border-radius: 12px;
-              padding: 3rpx 10rpx;
-            }
-          }
-        }
-      }
-    }
-
-    .card-list {
-      margin-bottom: 40rpx !important;
-
-      .core-cards,
-      .pop-cards {
-        .title {
-          position: relative;
-          height: 33rpx;
-          line-height: 33rpx;
-          margin-bottom: 20rpx;
-          font-size: 12px;
-          color: #999;
-          text-align: center;
-
-          &:after,
-          &:before {
-            position: absolute;
-            top: 50%;
-            background: #ddd;
-            content: "";
-            height: 1px;
-            width: 64rpx
-          }
-
-          &:before {
-            left: 420rpx;
-          }
-
-          &:after {
-            right: 420rpx;
-          }
-        }
-      }
-
-      .pop-cards {
-        margin-top: 30rpx;
-      }
-    }
-
-    .headline {
-      margin: 0 30rpx;
-
-      .more-btn {
+      padding: 97rpx 0 40rpx;
+      box-sizing: border-box;
+      .archetype-name {
         position: relative;
-        float: right;
-        height: 100%;
-        line-height: 96rpx;
-        font-weight: normal;
-
+        width: 100%;
+        margin-left: 40rpx;
+        z-index: 2;
+        .icon {
+          float: left;
+          width: 88rpx;
+          img {
+            position: absolute;
+            width: 88rpx;
+            height: 88rpx;
+            top: 50%;
+            transform: translateY(-50%);
+          }
+        }
         .name {
-          margin-right: 10rpx;
-          color: $palette-blue;
-          font-size: 13px;
-        }
-
-        .iconfont {
-          color: $palette-blue;
+          height: 100%;
+          margin-left: 107rpx;
+          color: #fff;
+          .cname {
+            height: 50rpx;
+            line-height: 50rpx;
+            font-size: 25px;
+          }
+          .ename {
+            height: 24rpx;
+            line-height: 24rpx;
+            margin-top: 19rpx;
+            font-size: 12px;
+          }
         }
       }
-    }
-
-    .panel {
-      margin: 0 15px;
-    }
-
-    .separator {
-      width: 100%;
-      box-sizing: border-box;
-      border-bottom: 1rpx solid #eee;
-      margin: 20rpx 0;
-    }
-
-    .deck-item {
-      padding: 0 30rpx;
-      box-sizing: border-box;
-      background-color: #fff;
-
-      &:active {
-        background-color: #eee;
-      }
-
-      .iconfont {
-        right: 30rpx
+      .desc {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        padding: 0 30rpx;
+        margin-top: 40rpx;
+        box-sizing: border-box;
+        .desc-item {
+          position: relative;
+          width: 172rpx;
+          height: 130rpx;
+          color: white;
+          text-align: center;
+          z-index: 2;
+          .item-name {
+            margin-top: 21rpx;
+            font-size: 13px;
+          }
+          .item-meta {
+            margin-top: 7rpx;
+            font-weight: bold;
+            font-size: 16px;
+          }
+        }
       }
     }
   }
+  .pop-deck, .board-panel {
+    .no-data, .loading {
+      padding: 0 30rpx;
+      font-size: 13px;
+      color: #999;
+      height: 80rpx;
+      text-align: center;
+      line-height: 80rpx;
+      box-sizing: border-box;
+    }
+    .tier-desc {
+      border-bottom: 1rpx solid #eee;
+      box-sizing: border-box;
+    }
+  }
+  .bw-game-panel, .pop-deck {
+    .board-panel {
+      margin-bottom: 10rpx;
+      .board {
+        .deck-item .tier-desc .desc-left .name {
+          display: flex;
+          align-items: center;
+          .name-meta {
+            height: 24rpx;
+            line-height: 24rpx;
+            margin-left: 8px;
+            font-size: 19rpx;
+            color: #666;
+            border: 1rpx solid #ddd;
+            border-radius: 12px;
+            padding: 3rpx 10rpx;
+          }
+        }
+      }
+    }
+  }
+  .card-list {
+    margin-bottom: 40rpx !important;
+    .core-cards, .pop-cards {
+      .title {
+        position: relative;
+        height: 33rpx;
+        line-height: 33rpx;
+        margin-bottom: 20rpx;
+        font-size: 12px;
+        color: #999;
+        text-align: center;
+        &:after, &:before {
+          position: absolute;
+          top: 50%;
+          background: #ddd;
+          content: "";
+          height: 1px;
+          width: 64rpx
+        }
+        &:before {
+          left: 420rpx;
+        }
+        &:after {
+          right: 420rpx;
+        }
+      }
+    }
+    .pop-cards {
+      margin-top: 30rpx;
+    }
+  }
+  .headline {
+    margin: 0 30rpx;
+    .more-btn {
+      position: relative;
+      float: right;
+      height: 100%;
+      line-height: 96rpx;
+      font-weight: normal;
+      .name {
+        margin-right: 10rpx;
+        color: $palette-blue;
+        font-size: 13px;
+      }
+      .iconfont {
+        color: $palette-blue;
+      }
+    }
+  }
+  .panel {
+    margin: 0 15px;
+  }
+  .separator {
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 1rpx solid #eee;
+    margin: 20rpx 0;
+  }
+  .deck-item {
+    padding: 0 30rpx;
+    box-sizing: border-box;
+    background-color: #fff;
+    &:active {
+      background-color: #eee;
+    }
+    .iconfont {
+      right: 30rpx
+    }
+  }
+  .video-ads {
+    margin-top: 20rpx;
+  }
+}
 </style>

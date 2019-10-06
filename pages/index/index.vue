@@ -159,11 +159,13 @@
             {text: '传说分段', rank_range: 'Legend_Only'}
           ]
         },
+        tempSelectedItem: 0,
         // canvas参数
         canvasWidth: 375,
         canvasHeight: 200,
         adHeight: 107,
-        collapseHeight: 0
+        collapseHeight: 0,
+        videoAd: null
       }
     },
     computed: {
@@ -195,6 +197,68 @@
       },
     },
     methods: {
+      async initVideoAds() {
+        if (wx.createRewardedVideoAd) {
+          this.videoAd = wx.createRewardedVideoAd({
+            adUnitId: 'adunit-6c39abb54de729f4'
+          })
+          this.videoAd.onClose(async (status) => {
+            console.log('激励视频关闭', status)
+            if (status && status.isEnded || status === undefined) {
+              let now = new Date()
+              try {
+                wx.setStorageSync('ads_video_date', new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000)
+              } catch (e) {
+                console.log(e)
+              }
+              this.rangePicker.selectedItem = this.tempSelectedItem
+              this.genArchetypeList()
+            } else {
+              wx.showToast({
+                title: '没有完整播放视频哦，喵。。。',
+                icon: 'none',
+                duration: 2500
+              })
+            }
+          })
+          this.videoAd.onError((res) => {
+            console.log('激励视频错误', res)
+            this.rangePicker.selectedItem = this.tempSelectedItem
+            this.genArchetypeList()
+            wx.showToast({
+              title: '出了点小问题，无法播放激励视频',
+              icon: 'none',
+              duration: 2500
+            })
+          })
+        }
+      },
+      async playVideoAds(index) {
+        this.tempSelectedItem = index
+        let videoAdUseable = true //wx.canIUse('createRewardedVideoAd')
+        if (videoAdUseable) {
+          if (this.videoAd) {
+            this.videoAd.show().catch(() => {
+              // 失败重试
+              this.videoAd.load()
+                .then(() => videoAd.show())
+                .catch(err => {
+                  console.log('激励视频 广告显示失败')
+                  this.rangePicker.selectedItem = this.tempSelectedItem
+                  this.genArchetypeList()
+                })
+            })
+          }
+        } else {
+          wx.showToast({
+            title: '微信版本过低，无法播放激励视频',
+            icon: 'none',
+            duration: 2500
+          })
+          this.rangePicker.selectedItem = this.tempSelectedItem
+          this.genArchetypeList()
+        }
+      },
       handleAdError(e) {
         console.log('ad error', e)
         this.adHeight = 0
@@ -326,8 +390,37 @@
         this.selectedGameType = item.mode
       },
       handleRankRangeChange(e) {
-        this.rangePicker.selectedItem = e.mp.detail.value
-        this.genArchetypeList()
+        if (e.mp.detail.value!=='0' && e.mp.detail.value!==this.rangePicker.selectedItem) {
+          try {
+            let value = wx.getStorageSync('ads_video_date')
+            let now = new Date()
+            let today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000
+            if (today === value) {
+              // Do something with return value
+              this.rangePicker.selectedItem = e.mp.detail.value
+              this.genArchetypeList()
+            } else {
+              wx.showModal({
+                title: '提示',
+                content: '播放完整激励视频即可解锁该功能, 限当日。（默认会播放声音，建议降低手机音量）',
+                success: res => {
+                  if (res.confirm) {
+                    this.playVideoAds(e.mp.detail.value)
+                  } else if (res.cancel) {
+                    console.log('用户点击取消')
+                  }
+                }
+              })
+            }
+          } catch (e) {
+            // Do something when catch error
+            this.rangePicker.selectedItem = e.mp.detail.value
+            this.genArchetypeList()
+          }
+        } else {
+          this.rangePicker.selectedItem = e.mp.detail.value
+          this.genArchetypeList()
+        }
       },
       handleHSVisionClick() {
         wx.navigateToMiniProgram({
@@ -430,7 +523,7 @@
         ctx.font = 'normal bold 12px sans-serif';
         ctx.setFillStyle('#433e88')
         ctx.textAlign = 'center'
-        ctx.fillText('微信小程序：炉石传说情报站', this.canvasWidth/2, 20)
+        ctx.fillText('微信小程序：HS炉石情报站', this.canvasWidth/2, 20)
         ctx.setFillStyle('#000')
         ctx.font = 'normal bold 16px sans-serif';
         ctx.fillText('卡组强度排行', this.canvasWidth/2, 45)
@@ -612,6 +705,7 @@
       this.genRankData()
       this.genArchetypeList()
       this.genNotice()
+      this.initVideoAds()
       this.$refs.articlePage.genDataList(true)
     },
     onPullDownRefresh() {

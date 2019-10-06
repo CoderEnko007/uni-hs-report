@@ -23,21 +23,26 @@
           <span class="iconfont">&#xe600;</span>
         </div>
         <div class="desc">
-          <div class="desc-item" v-show="deckDetail.real_win_rate">
+          <div class="desc-item">
             <p class="item-name">胜率</p>
-            <p class="item-meta font-bold color-light-green" :class="{'color-red': deckDetail.real_win_rate<50}">{{deckDetail.real_win_rate}}%</p>
+            <p class="item-meta font-bold color-light-green" :class="{'color-red': deckDetail.real_win_rate<50}" v-if="deckDetail.real_win_rate">{{deckDetail.real_win_rate}}%</p>
+            <p class="item-meta font-bold color-light-green" :class="{'color-red': deckDetail.real_win_rate<50}" v-else-if="deckDetail.win_rate">{{deckDetail.win_rate}}%</p>
+            <p class="item-meta font-bold" v-else>N/A</p>
           </div>
-          <div class="desc-item" v-show="deckDetail.game_count">
+          <div class="desc-item">
             <p class="item-name">对局数</p>
-            <p class="item-meta">{{gameCount}}</p>
+            <p class="item-meta" v-if="deckDetail.game_count">{{gameCount}}</p>
+            <p class="item-meta" v-else>N/A</p>
           </div>
-          <div class="desc-item" v-show="deckDetail.duration">
+          <div class="desc-item">
             <p class="item-name">对局时长</p>
-            <p class="item-meta">{{deckDetail.duration}}分钟</p>
+            <p class="item-meta" v-if="deckDetail.duration">{{deckDetail.duration}}分钟</p>
+            <p class="item-meta" v-else>N/A</p>
           </div>
-          <div class="desc-item" v-show="deckDetail.turns">
+          <div class="desc-item">
             <p class="item-name">回合数</p>
-            <p class="item-meta">{{deckDetail.turns}}</p>
+            <p class="item-meta" v-if="deckDetail.turns">{{deckDetail.turns}}</p>
+            <p class="item-meta" v-else>N/A</p>
           </div>
         </div>
       </div>
@@ -82,22 +87,30 @@
         </div>
       </div>
       <div class="mulligan-list" :hidden="activeIndex != 1">
-        <div v-if="deckDetail.mulligan && deckDetail.mulligan!=='[]'">
+        <div v-if="deckDetail.mulligan && deckDetail.mulligan.length>2">
           <mulliganList :cList="deckDetail.card_list" :mData="deckDetail.mulligan"></mulliganList>
         </div>
         <div class="no-data" v-else>
-          数据已掉入混沌虚空之中
+          缺少对战数据
         </div>
       </div>
       <div class="separator"></div>
-      <div class="ads" v-if="adsOpenFlag">
-        <ad unit-id="adunit-d6bb528c4e28a808"></ad>
-      </div>
       <div class="winrate-block m-30">
         <div class="headline"><span class="title">对阵各职业胜率</span></div>
-        <WinRateBoard :list="winrateChartData"></WinRateBoard>
+        <div v-if="winrateChartData.length">
+          <WinRateBoard :list="winrateChartData"></WinRateBoard>
+        </div>
+        <div class="no-data" v-else>
+          缺少对战数据
+        </div>
       </div>
       <div class="separator"></div>
+      <!-- <div class="ads" v-if="adsOpenFlag">
+        <ad unit-id="adunit-d6bb528c4e28a808"></ad>
+      </div> -->
+      <div class="video-ads">
+        <ad unit-id="adunit-658c5ed4c9982d96" ad-type="video" ad-theme="white"></ad>
+      </div>
       <div class="data-chart">
         <div class="headline m-30"><span class="title">费用分布</span></div>
         <!-- <BarChart :chartData="costChartData" canvasId="costBar"></BarChart> -->
@@ -121,7 +134,7 @@
 <script>
 import utils from '@/utils'
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import {getDeckDetail, setUserCollection, cancelUserCollection, getArchetypeDetail, getDeckCardList} from "@/api/dbapi";
+import {getDeckDetail, setUserCollection, cancelUserCollection, getArchetypeDetail, getDeckCardList, addCustomerSetting, getCustomerSetting, updateCustomerSetting} from "@/api/dbapi";
 import {getComponentByTag, iFanrTileImageURL, getImageInfoAsync} from "@/utils";
 import DeckCards from '@/components/DeckCards'
 import FooterMenu from '@/components/FooterMenu'
@@ -210,6 +223,7 @@ export default {
       activeIndex: 0,
       currentTab: 0,
       pageDelayFlag: false,
+      videoAd: null
     }
   },
   computed: {
@@ -295,8 +309,8 @@ export default {
           }
         })
       } else {
-        this.checkDeckCollected()
         this.deckDetail = res
+        this.checkDeckCollected()
         let filterName = this.decksName.filter(v => {
           return v.ename === this.deckDetail.deck_name
         })
@@ -440,14 +454,10 @@ export default {
       }
     },
     checkDeckCollected() {
-    //  检查当前卡组是否已收藏
+      //  检查当前卡组是否已收藏
       if (this.userInfo.id) {
         let res = this.collectedDecks.filter(item => {
-          if (this.recordID) {
-            return item.id === this.recordID
-          } else {
-            return item.deck_id === this.deckID
-          }
+          return item.deck_id === this.deckDetail.deck_id
         })
         this.deckCollected = res.length > 0;
       }
@@ -635,7 +645,7 @@ export default {
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.setFillStyle('#fff')
-      ctx.fillText('微信小程序：炉石传说情报站', this.canvasWidth/2, cardListHeight+headHeight+bRectHeight/2+2)
+      ctx.fillText('微信小程序：HS炉石情报站', this.canvasWidth/2, cardListHeight+headHeight+bRectHeight/2+2)
       ctx.restore()
 
       let _this = this
@@ -737,9 +747,111 @@ export default {
       });
     },
     tabBarClick(e) {
-      this.activeIndex = e.currentTarget.id;
-      this.currentTab =this.activeIndex;
+      if (e.currentTarget.id == 1) {
+        try {
+          let value = wx.getStorageSync('ads_video_date')
+          let now = new Date()
+          let today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000
+          if (today === value) {
+            // Do something with return value
+            this.activeIndex = e.currentTarget.id;
+            this.currentTab =this.activeIndex;
+          } else {
+            wx.showModal({
+              title: '提示',
+              content: '当日播放完整激励视频即可解锁该功能。（默认会播放声音，建议降低手机音量）',
+              success: res => {
+                if (res.confirm) {
+                  this.playVideoAds()
+                } else if (res.cancel) {
+                  console.log('用户点击取消')
+                }
+              }
+            })
+          }
+        } catch (e) {
+          // Do something when catch error
+          this.activeIndex = e.currentTarget.id;
+          this.currentTab =this.activeIndex;
+        }
+      } else {
+        this.activeIndex = e.currentTarget.id;
+        this.currentTab =this.activeIndex;
+      }
     },
+    async initVideoAds() {
+      if (wx.createRewardedVideoAd) {
+        this.videoAd = wx.createRewardedVideoAd({
+          adUnitId: 'adunit-6c39abb54de729f4'
+        })
+        this.videoAd.onClose(async (status) => {
+          console.log('激励视频关闭', status)
+          if (status && status.isEnded || status === undefined) {
+            // let res = await getCustomerSetting(this.userInfo.id)
+            // let temp = ''
+            // if (res.meta.total_count > 0) {
+            //   let ad_click_num = res.objects[0].ad_click_num + 1
+            //   temp = await updateCustomerSetting({
+            //     ad_click_num: ad_click_num,
+            //   }, res.objects[0].id)
+            // } else {
+            //   temp = await addCustomerSetting({}, this.userInfo.id)
+            // }
+            let now = new Date()
+            try {
+              wx.setStorageSync('ads_video_date', new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000)
+            } catch (e) {
+              console.log(e)
+              this.activeIndex = 1;
+              this.currentTab = this.activeIndex;
+            }
+            this.activeIndex = 1;
+            this.currentTab = this.activeIndex;
+          } else {
+            wx.showToast({
+              title: '没有完整播放视频哦，喵。。。',
+              icon: 'none',
+              duration: 2500
+            })
+          }
+        })
+        this.videoAd.onError((res) => {
+          console.log('激励视频错误', res)
+          this.activeIndex = 1;
+          this.currentTab =this.activeIndex;
+          wx.showToast({
+            title: '出了点小问题，无法播放激励视频',
+            icon: 'none',
+            duration: 2500
+          })
+        })
+      }
+    },
+    async playVideoAds() {
+      let videoAdUseable = true //wx.canIUse('createRewardedVideoAd')
+      if (videoAdUseable) {
+        if (this.videoAd) {
+          this.videoAd.show().catch(() => {
+            // 失败重试
+            this.videoAd.load()
+              .then(() => videoAd.show())
+              .catch(err => {
+                console.log('激励视频 广告显示失败')
+                this.activeIndex = 1;
+                this.currentTab =this.activeIndex;
+              })
+          })
+        }
+      } else {
+        wx.showToast({
+          title: '微信版本过低，无法播放激励视频',
+          icon: 'none',
+          duration: 2500
+        })
+        this.activeIndex = 1;
+        this.currentTab =this.activeIndex;
+      }
+    }
   },
   async mounted() {
     this.recordID = this.$root.$mp.query.id
@@ -764,6 +876,7 @@ export default {
     _this = this;
     this.cWidth=uni.upx2px(750);
     this.cHeight=uni.upx2px(300);
+    this.initVideoAds()
   },
   onPullDownRefresh() {
     // 下拉刷新要把json字符串转换为对象，否则getDeckData时操作对象会报错
@@ -985,7 +1098,7 @@ export default {
       }
     }
   }
-  .mulligan-list {
+  .mulligan-list, .winrate-block {
     .no-data {
       width: 100%;
       line-height: 200rpx;
@@ -1060,12 +1173,15 @@ export default {
     position: fixed;
     bottom: 0;
     background-color: white;
-    z-index: 20;
+    z-index: 9999;
   }
   .float-btn {
     position: fixed;
     bottom: 50px;
     right: 20px;
+  }
+  .video-ads {
+    margin: 10rpx 0;
   }
   @keyframes tabBottomIn {
     from {width: 100%; opacity: 0}
