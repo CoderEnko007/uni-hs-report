@@ -3,7 +3,7 @@
      scroll-y='true'
      @scrolltolower='scrollToBottom'
      @scrolltoupper="scrollToTop"
-     :style="{height: winHeight-navHeight-184+'px'}">
+     :style="{height: scrollHeight}">
   <div class="table">
     <div class="table-tr" v-for="(item, index) in list" :key="index" @click="handleItemClick(item)">
       <div class="table-td col-1st">
@@ -32,9 +32,9 @@
       </div>
     </div>
   </div>
-  <load-more v-if="loading" :loading=true />
-  <load-more v-else-if="nodata" :nodata=true />
-  <load-more v-else :nomore=true />
+  <load-more v-if="loading" :loading='true' />
+  <load-more v-else-if="nodata" :nodata='true' />
+  <load-more v-else :nomore='true' />
 </scroll-view>
 </template>
 <script>
@@ -52,7 +52,7 @@ export default {
     return {
       deckName: [],
       dustImage: utils.image.dustImage,
-      scrollTop: 0
+      scrollTop: 0,
     }
   },
   computed: {
@@ -64,6 +64,10 @@ export default {
     ]),
     factions() {
       return utils.faction
+    },
+    scrollHeight() {
+      let ratio = this.winWidth/750
+      return (this.winHeight-this.navHeight-89*ratio-278*ratio)+'px'
     }
   },
   methods: {
@@ -110,7 +114,7 @@ export default {
       line-height: 120rpx;
       text-align: center;
       span {
-        font-size: 13px;
+        font-size: 26rpx;
       }
     }
     .col-1st {
@@ -133,16 +137,20 @@ export default {
         transform: translateY(-50%);
         margin-left: 90rpx;
         p.cname {
-          font-size: 13px;
-          color: #333333;
+          width:180rpx;
           height: 37rpx;
           line-height: 37rpx;
+          font-size: 26rpx;
+          color: #333333;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
         p.ename {
           width:180rpx;
           height: 30rpx;
           line-height: 30rpx;
-          font-size: 11px;
+          font-size: 22rpx;
           color: #999;
           overflow:hidden;
           text-overflow:ellipsis;

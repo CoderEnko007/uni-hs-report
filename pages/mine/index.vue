@@ -247,22 +247,22 @@ export default {
 @import '../../style/color';
 .banner {
   position: relative;
-  height: 40px;
+  height: 80rpx;
   width: 100%;
   padding: 10rpx 0;
   background-color: #fff0cd;
   img {
-    width: 100px;
+    width: 200rpx;
     height: 100%;
-    margin-left: 12px;
+    margin-left: 24rpx;
   }
   .desc {
     position: absolute;
-    bottom: 5px;
-    left: 45px;
-    right: 5px;
+    bottom: 10rpx;
+    left: 90rpx;
+    right: 10rpx;
     color: #591804;
-    font-size: 12px;
+    font-size: 24rpx;
     font-weight: 700;
     text-align: right;
   }
@@ -271,7 +271,7 @@ export default {
   position: relative;
   background-color: #fff;
   button, p {
-    font-size: 15px;
+    font-size: 30rpx;
     height: 60rpx;
     line-height: 60rpx;
     padding: 0;
@@ -298,18 +298,17 @@ export default {
   .text {
     height: 42rpx;
     line-height: 120rpx;
-    font-size: 15px;
+    font-size: 30rpx;
   }
   .arrowIcon {
     float: right;
     line-height:120rpx
   }
   .playIcon {
-    font-size: 20px;
+    font-size: 40rpx;
     line-height: 120rpx;
     vertical-align: middle;
     display: inline-block;
-    /*margin-left: 5px;*/
   }
 }
 .nga-block {
@@ -322,14 +321,14 @@ export default {
     .text {
       height: 42rpx;
       line-height: 42rpx;
-      font-size: 15px;
+      font-size: 30rpx;
       color: #333;
     }
     .desc {
       height: 22rpx;
       line-height: 22rpx;
       margin-top: 13rpx;
-      font-size: 11px;
+      font-size: 22rpx;
       color: #999;
     }
   }
@@ -341,7 +340,7 @@ export default {
     width: 200rpx;
     height: 90rpx;
     background-color: #FFEFCD;
-    border-radius: 12px;
+    border-radius: 24rpx;
     img {
       position:absolute;
       top:0;
@@ -362,18 +361,18 @@ export default {
   padding: 30rpx;
   p {
     font-size: 24rpx;
-    line-height:22px;
+    line-height: 44rpx;
   }
   h1 {
     display:inline-block;
     /*margin-top: 38rpx;*/
     margin-bottom: 24rpx;
-    font-size: 15px;
+    font-size: 30rpx;
     color: #333333;
   }
   img {
     display: block;
-    width: 220px;
+    width: 440rpx;
     margin: 0 auto;
   }
   .capsule {
@@ -385,7 +384,7 @@ export default {
     line-height: 40rpx;
     padding:0 15rpx;
     margin-left:300rpx;
-    font-size: 12px;
+    font-size: 24rpx;
     border-radius: 20rpx;
     box-sizing: border-box;
     border: 1rpx solid red;
@@ -395,9 +394,9 @@ export default {
   }
 }
 .feedback {
-  margin: 5px 5px 10px;
+  margin: 10rpx 10rpx 20rpx;
   button {
-    font-size: 12px;
+    font-size: 24rpx;
     color: $palette-blue-normal;
     text-align:center;
     background-color: transparent;

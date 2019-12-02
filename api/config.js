@@ -15,6 +15,8 @@ const noticeTableID = 58439
 const aboutTableID = 59552
 const settingTableID = 70372
 const customerSettingTableID = 72200
+const battlegroundCardTableID = 87402
+const revealCardsTableID = 88786
 
 const tableID = {
   winrateTableID,
@@ -34,5 +36,7 @@ const tableID = {
   aboutTableID,
   settingTableID,
   customerSettingTableID,
+  battlegroundCardTableID,
+  revealCardsTableID
 }
 export default tableID

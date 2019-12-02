@@ -108,7 +108,7 @@ export default {
       margin:0 30rpx;
       .date {
         height: 39rpx;
-        font-size: 13px;
+        font-size: 26rpx;
         color: #999999;
         margin: 20rpx 0;
       }
@@ -121,7 +121,7 @@ export default {
       top: 120rpx;
       left:50%;
       transform:translateX(-50%);
-      font-size: 16px;
+      font-size: 32rpx;
       color: #ddd;
     }
   }

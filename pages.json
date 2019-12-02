@@ -3,8 +3,8 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"enablePullDownRefresh": true,
-				"backgroundColor":"#eff3f4"
+				"enablePullDownRefresh": true
+				// "backgroundColor":"#eff3f4"
 			}
 		}, {
 			"path": "pages/trending/index",
@@ -41,6 +41,15 @@
 			"style": {}
 		}, {
 			"path": "pages/cards/cardDetail/index",
+			"style": {}
+		}, {
+		  "path": "pages/index/revealPage/index",
+		  "style": {}
+		}, {
+			"path": "pages/cards/revealCardDetail/index",
+			"style": {}
+		}, {
+			"path": "pages/cards/battlegroundCardDetail/index",
 			"style": {}
 		}, {
 			"path": "pages/mine/index",

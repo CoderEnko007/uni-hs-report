@@ -69,7 +69,7 @@ export default {
       width: 30rpx;
       height: 30rpx;
       margin-left: 29rpx;
-      font-size: 13px;
+      font-size: 26rpx;
       color: #999999;
       line-height: 30rpx;
     }
@@ -79,7 +79,7 @@ export default {
       margin-left: 5rpx;
     }
     .faction {
-      font-size: 13px;
+      font-size: 26rpx;
       color: #333333;
       line-height: 30rpx;
       margin-left: 14.5rpx;
@@ -88,7 +88,7 @@ export default {
       position: absolute;
       right: 30rpx;
       line-height: 26rpx;
-      font-size: 13px;
+      font-size: 26rpx;
       font-weight: bold;
       /*color: #333333;*/
       text-align: right;

@@ -93,7 +93,7 @@
         line-height: 120rpx;
         text-align: center;
         span {
-          font-size: 13px;
+          font-size: 26rpx;
         }
       }
       .col-1st {
@@ -116,16 +116,19 @@
           transform: translateY(-50%);
           margin-left: 90rpx;
           p.cname {
-            font-size: 13px;
+            font-size: 26rpx;
             color: #333333;
             height: 37rpx;
             line-height: 37rpx;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
           p.ename {
             width:180rpx;
             height: 30rpx;
             line-height: 30rpx;
-            font-size: 11px;
+            font-size: 22rpx;
             color: #999;
             overflow:hidden;
             text-overflow:ellipsis;

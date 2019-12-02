@@ -249,7 +249,7 @@ export default {
               position: relative;
               height:44rpx;
               line-height:44rpx;
-              font-size: 12px;
+              font-size: 24rpx;
               img {
                 position: absolute;
                 width: 23rpx;
@@ -277,7 +277,7 @@ export default {
           .desc-item {
             line-height: 45rpx;
             color: white;
-            font-size: 13px;
+            font-size: 26rpx;
             text-align: center;
           }
         }
@@ -289,8 +289,8 @@ export default {
           margin:20rpx auto 0;
           color: #fff;
           border: 1rpx solid rgba(255,255,255,0.50);
-          border-radius: 27px;
-          font-size: 13px;
+          border-radius: 54rpx;
+          font-size: 26rpx;
           background: rgba(0,0,0,0.20);
         }
       }
@@ -342,10 +342,10 @@ export default {
         height: 100%;
         line-height: 64rpx;
         width: 207rpx;
-        font-size: 13px;
+        font-size: 26rpx;
         color: white;
         background-color: $palette-blue;
-        border-radius: 37px;
+        border-radius: 74rpx;
         margin-left: 18rpx;
         text-align:center;
         padding-left:15rpx;
@@ -357,11 +357,11 @@ export default {
         display: inline-block;
         width: 467rpx;
         color: #666;
-        font-size: 14px;
+        font-size: 28rpx;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        border-radius: 32px;
+        border-radius: 64rpx;
         background-color: #f8f8f8;
         padding: 0 21rpx 0 13rpx;
         box-sizing: border-box;

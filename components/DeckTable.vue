@@ -102,7 +102,7 @@ export default {
 .table-tr {
   display: table-row;
   width: 100%;
-  font-size: 13px;
+  font-size: 26rpx;
   .table-td {
     display: table-cell;
     span {
@@ -130,6 +130,7 @@ export default {
       transform: translateY(-50%);
       margin-left: 90rpx;
       p.cname {
+        width:180rpx;
         height: 37rpx;
         line-height: 37rpx;
         overflow:hidden;
@@ -140,7 +141,7 @@ export default {
         width:180rpx;
         height: 30rpx;
         line-height: 30rpx;
-        font-size: 11px;
+        font-size: 22rpx;
         color: #999;
         overflow:hidden;
         text-overflow:ellipsis;
@@ -171,7 +172,7 @@ export default {
 }
 .float-right {
   float: right;
-  margin-right: 20px;
+  margin-right: 40rpx;
 }
 .header {
   display: flex;
@@ -188,7 +189,7 @@ export default {
   }
   .order {
     position: relative;
-    font-size: 13px;
+    font-size: 26rpx;
     color: #333;
     img {
       position:absolute;

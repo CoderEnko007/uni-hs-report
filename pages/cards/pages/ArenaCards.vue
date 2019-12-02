@@ -2,7 +2,7 @@
   <div class="arnea-cards-container">
     <div class="filter">
       <div class="search-bar">
-        <SearchBar :search.sync="filter.search" @handleConfirm="handleSearch" placeholder="请输入卡牌名称"></SearchBar>
+        <SearchBar :search.sync="filter.search" :reset='true' @resetFilter="resetFilter" @handleConfirm="handleSearch" placeholder="请输入卡牌名称"></SearchBar>
       </div>
       <div class="panel-faction">
         <HeroesPanel :dataList="factionIcons" :selected="selectedFaction.id" @itemClick="handleIconsClick"></HeroesPanel>
@@ -35,7 +35,7 @@
     <div class="cards-list">
       <scroll-view class="scroll-list"
                    scroll-y='true'
-                   :style="{height: winHeight-navHeight-239+'px'}"
+                   :style="{height: scrollHeight+'px'}"
                    @scrolltolower="scrollToBottom">
         <div class="cards">
           <div style="width: 302rpx;">
@@ -132,8 +132,18 @@ export default {
       'arenaTableID',
       'ifanr_arena_card_resource',
     ]),
+    scrollHeight() {
+      const res = wx.getSystemInfoSync()
+      let ratio = res.windowWidth/750
+      return res.windowHeight-this.navHeight-89*ratio-383*ratio
+    }
   },
   methods: {
+    resetFilter() {
+      this.filter = Object.assign({}, defaultFilter)
+      this.selectedFaction = ''
+      this.genCardsList(true)
+    },
     genFactionIcons() {
       this.factionIcons = []
       for (let key in utils.faction) {
@@ -207,11 +217,6 @@ export default {
       this.orderScrollLeft = e.mp.detail.scrollLeft
       // this.scrollLeft = parseInt((e.mp.detail.scrollLeft+45)/95) * 95
     },
-    // handleTouched(e) {
-    //   console.log(e)
-    //   this.orderScrollLeft = this.scrollLeft
-    //   console.log(this.orderScrollLeft)
-    // }
   },
   mounted() {
     this.genFactionIcons()
@@ -251,24 +256,24 @@ export default {
       }
       .type_icon {
         position: relative;
-        width: 27px;
-        height: 27px;
+        width: 54rpx;
+        height: 54rpx;
         display: inline-block;
-        background: url('../../../static/mana/mana.png') no-repeat;
+        background: url('../../../static/mana/mana1.png') no-repeat;
         background-size: 100% 100%;
       }
       .type_icon_active {
         position: relative;
-        width: 27px;
-        height: 27px;
+        width: 54rpx;
+        height: 54rpx;
         display: inline-block;
         background: url('../../../static/mana/mana_active.png') no-repeat;
         background-size: 100% 100%;
       }
       .cost_num {
         position: absolute;
-        width: 22px;
-        height: 17px;
+        width: 44rpx;
+        height: 34rpx;
         top: 47%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -299,12 +304,12 @@ export default {
           line-height: 58rpx;
           display:flex;
           justify-content:space-around;
-          padding-top: 10px;
+          padding-top: 20rpx;
           span {
             display: inline-block;
             width: 136rpx;
             text-align: center;
-            font-size: 14px;
+            font-size: 28rpx;
             font-weight: bold;
             /*color: #333333;*/
           }
@@ -318,7 +323,7 @@ export default {
   height: 88rpx;
   width: 100%;
   padding: 0 20rpx;
-  font-size: 13px;
+  font-size: 26rpx;
   color: #333333;
   text-align: center;
   line-height: 88rpx;

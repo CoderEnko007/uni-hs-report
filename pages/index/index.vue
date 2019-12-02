@@ -1,12 +1,6 @@
 <template>
   <div class="container">
-    <nav-bar background="#eff3f4"></nav-bar>
-    <div class="swiper">
-      <div class="notice-bar" v-show="noticeContent.display">
-        <cmd-notice-bar scrollable :text="noticeText.text" mode="close" @click="handleNoticeClick"></cmd-notice-bar>
-      </div>
-      <SwiperBanner :banners="banners" :date="report_date" @swiperClick="handleBannerClick" v-if="banners"></SwiperBanner>
-    </div>
+    <nav-bar></nav-bar>
     <div class="panel-tab">
       <block v-for="(item,index) in tabbar" :key="item.id">
         <div :id="index" :class="{'tab-item': true, 'tab-item-active': activeIndex==index}" @click="handleTabBarClick">
@@ -18,6 +12,12 @@
       <swiper class="content" :easing-function="easeInOutCubic" :duration="100" :style="'height:'+contentHeight" @change="swiperChange"
        :current="currentTab">
         <swiper-item>
+          <div class="swiper">
+            <div class="notice-bar" v-show="noticeContent.display">
+              <cmd-notice-bar scrollable :text="noticeText.text" mode="close" @click="handleNoticeClick"></cmd-notice-bar>
+            </div>
+            <SwiperBanner :banners="banners" :date="report_date" @swiperClick="handleBannerClick" v-if="banners"></SwiperBanner>
+          </div>
           <div class="rank-panel">
             <div class="headline">
               <span class="title">职业排名</span>
@@ -38,13 +38,20 @@
             <div class="content">
               <RankBoard :list="rankData[selectedGameType]" :mode="modeFilter.list[modeFilter.selectedItem].value"></RankBoard>
             </div>
-            <div class="data-vision" @click="handleHSVisionClick">
-              <img class="btn-img" src="/static/icons-v2/trending.png" mode="aspectFit">
-              <span class="text">职业强度趋势</span>
-              <span class="iconfont">&#xe600;</span>
+            <div class="extra-btn">
+              <div class="data-vision" @click="handleHSVisionClick">
+                <img class="btn-img" src="/static/icons-v2/trending.png" mode="aspectFit">
+                <span class="text">职业趋势</span>
+                <span class="iconfont">&#xe600;</span>
+              </div>
+              <div class="data-vision" @click="handleRevealClick">
+                <img class="btn-img" src="/static/icons-v2/Set_DRAGONS.png" style="width:42rpx" mode="aspectFit">
+                <span class="text">新卡发布</span>
+                <span class="iconfont">&#xe600;</span>
+              </div>
             </div>
           </div>
-         <div class="ads" style="margin: 15upx 0 0 0;">
+          <div class="ads" style="margin: 15upx 0 0 0;" v-if="adsType!=='video'">
             <ad unit-id="adunit-900bbac5f4c50939" @error="handleAdError" @load="handleAdLoaded"></ad>
           </div>
           <div class="tier-panel">
@@ -69,6 +76,9 @@
             <div class="tier-content">
               <div class="tier-block" v-for="(tier, index) in tierList" :key="tier.name">
                 <TierList :tierData="tier" @itemClick="handleTierClick" @onCollapse="handleCollapse"></TierList>
+                <div class="video-ads" style="margin: 10rpx 30rpx;" v-if="index===0 && adsType==='video'">
+                  <ad unit-id="adunit-03a8570563bafc46" ad-type="video" ad-theme="white" @load="handleAdLoaded"></ad>
+                </div>
               </div>
             </div>
           </div>
@@ -80,7 +90,7 @@
     </div>
     <x-modal :text='noticeText.text' :no-cancel='true' :no-title='true' confirm-text='朕知道了' :hidden.sync='hideModal'></x-modal>
     <div style="position: fixed; top: 9999999999999px; overflow: hidden">
-      <canvas :style="{width: canvasWidth+'px', height: canvasHeight+'px'}" canvas-id="dailyReport"></canvas>
+      <canvas :style="{width: canvasWidth*2+'rpx', height: canvasHeight*2+'rpx'}" canvas-id="dailyReport"></canvas>
     </div>
   </div>
 </template>
@@ -89,7 +99,7 @@
   import { mapGetters } from 'vuex'
   import utils from '@/utils'
   import { gradientColor, formatNowTime, ShadeColor } from '@/utils'
-  import { getRankData, getArchetypeList, getBanners, getNotice } from '@/api/dbapi.js'
+  import { getRankData, getArchetypeList, getBanners, getNotice, getSetting } from '@/api/dbapi.js'
   import NavBar from '@/components/NavBar.vue'
   import SwiperBanner from '@/components/SwiperBanner.vue'
   import cmdNoticeBar from "@/components/cmd-notice-bar/cmd-notice-bar.vue"
@@ -97,7 +107,6 @@
   import RankBoard from '@/components/RankBoard'
   import TierList from '@/components/TierList'
   import articlePage from './components/articlePage'
-
 
   export default {
     components: {
@@ -107,7 +116,7 @@
       xModal,
       RankBoard,
       TierList,
-      articlePage
+      articlePage,
     },
     data() {
       return {
@@ -163,9 +172,10 @@
         // canvas参数
         canvasWidth: 375,
         canvasHeight: 200,
-        adHeight: 107,
+        adHeight: 160,
         collapseHeight: 0,
-        videoAd: null
+        videoAd: null,
+        adsType: 'video'
       }
     },
     computed: {
@@ -179,7 +189,7 @@
       ]),
       contentHeight() {
         if (this.activeIndex == 0) {
-          return 471 + this.adHeight + this.barHeight + 51 + 60 * this.tierListNum + 25 - this.collapseHeight + 'px'
+          return 471 + this.adHeight + this.barHeight + 51 + 60 * this.tierListNum + 65 - this.collapseHeight + 'px'
           // return 471 + 150 + 51 + 60 * this.tierListNum + 25 + 'px'
         } else {
           return this.winHeight - this.navHeight - 41 + "px"
@@ -197,6 +207,10 @@
       },
     },
     methods: {
+      async getIfanrSettings() {
+        let res = await getSetting()
+        this.adsType = res.objects[0].main_ads_type
+      },
       async initVideoAds() {
         if (wx.createRewardedVideoAd) {
           this.videoAd = wx.createRewardedVideoAd({
@@ -261,11 +275,11 @@
       },
       handleAdError(e) {
         console.log('ad error', e)
-        this.adHeight = 0
+        this.adHeight = 160
       },
       handleAdLoaded(e) {
         console.log('ad loaded', e)
-        this.adHeight = 107
+        this.adHeight = 107*3+150
       },
       compareFunction(key) {
         return function(obj1, obj2) {
@@ -430,6 +444,11 @@
             // 打开成功
             console.log(res)
           }
+        })
+      },
+      handleRevealClick() {
+        uni.navigateTo({
+          url: `/pages/index/revealPage/index`
         })
       },
       handleHSVisionTierClick() {
@@ -701,20 +720,25 @@
       },
     },
     onLoad() {
+      this.getIfanrSettings()
       this.genBanners()
       this.genRankData()
       this.genArchetypeList()
       this.genNotice()
       this.initVideoAds()
-      this.$refs.articlePage.genDataList(true)
+      // this.$refs.articlePage.genDataList(true)
     },
     onPullDownRefresh() {
+      this.getIfanrSettings()
       this.genBanners()
       this.genRankData()
       this.genArchetypeList()
       this.genNotice()
       this.$refs.articlePage.genDataList(true)
       this.$store.dispatch('getDecksName')
+    },
+    onShow() {
+      this.$refs.articlePage.genDataList(true)
     },
     onShareAppMessage(res) {
       return {
@@ -729,8 +753,9 @@
 @import '../../style/color';
 .container {
   .panel-tab {
+    position: fixed;
     width: 100%;
-    height: 80rpx;
+    height: 70rpx;
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-around;
@@ -741,8 +766,8 @@
       position: relative;
       height: 100%;
       width: 232rpx;
-      line-height: 80rpx;
-      font-size: 15px;
+      line-height: 70rpx;
+      font-size: 30rpx;
       color: #666;
       text-align: center;
       &:after {
@@ -767,8 +792,12 @@
     }
   }
   .tab-container {
+    margin-top: 85rpx;
     width: 100%;
     z-index: 1;
+    // .notice-bar {
+    //   margin-top: 10rpx;
+    // }
   }
   .rank-panel {
     padding: 0 30rpx;
@@ -778,11 +807,11 @@
         display: inline-block;
         height: 24rpx;
         line-height: 24rpx;
-        margin-left: 8px;
+        margin-left: 16rpx;
         font-size: 19rpx;
         color: #999;
         border: 1rpx solid #ddd;
-        border-radius: 12px;
+        border-radius: 24rpx;
         padding: 3rpx 10rpx;
       }
       .btn-group {
@@ -811,7 +840,7 @@
             height: 100%;
             line-height: 96rpx;
             margin-left: 40rpx;
-            font-size: 14px;
+            font-size: 28rpx;
             font-weight: normal;
             color: #999;
           }
@@ -821,10 +850,10 @@
           }
           .separator {
             width: 25rpx;
-            height: 16px;
+            height: 32rpx;
             line-height: 96rpx;
             text-align: center;
-            font-size: 14px;
+            font-size: 28rpx;
             color: #EEEEEE;
           }
         }
@@ -832,44 +861,49 @@
     }
   }
   .tier-panel {
-    padding: 10px 0;
+    padding: 20rpx 0;
     .headline {
       padding: 0 30rpx;
       .headline-meta {
         height: 24rpx;
         line-height: 24rpx;
-        margin-left: 8px;
+        margin-left: 16rpx;
         font-size: 19rpx;
         color: #999;
         border: 1rpx solid #ddd;
-        border-radius: 12px;
+        border-radius: 24rpx;
         padding: 3rpx 10rpx;
       }
     }
   }
+  .extra-btn {
+    display: flex;
+    justify-content: space-between;
+  }
   .data-vision {
    position: relative;
-   margin-top: 10px;
+   width: 45%;
+   margin-top: 20rpx;
    background: #FAFAFA;
-   line-height: 45px;
+   line-height: 90rpx;
    border-radius: 24rpx;
    img {
      position: absolute;
      top: 50%;
      transform: translateY(-50%);
-     margin-left: 10px;
+     margin-left: 20rpx;
      width: 52rpx;
      height: 52rpx;
    }
    .text {
-     font-size: 16px;
-     margin-left: 44px;
+     font-size: 32rpx;
+     margin-left: 88rpx;
    }
    .iconfont {
      position: absolute;
      top: 50%;
      transform: translateY(-50%);
-     right: 10px;
+     right: 20rpx;
    }
   }
 }
@@ -878,8 +912,8 @@
   top: 50%;
   right: 55rpx;
   transform: translateY(-50%);
-  line-height: 30px;
-  font-size: 12px;
+  line-height: 60rpx;
+  font-size: 24rpx;
   color: $palette-blue;
 }
 @keyframes tabBottomIn {

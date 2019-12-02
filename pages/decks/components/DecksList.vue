@@ -52,12 +52,8 @@
 </template>
 <script>
   import utils from '@/utils'
-  import {
-    mapGetters
-  } from 'vuex'
-  import {
-    getDeckList
-  } from "@/api/dbapi";
+  import { mapGetters } from 'vuex'
+  import { getDeckList } from "@/api/dbapi";
   import HeroesPanel from '@/components/HeroesPanel'
   import DecksBoard from '@/components/DecksBoard-v2';
 
@@ -68,31 +64,15 @@
     last_30_days: false,
     order: '-game_count'
   }
-  const defaultOrder = [{
-      id: 'game_count',
-      name: '对局数'
-    },
-    {
-      id: 'dust_cost',
-      name: '合成花费'
-    },
-    {
-      id: 'win_rate',
-      name: '胜率'
-    },
+  const defaultOrder = [
+    { id: 'game_count', name: '对局数' },
+    { id: 'dust_cost', name: '合成花费' },
+    { id: 'win_rate', name: '胜率' },
   ]
-  const last30dOrder = [{
-      id: 'real_game_count',
-      name: '对局数'
-    },
-    {
-      id: 'dust_cost',
-      name: '合成花费'
-    },
-    {
-      id: 'real_win_rate',
-      name: '胜率'
-    },
+  const last30dOrder = [
+    { id: 'real_game_count', name: '对局数' },
+    { id: 'dust_cost', name: '合成花费' },
+    { id: 'real_win_rate', name: '胜率' },
   ]
   export default {
     name: 'DecksList',
@@ -100,7 +80,6 @@
       HeroesPanel,
       DecksBoard,
     },
-
     data() {
       return {
         deckList: [],
@@ -112,14 +91,9 @@
         //过滤器参数
         tabList: {
           selectedItem: 0,
-          list: [{
-              text: '当前赛季卡组',
-              last_30_days: false
-            },
-            {
-              text: '最近30天卡组',
-              last_30_days: true
-            }
+          list: [
+            { text: '当前赛季卡组', last_30_days: false },
+            { text: '最近30天卡组', last_30_days: true }
           ]
         },
         deckMode: utils.rankMode,
@@ -366,7 +340,7 @@
               height: 100%;
               line-height: 96rpx;
               margin-left: 40rpx;
-              font-size: 14px;
+              font-size: 28rpx;
               font-weight: normal;
               color: #999;
             }
@@ -378,10 +352,10 @@
 
             .separator {
               width: 25rpx;
-              height: 16px;
+              height: 32rpx;
               line-height: 96rpx;
               text-align: center;
-              font-size: 14px;
+              font-size: 28rpx;
               color: #EEEEEE;
             }
           }
@@ -406,7 +380,7 @@
           position: relative;
           height: 100%;
           line-height: 86rpx;
-          font-size: 13px;
+          font-size: 26rpx;
 
           .picker-icon {
             position: absolute;
@@ -419,7 +393,7 @@
 
           .selector-item {
             text-align: center;
-            font-size: 13px;
+            font-size: 26rpx;
             color: $palette-blue;
           }
 
@@ -447,7 +421,7 @@
 
     .panel-list {
       /*padding-top: 370rpx;*/
-      padding-top: 275rpx;
+      padding-top: 278rpx;
       z-index: -1;
       /*scroll-view {*/
       /*height: 100%;*/

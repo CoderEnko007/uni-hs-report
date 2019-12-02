@@ -17,6 +17,7 @@ const settings = {
     ifanr_arena_card_resource: false,
     adsOpenFlag: true,
     insertAdsFlag: true,
+    cardsInsertAdsFlag: true,
     adNotice: null,
   },
   mutations: {
@@ -29,6 +30,9 @@ const settings = {
     SET_INSERT_ADS_FLAG: (state, val) => {
       state.insertAdsFlag = val
     },
+    SET_CARDS_INSERT_ADS_FLAG: (state, val) => {
+      state.cardsInsertAdsFlag = val
+    },
     SET_NAV_HEIGHT: (state, navHeight) => {
       state.navHeight = navHeight
     },
@@ -36,6 +40,7 @@ const settings = {
       state.barHeight = barHeight
     },
     SET_TAB_HEIGHT: (state, val) => {
+      console.log('tab height', val)
       state.tabHeight = val
     },
     IS_IPHONE_X: (state) => {
@@ -75,7 +80,15 @@ const settings = {
         commit('SET_INSERT_ADS_FLAG', false)
         setTimeout(() => {
           commit('SET_INSERT_ADS_FLAG', true)
-        }, 2000*60)
+        }, 1500*60)
+      })
+    },
+    resetCardsInsertAdsFlag({commit, state}) {
+      return new Promise((reolve, reject) => {
+        commit('SET_CARDS_INSERT_ADS_FLAG', false)
+        setTimeout(() => {
+          commit('SET_CARDS_INSERT_ADS_FLAG', true)
+        }, 1500*60)
       })
     },
     setNavHeight({commit, state}) {
@@ -87,6 +100,7 @@ const settings = {
             // let navHeight = res.statusBarHeight*2+25
             commit('SET_NAV_HEIGHT', navHeight)
             commit('SET_BAR_HEIGHT', res.statusBarHeight)
+            console.log(`navHeight:${navHeight}, statusBarHeight:${res.statusBarHeight}`)
             console.log(res.model)
             if (res.model.indexOf('iPhone X')>-1) {
               commit('IS_IPHONE_X')
@@ -106,7 +120,9 @@ const settings = {
             commit('SET_WIN_WIDTH', res.windowWidth)
             commit('SET_WIN_HEIGHT', res.windowHeight)
             commit('SET_TAB_HEIGHT', res.screenHeight-res.windowHeight)
-            resolve()
+            console.log(`screenWidth:${res.screenWidth}, screenHeight:${res.screenHeight}`)
+            console.log(`windowWidth:${res.windowWidth}, windowHeight:${res.windowHeight}`)
+            resolve(res)
           }, fail(err) {
             console.log(err)
             reject(err)

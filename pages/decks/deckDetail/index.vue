@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" :style="{'padding-bottom': isIphoneX?120+'rpx':80+'rpx'}">
     <NavBar :showCapsule="true" navTitle="套牌详情"></NavBar>
     <div class="banner" :style="{'background-image': bannerImg?'url('+bannerImg+')':''}">
       <div class="bubble" :style="{'display': showBubble?'block':'none'}">
@@ -26,7 +26,7 @@
           <div class="desc-item">
             <p class="item-name">胜率</p>
             <p class="item-meta font-bold color-light-green" :class="{'color-red': deckDetail.real_win_rate<50}" v-if="deckDetail.real_win_rate">{{deckDetail.real_win_rate}}%</p>
-            <p class="item-meta font-bold color-light-green" :class="{'color-red': deckDetail.real_win_rate<50}" v-else-if="deckDetail.win_rate">{{deckDetail.win_rate}}%</p>
+            <p class="item-meta font-bold color-light-green" :class="{'color-red': deckDetail.win_rate<50}" v-else-if="deckDetail.win_rate">{{deckDetail.win_rate}}%</p>
             <p class="item-meta font-bold" v-else>N/A</p>
           </div>
           <div class="desc-item">
@@ -94,6 +94,9 @@
           缺少对战数据
         </div>
       </div>
+      <div class="video-ads">
+        <ad unit-id="adunit-658c5ed4c9982d96" ad-type="video" ad-theme="white"></ad>
+      </div>
       <div class="separator"></div>
       <div class="winrate-block m-30">
         <div class="headline"><span class="title">对阵各职业胜率</span></div>
@@ -108,20 +111,20 @@
       <!-- <div class="ads" v-if="adsOpenFlag">
         <ad unit-id="adunit-d6bb528c4e28a808"></ad>
       </div> -->
-      <div class="video-ads">
-        <ad unit-id="adunit-658c5ed4c9982d96" ad-type="video" ad-theme="white"></ad>
-      </div>
       <div class="data-chart">
         <div class="headline m-30"><span class="title">费用分布</span></div>
         <!-- <BarChart :chartData="costChartData" canvasId="costBar"></BarChart> -->
         <canvas canvas-id="canvasColumn" id="canvasColumn" class="charts" v-if="!costChartImg"></canvas>
         <img class="charts" :src="costChartImg" mode="aspectFit" v-else>
       </div>
-      <div class="safe-panel" :style="{'height': isIphoneX?90+'rpx':60+'rpx'}"></div>
+      <!-- <div class="video-ads">
+        <ad unit-id="adunit-658c5ed4c9982d96" ad-type="video" ad-theme="white"></ad>
+      </div> -->
+      <div class="safe-panel" :style="{'height': isIphoneX?100+'rpx':60+'rpx'}"></div>
       <div style="position: fixed; top: 9999999999999px; overflow: hidden">
-        <canvas :style="{width: canvasWidth+'px', height: canvasHeight+'px', 'margin-left': '30rpx'}" canvas-id="deck-pic"></canvas>
+        <canvas :style="{width: canvasWidth*2+'rpx', height: canvasHeight*2+'rpx', 'margin-left': '30rpx'}" canvas-id="deck-pic"></canvas>
       </div>
-      <div class="float-btn" :style="{'bottom': isIphoneX?70+'px':50+'px'}">
+      <div class="float-btn" :style="{'bottom': isIphoneX?140+'rpx':100+'rpx'}">
         <floatBtnGroup @onCompare="openCompareDeckModal" :badgeCount="badgeCount" showCompare="true"></floatBtnGroup>
       </div>
       <compareDeckModal ref="cDeckModal" :deckDetail='deckDetail'></compareDeckModal>
@@ -749,7 +752,7 @@ export default {
     tabBarClick(e) {
       if (e.currentTarget.id == 1) {
         try {
-          let value = wx.getStorageSync('ads_video_date')
+          let value = wx.getStorageSync('ads_video_date_1')
           let now = new Date()
           let today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000
           if (today === value) {
@@ -799,7 +802,7 @@ export default {
             // }
             let now = new Date()
             try {
-              wx.setStorageSync('ads_video_date', new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000)
+              wx.setStorageSync('ads_video_date_1', new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000)
             } catch (e) {
               console.log(e)
               this.activeIndex = 1;
@@ -910,8 +913,8 @@ export default {
     background-size: 100%;
     .bubble {
       position: absolute;
-      right:5px;
-      top:10px;
+      right:10rpx;
+      top:20rpx;
     }
     .overview {
       position: relative;
@@ -943,14 +946,14 @@ export default {
           .cname {
             height:50rpx;
             line-height:50rpx;
-            font-size: 25px;
+            font-size: 50rpx;
           }
           .dust-cost {
             position: relative;
             height:44rpx;
             line-height:44rpx;
             margin-top: 5rpx;
-            font-size: 12px;
+            font-size: 24rpx;
             img {
               position: absolute;
               width: 23rpx;
@@ -982,12 +985,12 @@ export default {
           text-align: center;
           .item-name {
             margin-top: 21rpx;
-            font-size: 13px;
+            font-size: 26rpx;
           }
           .item-meta {
             margin-top: 7rpx;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 32rpx;
           }
         }
       }
@@ -1001,8 +1004,8 @@ export default {
         padding-left: 20rpx;
         color: #fff;
         border: 1rpx solid rgba(255,255,255,0.50);
-        border-radius: 27px;
-        font-size: 13px;
+        border-radius: 54rpx;
+        font-size: 26rpx;
         background: rgba(0,0,0,0.20);
       }
     }
@@ -1022,7 +1025,7 @@ export default {
       padding:0 18rpx;
       margin-right: 10rpx;
       text-align: center;
-      font-size: 13px;
+      font-size: 26rpx;
       color: #666;
       border: 1rpx solid #ddd;
       border-radius: 32rpx;
@@ -1068,10 +1071,10 @@ export default {
         line-height: 64rpx;
         width: 207rpx;
         padding: 0;
-        font-size: 13px;
+        font-size: 26rpx;
         color: white;
         background-color: $palette-blue;
-        border-radius: 37px;
+        border-radius: 74rpx;
         margin-left: 18rpx;
         &:after {
           border: none;
@@ -1083,11 +1086,11 @@ export default {
         display: inline-block;
         width: 467rpx;
         color: #666;
-        font-size: 14px;
+        font-size: 28rpx;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        border-radius: 32px;
+        border-radius: 128rpx;
         background-color: #f8f8f8;
         padding: 0 21rpx 0 13rpx;
         box-sizing: border-box;
@@ -1104,7 +1107,7 @@ export default {
       line-height: 200rpx;
       text-align: center;
       vertical-align: middle;
-      font-size: 14px;
+      font-size: 28rpx;
       overflow: hidden;
       box-sizing: border-box;
     }
@@ -1123,7 +1126,7 @@ export default {
       height: 100%;
       width: 232rpx;
       line-height: 89rpx;
-      font-size: 16px;
+      font-size: 32rpx;
       color: #666;
       text-align: center;
       &:after {
@@ -1150,12 +1153,11 @@ export default {
   .data-chart {
     width: 100%;
     overflow: hidden;
-    margin-bottom: 30rpx;
     /*margin: 20rpx;*/
     .chart-text {
-      height:27px;
-      line-height:27px;
-      font-size:14px;
+      height:54rpx;
+      line-height:54rpx;
+      font-size:28rpx;
     }
   }
   .charts {
@@ -1177,11 +1179,11 @@ export default {
   }
   .float-btn {
     position: fixed;
-    bottom: 50px;
-    right: 20px;
+    bottom: 100rpx;
+    right: 40rpx;
   }
   .video-ads {
-    margin: 10rpx 0;
+    margin: 20rpx 30rpx;
   }
   @keyframes tabBottomIn {
     from {width: 100%; opacity: 0}

@@ -9,8 +9,8 @@
       </div>
     </div>
     <div class="detail">
-      <p class="name" @click="handleCopyBtn(cardDetail.name)">{{cardDetail.name}}<span class="headline-meta">点击复制</span></p>
-      <p class="normal" @click="handleCopyBtn(cardDetail.ename)"><span class="f3">英文名</span>：{{cardDetail.ename}}</p>
+      <p v-show="cardDetail.name" class="name" @click="handleCopyBtn(cardDetail.name)">{{cardDetail.name}}<span class="headline-meta">点击复制</span></p>
+      <p v-show="cardDetail.ename" class="normal" @click="handleCopyBtn(cardDetail.ename)"><span class="f3">英文名</span>：{{cardDetail.ename}}</p>
       <p v-show="cardDetail.series" class="normal"><span class="f4">所属系列</span>：{{cardDetail.series}}</p>
       <p v-show="cardDetail.type" class="normal"><span class="f2">类型</span>：{{cardDetail.type}}</p>
       <p v-show="cardDetail.flavor" class="flavor" @click="handleCopyBtn(cardDetail.flavor)">{{cardDetail.flavor}}</p>
@@ -88,20 +88,20 @@
         <SpinKit :mode="'sk-spinner-pulse'"></SpinKit>
       </div>
     </div>
-    <div class="ads">
-      <ad unit-id="adunit-038fb5d0b45f4699"></ad>
+    <div class="video-ads" style="margin: 10rpx 30rpx;" v-show="cardDetail.name">
+      <ad unit-id="adunit-3f4b7b57a1b47647" ad-type="video" ad-theme="white"></ad>
     </div>
-    <div :style="{'height': isIphoneX?124+'rpx':90+'rpx'}"></div>
+    <div :style="{'height': isIphoneX?130+'rpx':90+'rpx'}"></div>
     <div class="footer">
       <!-- <FooterMenu></FooterMenu> -->
-      <div class="btn-group" :style="{'height':isIphoneX?124+'rpx':90+'rpx'}">
-        <button class="btn previous" @click="handlePrevious" :class="{'de-active': !prevBtnEnable}" :style="{'margin-bottom':isIphoneX?30+'rpx':0}"><span>上一张</span></button>
-        <button class="btn next" @click="handleNext" :class="{'de-active': !nextBtnEnable}" :style="{'margin-bottom':isIphoneX?30+'rpx':0}"><span>下一张</span></button>
+      <div class="btn-group" :style="{'height':isIphoneX?130+'rpx':90+'rpx'}">
+        <button class="btn previous" @click="handlePrevious" :class="{'de-active': !prevBtnEnable}" :style="{'margin-bottom':isIphoneX?40+'rpx':0}"><span>上一张</span></button>
+        <button class="btn next" @click="handleNext" :class="{'de-active': !nextBtnEnable}" :style="{'margin-bottom':isIphoneX?40+'rpx':0}"><span>下一张</span></button>
       </div>
     </div>
-    <div class="float-btn" :style="{'top': isIphoneX?100+'px':70+'px'}">
+    <!-- <div class="float-btn" :style="{'top': isIphoneX?130+'px':100+'px'}">
       <floatBtnGroup showShare="true"></floatBtnGroup>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -152,6 +152,7 @@ export default {
   },
   data() {
     return {
+      interstitialAd: null,
       cardId: null,
       cardHsId: null,
       cardDetail: Object.assign({}, defaultCardDetail),
@@ -211,7 +212,8 @@ export default {
       'cardsPageParams',
       'entourageParams',
       'isIphoneX',
-      'decksName'
+      'decksName',
+      'cardsInsertAdsFlag'
     ]),
     getEnAudio() {
       if (this.cardDetail.audios) {
@@ -416,7 +418,6 @@ export default {
       wx.hideNavigationBarLoading()
     },
     async initDeckList(mode) {
-      console.log(this.cardDetail)
       this.deckList = null
       this.totalDecks = 0
       this.selectedFaction = ''
@@ -588,8 +589,6 @@ export default {
         })
       } 
       this.totalDecks = filterdDeckList.length
-      // this.initDeckList()
-      // this.deckList.
     },
     handleOrderChange(item) {
       if (this.deckListOrder.indexOf(item.id) >= 0) {
@@ -597,8 +596,19 @@ export default {
       } else {
         this.deckListOrder = '-' + item.id
       }
-      // this.sortTableData()
     },
+  },
+  onLoad() {
+   if (wx.createInterstitialAd) {
+     this.interstitialAd = wx.createInterstitialAd({
+       adUnitId: 'adunit-f0ee7b7386b219dd'
+     })
+     this.interstitialAd.onLoad(() => {})
+     this.interstitialAd.onError((err) => {})
+     this.interstitialAd.onClose(() => {
+         this.$store.dispatch('resetCardsInsertAdsFlag')
+     })
+   }
   },
   mounted() {
     this.genFactionIcons()
@@ -628,6 +638,11 @@ export default {
       console.log(res.errCode)
       console.log(res)
     })
+    if (this.cardsInsertAdsFlag && this.interstitialAd) {
+      this.interstitialAd.show().catch((err) => {
+        console.error(err)
+      })
+    }
     this.initCardDetail()
   },
   onPullDownRefresh() {
@@ -644,16 +659,20 @@ export default {
     this.cardDetail = Object.assign({}, defaultCardDetail)
   },
   onShareAppMessage(res) {
-    if (res.from === 'button') {
-      return {
-        title: this.cardDetail.name,
-        path: `/pages/cards/cardDetail/index?id=${this.cardDetail.dbfId}`
-      }
-    } else {
-      return {
-        title: '炉石传说情报站',
-        path: '/pages/index/index'
-      }
+    // if (res.from === 'button') {
+    //   return {
+    //     title: this.cardDetail.name,
+    //     path: `/pages/cards/cardDetail/index?id=${this.cardDetail.dbfId}`
+    //   }
+    // } else {
+    //   return {
+    //     title: '炉石传说情报站',
+    //     path: '/pages/index/index'
+    //   }
+    // }
+    return {
+      title: this.cardDetail.name,
+      path: `/pages/cards/cardDetail/index?id=${this.cardDetail.dbfId}`
     }
   }
 }
@@ -666,6 +685,7 @@ export default {
     width: 100%;
     height: 700rpx;
     overflow: hidden;
+    background: #FAFAFA;
     .bg-img {
       position: absolute;
       width: 100%;
@@ -678,7 +698,7 @@ export default {
     .card-img {
       position: absolute;
       width: 100%;
-      height: 800rpx;
+      height: 100%;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
@@ -696,26 +716,26 @@ export default {
     padding: 30rpx;
     box-sizing: border-box;
     .name {
-      font-size: 18px;
+      font-size: 36rpx;
       font-weight: 700;
-      height: 38px;
+      height: 76rpx;
       .headline-meta {
         height: 24rpx;
         line-height: 24rpx;
-        margin-left:8px;
+        margin-left: 16rpx;
         font-size: 19rpx;
         color: #999;
         border: 1rpx solid #ddd;
-        border-radius: 12px;
+        border-radius: 24rpx;
         padding: 3rpx 10rpx;
       }
     }
     .normal {
-      height: 25px;
-      font-size: 14px;
+      height: 50rpx;
+      font-size: 28rpx;
     }
     .flavor {
-      font-size: 14px;
+      font-size: 28rpx;
       font-style: italic;
       color: rgba(0, 0, 0, .5);
     }
@@ -735,29 +755,29 @@ export default {
   .audio-list {
     margin: 0 30rpx 15rpx;
     .title {
-      font-size: 14px;
+      font-size: 28rpx;
       color: #333333;
-      line-height: 36px;
+      line-height: 72rpx;
       font-weight: bold;
     }
     .en-audio, .zh-audio {
       width: 100%;
       .title {
-        font-size: 14px;
+        font-size: 28rpx;
         color: #333333;
-        line-height: 26px;
+        line-height: 52rpx;
       }
       .audio-item {
         display: inline-block;
         width: 150rpx;
-        height: 30px;
-        line-height: 30px;
-        margin-right: 10px;
+        height: 60rpx;
+        line-height: 60rpx;
+        margin-right: 20rpx;
         box-sizing:border-box;
-        border-radius: 25px;
+        border-radius: 50rpx;
         background: #eee;
         padding-left: 15rpx;
-        margin-bottom: 10px;
+        margin-bottom: 20rpx;
         .play-img {
           display: inline-block;
           width: 30rpx;
@@ -768,7 +788,7 @@ export default {
         }
         span {
           margin-left: 8rpx;
-          font-size: 12px;
+          font-size: 24rpx;
           vertical-align:middle;
         }
       }
@@ -788,7 +808,7 @@ export default {
       padding: 0 0 8rpx;
       margin-bottom: 35rpx;
       text-align: center;
-      font-size: 12px;
+      font-size: 24rpx;
       img {
         width: 100%;
         height: 100%;
@@ -802,6 +822,7 @@ export default {
     position: fixed;
     bottom: 0;
     box-shadow:0px 0px 4px #c0c0c0;
+    z-index: 999;
     .btn-group {
       position: relative;
       display: flex;
@@ -819,7 +840,7 @@ export default {
         border-radius: 10rpx;
         background-color: $palette-blue;
         color: #fff;
-        font-size: 13px;
+        font-size: 26rpx;
       }
       .de-active {
         background: rgba(67, 62, 136, .2);
@@ -842,12 +863,12 @@ export default {
     top: 50%;
     right: 0;
     transform: translateY(-50%);
-    font-size: 10px;
-    height: 16px;
-    line-height: 16px;
-    border-radius: 10px;
+    font-size: 20rpx;
+    height: 32rpx;
+    line-height: 32rpx;
+    border-radius: 20rpx;
     text-align: center;
-    padding: 1px 6px;
+    padding: 2rpx 12rpx;
     background: $palette-blue;
     color: #fff;
     border: 1rpx solid $palette-blue;
@@ -856,8 +877,8 @@ export default {
 }
 .float-btn {
   position: fixed;
-  top: 100px;
-  right: 10px;
+  top: 200rpx;
+  right: 20rpx;
 }
 .loading {
   position: relative;
@@ -870,7 +891,7 @@ export default {
     align-items: center;
     text-align: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 32rpx;
   }
 }
 .panel-block {
@@ -886,7 +907,7 @@ export default {
     position: relative;
     height: 100%;
     line-height: 86rpx;
-    font-size: 13px;
+    font-size: 26rpx;
     .table-name {
       width: 265rpx;
       color: #999;
@@ -903,7 +924,7 @@ export default {
     }
     .selector-item {
       text-align: center;
-      font-size: 13px;
+      font-size: 26rpx;
       color: $palette-blue;
     }
     .order-item {

@@ -117,25 +117,79 @@ export function getCardsList(params, limit=20, page=0, offset=0, orderBy='-set_i
     if (params.series && params.series.id !== 'all') {
       seriesQuery.compare('set_id', '=', params.series.id)
     }
+    let raceQuery = new wx.BaaS.Query()
+    if (params.race && params.race.id !== 'all') {
+      raceQuery.compare('race', '=', params.race.id)
+    }
     let searchQuery = new wx.BaaS.Query()
     if (params.search) {
       let nameQuery = new wx.BaaS.Query()
       nameQuery.contains('name', params.search)
-      let raceQuery = new wx.BaaS.Query()
-      for (let item in utils.race) {
-        if(utils.race.hasOwnProperty(item)) {
-          if (utils.race[item].name === params.search) {
-            raceQuery.compare('race', '=', item)
-          }
-        }
-      }
       let otherQuery = new wx.BaaS.Query()
       otherQuery.contains('text', params.search)
       searchQuery = wx.BaaS.Query.or(nameQuery, otherQuery)
     }
     let tempOffset = offset?offset:page*limit
-    let query = wx.BaaS.Query.and(collectibleQuery, validQuery, costQuery, factionQuery, modeQuery, typeQuery, rarityQuery, seriesQuery, searchQuery)
+    let query = wx.BaaS.Query.and(collectibleQuery, validQuery, costQuery, factionQuery, modeQuery, typeQuery, raceQuery, rarityQuery, seriesQuery, searchQuery)
     tableObj.setQuery(query).orderBy(['-set_id', 'cost']).limit(limit).offset(tempOffset).find().then(res => {
+      resolve(res.data)
+    }, err => {
+      reject(err)
+    })
+  })
+}
+
+export function getBattlegroundCards(params, limit=20, page=0, offset=0, orderBy='tier') {
+  return new Promise((resolve, reject) => {
+    let tableObj = new wx.BaaS.TableObject(tableID.battlegroundCardTableID)
+    let tierQuery = new wx.BaaS.Query()
+    if (params.tier) {
+      tierQuery.compare('tier', '=', params.tier)
+    }
+    let heroQuery = new wx.BaaS.Query()
+    if (params.hero && params.hero.id !== 'all') {
+      heroQuery.compare('hero', '=', params.hero.id)
+    }
+    let typeQuery = new wx.BaaS.Query()
+    if (params.type && params.type.id !== 'all') {
+      typeQuery.compare('minionType', '=', params.type.id)
+    }
+    let attackQuery = new wx.BaaS.Query()
+    if (params.attack && params.attack.id !== 'all') {
+      if (params.attack.id === '10') {
+        attackQuery.compare('attack', '>=', 10)
+      } else {
+        attackQuery.compare('attack', '=', params.attack.id)
+      }
+    }
+    let healthQuery = new wx.BaaS.Query()
+    if (params.health && params.health.id !== 'all') {
+      if (params.health.id === '10') {
+        healthQuery.compare('health', '>=', 10)
+      } else {
+        healthQuery.compare('health', '=', params.health.id)
+      }
+    }
+    let keywordsQuery = new wx.BaaS.Query()
+    if (params.keywords && params.keywords.id !== 'all') {
+      keywordsQuery.in('keywords', [params.keywords.id])
+    }
+    let vallidQuery = new wx.BaaS.Query()
+    vallidQuery.compare('outTier', '=', 'all')
+    let searchQuery = new wx.BaaS.Query()
+    if (params.search) {
+      let nameQuery = new wx.BaaS.Query()
+      nameQuery.contains('name', params.search)
+      let otherQuery = new wx.BaaS.Query()
+      otherQuery.contains('text', params.search)
+      searchQuery = wx.BaaS.Query.or(nameQuery, otherQuery)
+    }
+    if (params.orderBy) {
+      orderBy = params.orderBy.id
+    }
+    let tempOffset = offset?offset:page*limit
+    let query = wx.BaaS.Query.and(tierQuery, heroQuery, typeQuery, attackQuery, healthQuery, typeQuery, keywordsQuery, vallidQuery, searchQuery)
+    tableObj.setQuery(query).orderBy(['-hero', orderBy]).limit(limit).offset(tempOffset).find().then(res => {
       resolve(res.data)
     }, err => {
       reject(err)
@@ -204,6 +258,23 @@ export function getCardDetail(params) {
     })
   })
 }
+
+export function getBattlegroundCardDetail(params) {
+  return new Promise((resolve, reject) => {
+    let tableObj = new wx.BaaS.TableObject(tableID.battlegroundCardTableID)
+    let query = new wx.BaaS.Query()
+    if (params.hsId) {
+      query.compare('hsId', '=', params.hsId)
+    } else {
+      resolve()
+    }
+    tableObj.setQuery(query).find().then(res => {
+      resolve(res.data.objects)
+    }, err => {
+      reject(err)
+    })
+  })
+} 
 
 export function getWinRateData(params, orderBy='games') {
   return new Promise((resolve, reject) => {
@@ -572,7 +643,17 @@ export function getArticleList(params, limit=10, page=0, orderBy=['-top', '-orde
     if (params && params.mainArticleId) {
       query.compare('main_article', '=', params.mainArticleId)
     }
-    MyContentGroup.setQuery(query).orderBy(orderBy).limit(limit).offset(page*limit).find().then(res => {
+    let searchQuery = new wx.BaaS.Query()
+    if (params && params.search) {
+      let titleQuery = new wx.BaaS.Query()
+      let regExp = new RegExp(params.search, 'i')
+      titleQuery.matches('title', regExp)
+      let authorQuery = new wx.BaaS.Query()
+      authorQuery.matches('author', regExp)
+      searchQuery = wx.BaaS.Query.or(titleQuery, authorQuery)
+    }
+    let queryAll = wx.BaaS.Query.and(query, searchQuery)
+    MyContentGroup.setQuery(queryAll).orderBy(orderBy).limit(limit).offset(page*limit).find().then(res => {
       resolve(res.data)
     }, err => {
       reject(err)
@@ -598,6 +679,67 @@ export function getDeckCardList(params) {
     query.in('dbfId', params.list)
     tableObj.setQuery(query).limit(30).find().then(res => {
       resolve(res.data)
+    }, err => {
+      reject(err)
+    })
+  })
+}
+
+export function getRevealCardsList(params, limit=20, page=0, orderBy='reveal_time') {
+  return new Promise((resolve, reject) => {
+    let tableObj = new wx.BaaS.TableObject(tableID.revealCardsTableID)
+    let timeQuery = new wx.BaaS.Query()
+    let ts_now = Math.round(new Date().getTime()/1000)
+    if (params&&params.hasOwnProperty('revealed')) {
+      if (params.revealed) {
+        timeQuery.compare('reveal_time', '<=', ts_now)
+      } else {
+        timeQuery.compare('reveal_time', '>', ts_now)
+      }
+    }
+    let factionQuery = new wx.BaaS.Query()
+    if (params&&params.faction) {
+      factionQuery.compare('cardClass', '=', params.faction)
+    }
+    let revealCard = new wx.BaaS.Query()
+    if (params&&params.hasOwnProperty('card_detail')) {
+      if (params.card_detail) {
+        timeQuery.isNotNull('name')
+      } else {
+        timeQuery.isNull('name')
+      }
+    }
+    let childList = new wx.BaaS.Query()
+    if (params&&params.childList) {
+      childList.in('dbfId', params.childList)
+    }
+    let validQuery = new wx.BaaS.Query()
+    if (params&&params.hasOwnProperty('collectible')) {
+      validQuery.compare('collectible', '=', params.collectible)
+    }
+    
+    let query = wx.BaaS.Query.and(timeQuery, factionQuery, validQuery, childList)
+    tableObj.setQuery(query).limit(limit).orderBy(orderBy).offset(page*limit).find().then(res => {
+      resolve(res.data)
+    }, err => {
+      reject(err)
+    })
+  })
+}
+
+export function getRevealCardDetail(params) {
+  return new Promise((resolve, reject) => {
+    let tableObj = new wx.BaaS.TableObject(tableID.revealCardsTableID)
+    let query = new wx.BaaS.Query()
+    if (params.dbfId) {
+      query.compare('dbfId', '=', params.dbfId)
+    } else if (params.hsId) {
+      query.compare('hsId', '=', params.hsId)
+    } else {
+      resolve()
+    }
+    tableObj.setQuery(query).find().then(res => {
+      resolve(res.data.objects)
     }, err => {
       reject(err)
     })

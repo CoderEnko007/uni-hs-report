@@ -3,26 +3,39 @@
   <div class="search-bar-form">
     <div class="serach-bar-box">
       <div class="zan-icon zan-icon-search"></div>
-      <input type="text" :placeholder="placeholder" @input="handleInput" @confirm="handleConfirm">
+      <input type="text" v-model="message" :placeholder="placeholder" @input="handleInput" @confirm="handleConfirm">
     </div>
+  </div>
+  <div class="reset-btn" v-if="reset">
+    <button @click="handleReset">重 置</button>
   </div>
 </div>
 </template>
 <script>
 export default {
   name: 'SearchBar',
-  props: ["placeholder"],
+  props: ["placeholder", "reset"],
+  data() {
+    return {
+      message: ''
+    }
+  },
   methods: {
     handleConfirm(e) {
       this.$emit('handleConfirm', e.mp.detail.value)
     },
     handleInput(e) {
       this.$emit('update:search', e.mp.detail.value.trim())
+    },
+    handleReset(e) {
+      this.message = ''
+      this.$emit('resetFilter')
     }
   },
 }
 </script>
 <style lang="scss" scoped>
+@import '../style/color';
 .search-bar {
   display: flex;
   /*padding: 20rpx 30rpx;*/
@@ -34,7 +47,7 @@ export default {
     border-radius: 34rpx;
     .serach-bar-box {
       padding-left: 72rpx;
-      font-size: 14px;
+      font-size: 28rpx;
       color: #999;
       .zan-icon {
         position: absolute;
@@ -43,8 +56,25 @@ export default {
         transform: translateY(-50%);
       }
       input {
-        height: 68rpx;
-        line-height: 68rpx;
+        height: 58rpx;
+        line-height: 58rpx;
+      }
+    }
+  }
+  .reset-btn {
+    button {
+      float: right;
+      height: 100%;
+      line-height: 64rpx;
+      width: 120rpx;
+      padding: 0;
+      font-size: 26rpx;
+      color: white;
+      background-color: $palette-blue;
+      border-radius: 74rpx;
+      margin-left: 18rpx;
+      &:after {
+        border: none;
       }
     }
   }

@@ -14,6 +14,9 @@
           <single-cards></single-cards> 
         </swiper-item>
         <swiper-item>
+          <battleground-cards></battleground-cards>
+        </swiper-item>
+        <swiper-item>
           <arena-cards></arena-cards>
         </swiper-item>
       </swiper>
@@ -26,17 +29,20 @@
   import NavBar from '@/components/NavBar'
   import SingleCards from './pages/SingleCards'
   import ArenaCards from './pages/ArenaCards'
+  import BattlegroundCards from './pages/BattlegroundCards'
   
   export default {
     components: {
       NavBar,
       SingleCards,
-      ArenaCards
+      ArenaCards,
+      BattlegroundCards
      },
     data() {
       return {
         tabbar: [
           {id: 'single_card', text: '单卡查询'},
+          {id: 'battleground_card', text: '酒馆战棋'},
           {id: 'arena_card', text: '竞技场数据'},
         ],
         activeIndex: 0,
@@ -89,7 +95,7 @@
       height: 100%;
       width: 232rpx;
       line-height: 89rpx;
-      font-size: 16px;
+      font-size: 32rpx;
       color: #666;
       text-align: center;
       &:after {

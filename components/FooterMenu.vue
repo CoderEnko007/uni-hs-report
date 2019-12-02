@@ -76,7 +76,7 @@ export default {
   border-top: 1rpx solid $palette-bg-gray;
   background-color: #fff;
   border-bottom:1rpx solid $palette-bg-gray;
-  box-shadow:0px 0px 4px #c0c0c0;
+  box-shadow:0 0 8rpx #c0c0c0;
   .like-block {
     height: 90rpx;
     width: 240rpx;
@@ -89,9 +89,9 @@ export default {
     display: inline-block;
     background-color: white;
     border-radius: 0;
-    font-size: 13px;
+    font-size: 26rpx;
     .icon {
-      font-size: 16px;
+      font-size: 32rpx;
       color: $palette-blue;
       margin-right: 20rpx;
     }

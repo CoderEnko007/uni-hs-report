@@ -24,6 +24,18 @@ export function formatTime (date, full=false) {
   }
 }
 
+export function formatTimerTime (date) {
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+
+  const hour = date.getHours()
+  const minute = date.getMinutes()
+  const second = date.getSeconds()
+  
+  return `${formatNumber(month)}月${formatNumber(day)}日 ${formatNumber(hour)}:${formatNumber(minute)}:${formatNumber(second)}`
+}
+
 export function formatNowTime(date) {
   const year = date.getFullYear()
   const month = date.getMonth() + 1
@@ -366,10 +378,34 @@ const rankMode = [
 
 const factionColors = ['#ff7d0a', '#abd473', '#69ccf0', '#f58cba', '#ccc', '#fff569', '#0070de', '#9482c9', '#c79c6e']
 
+const battlegroundMinionType = [
+  {id: 15, name: '恶魔'},
+  {id: 17, name: '机械'},
+  {id: 26, name: '全部'},
+  {id: 20, name: '野兽'},
+  {id: 14, name: '鱼人'}
+]
+
+const battlegroundKeywords = [
+  {id: 61, name: '超杀', ename: 'overkill'},
+  {id: 1, name: '嘲讽', ename: 'taunt'},
+  {id: 4, name: '冲锋', ename: 'charge'},
+  {id: 66, name: '磁力', ename: 'modular'},
+  {id: 21, name: '发现', ename: 'discover'},
+  {id: 11, name: '风怒', ename: 'windfury'},
+  {id: 34, name: '进化', ename: 'adapt'},
+  {id: 32, name: '剧毒', ename: 'poisonous'},
+  {id: 17, name: '免疫', ename: 'immune'},
+  {id: 3, name: '圣盾', ename: 'divine-shield'},
+  {id: 12, name: '亡语', ename: 'deathrattle'},
+  {id: 8, name: '战吼', ename: 'battlecry'}
+]
+
 export default {
   adsOpenFlag,
   formatNumber,
   formatTime,
+  formatTimerTime,
   formatNowTime,
   timesFun,
   genCardsImageURL,
@@ -389,5 +425,7 @@ export default {
     dustImage
   },
   gameMode,
-  rankMode
+  rankMode,
+  battlegroundMinionType,
+  battlegroundKeywords
 }

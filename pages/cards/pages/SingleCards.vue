@@ -2,7 +2,7 @@
   <div class="single-card-container">
     <div class="filter">
       <div class="search-bar">
-        <SearchBar :search.sync="filter.search" @handleConfirm="handleSearch" placeholder="请输入卡牌名称、规则或者属性"></SearchBar>
+        <SearchBar :search.sync="filter.search" :reset='true' @resetFilter="resetFilter" @handleConfirm="handleSearch" placeholder="请输入卡牌名称、规则或者属性"></SearchBar>
       </div>
       <div class="cost_filter">
         <ul class="cards_cost">
@@ -25,9 +25,11 @@
         <div class="filter_item_menu">
           <div class="menu_block" v-show="selectedFilterTabItem!==null">
             <FilterMenu v-for="(filter, index) in filterTabBar"
+                        :ref="filter.name"
                         :filter="filter"
                         :key="index"
                         :show="selectedFilterTabItem===filter.name"
+                        :colNum="filter.name==='series'?3:2"
                         @filterMenuClick="handleFilterMenuClick"
             ></FilterMenu>
           </div>
@@ -40,6 +42,7 @@
                 @cardClick="handleCardClick"
                 @scrollToBottom="scrollToBottom"
                 @scrollToTop="scrollToTop"
+                :largeImg='true'
                 :loading="more"
                 :nodata="!more&&!cardsList.length"></CardList>
     </div>
@@ -49,6 +52,7 @@
   import { mapGetters } from 'vuex'
   import { getCardPicture } from "@/utils";
   import utils from '@/utils'
+  import HeroesPanel from '@/components/HeroesPanel'
   import SearchBar from '@/components/SearchBar'
   import FilterMenu from '@/components/FilterMenu'
   import CardList from '@/components/CardList'
@@ -63,10 +67,19 @@
     rarity: null,
     series: null,
   }
+  const defaultFilterList = [
+    {name: 'faction', text: '职业', items: [], selected: '职业'},
+    {name: 'mode', text: '游戏模式', items: [], selected: '游戏模式'},
+    {name: 'type', text: '类型', items: [], selected: '类型'},
+    {name: 'race', text: '种族', items: [], selected: '种族'},
+    {name: 'rarity', text: '稀有度', items: [], selected: '稀有度'},
+    {name: 'series', text: '扩展包', items: [], selected: '扩展包'}
+  ]
   export default {
     name: 'SingleCards',
     components: {
       SearchBar,
+      HeroesPanel,
       FilterMenu,
       CardList,
     },
@@ -83,6 +96,8 @@
       return {
         test: '',
         filter: Object.assign({}, defaultFilter),
+        selectedFaction: '',
+        factionIcons: [],
         costList: [
           {cost: 0, icon: '/static/mana/0.png'},
           {cost: 1, icon: '/static/mana/1.png'},
@@ -93,13 +108,7 @@
           {cost: 6, icon: '/static/mana/6.png'},
           {cost: 7, icon: '/static/mana/7+.png'}
         ],
-        filterTabBar: [
-          {name: 'faction', text: '职业', items: [], selected: '职业'},
-          {name: 'mode', text: '游戏模式', items: [], selected: '游戏模式'},
-          {name: 'type', text: '类型', items: [], selected: '类型'},
-          {name: 'rarity', text: '稀有度', items: [], selected: '稀有度'},
-          {name: 'series', text: '扩展包', items: [], selected: '扩展包'}
-        ],
+        filterTabBar: utils.deepCopy(defaultFilterList),
         selectedFilterTabItem: null,
         page: 0,
         more: true,
@@ -108,12 +117,33 @@
       }
     },
     methods: {
+      resetFilter() {
+        this.filter = Object.assign({}, defaultFilter)
+        for (let index in this.filterTabBar) {
+          if (this.filterTabBar.hasOwnProperty(index)) {
+            this.filterTabBar[index].selected = defaultFilterList[index].selected
+            this.$refs[this.filterTabBar[index].name][0].resetFilter()
+          }
+        }
+        this.genCardsList(true)
+      },
+      genFactionIcons() {
+        this.factionIcons = []
+        for (let key in utils.faction) {
+          if (utils.faction.hasOwnProperty(key)) {
+            this.factionIcons.push({id: key, name: utils.faction[key].name, image: utils.faction[key].image})
+          }
+        }
+      },
       genSeriesList() {
         this.series.unshift({id: 'all', name: '全部扩展包', mode: 'all'})
-        if (this.series.length%2) {
-          this.series.push({})
+        let emptyNum = this.series.length % 3
+        if(emptyNum) {
+          for (let i=0; i<(3-emptyNum); i++) {
+            this.series.push({})
+          }
         }
-        this.filterTabBar[4].items = this.series
+        this.filterTabBar[5].items = this.series
       },
       genFilterMenuItems() {
         let array = []
@@ -132,12 +162,21 @@
 
         array = []
         for (let key in utils.type) {
-          if (utils.type.hasOwnProperty(key)) {
+          if (utils.type.hasOwnProperty(key) && key!=='HERO_POWER') {
             array.push({id: key, name: utils.type[key].name})
           }
         }
         array.unshift({id: 'all', name: '全部类型'})
         this.filterTabBar[2].items = array
+
+        array = []
+        for (let key in utils.race) {
+          if (utils.race.hasOwnProperty(key)) {
+            array.push({id: key, name: utils.race[key].name})
+          }
+        }
+        array.unshift({id: 'all', name: '全部种族'})
+        this.filterTabBar[3].items = array
 
         array = []
         for (let key in utils.rarity) {
@@ -146,13 +185,22 @@
           }
         }
         array.unshift({id: 'all', name: '全部稀有度'})
-        this.filterTabBar[3].items = array
+        this.filterTabBar[4].items = array
 
         for (let filter of this.filterTabBar) {
-          if (filter.items.length % 2) {
+          if (filter.name !== 'series' && filter.items.length % 2) {
             filter.items.push({})
           }
         }
+      },
+      handleIconsClick(item) {
+        if (this.selectedFaction === item) {
+          this.selectedFaction = ({id: 'ALL'})
+        } else {
+          this.selectedFaction = item
+        }
+        this.filter.faction = this.selectedFaction
+        this.genCardsList(true)
       },
       handleFilterBarClick(item) {
         this.selectedFilterTabItem = this.selectedFilterTabItem === item.name?null:item.name
@@ -170,8 +218,9 @@
           case 'faction': this.filter.faction = filter.item; this.filterTabBar[0].selected=filter.item.name; break
           case 'mode': this.filter.mode = filter.item; this.filterTabBar[1].selected=filter.item.name; break
           case 'type': this.filter.type = filter.item; this.filterTabBar[2].selected=filter.item.name; break
-          case 'rarity': this.filter.rarity = filter.item; this.filterTabBar[3].selected=filter.item.name; break
-          case 'series': this.filter.series = filter.item; this.filterTabBar[4].selected=filter.item.name; break
+          case 'race': this.filter.race = filter.item; this.filterTabBar[3].selected=filter.item.name; break
+          case 'rarity': this.filter.rarity = filter.item; this.filterTabBar[4].selected=filter.item.name; break
+          case 'series': this.filter.series = filter.item; this.filterTabBar[5].selected=filter.item.name; break
           default: console.log(filter.name+' not found');
         }
         this.genCardsList(true)
@@ -258,6 +307,7 @@
     },
     mounted() {
       this.genSeriesList()
+      // this.genFactionIcons()
       this.genFilterMenuItems()
       this.genCardsList(true)
     },
@@ -291,6 +341,9 @@
       padding: 20rpx 30rpx;
     }
   }
+  .panel-faction {
+    padding: 0 30rpx 20rpx;
+  }
   .cost_filter {
     position: relative;
     padding: 0 30rpx;
@@ -309,24 +362,24 @@
         }
         .type_icon {
           position: relative;
-          width: 27px;
-          height: 27px;
+          width: 54rpx;
+          height: 54rpx;
           display: inline-block;
-          background: url('../../../static/mana/mana.png') no-repeat;
+          background: url('../../../static/mana/mana1.png') no-repeat;
           background-size: 100% 100%;
         }
         .type_icon_active {
           position: relative;
-          width: 27px;
-          height: 27px;
+          width: 54rpx;
+          height: 54rpx;
           display: inline-block;
           background: url('../../../static/mana/mana_active.png') no-repeat;
           background-size: 100% 100%;
         }
         .cost_num {
           position: absolute;
-          width: 22px;
-          height: 17px;
+          width: 44rpx;
+          height: 34rpx;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
@@ -341,8 +394,8 @@
       display: flex;
       justify-content: space-around;
       width: 100%;
-      font-size: 12px;
-      box-shadow: 0 3px 2px -3px #000;
+      font-size: 24rpx;
+      box-shadow: 0 1rpx 10rpx -6rpx #000;
       padding:0 30rpx;
       box-sizing:border-box;
       li {
@@ -371,7 +424,7 @@
     position: fixed;
     width: 100%;
     height: 100%;
-    padding-top: 121px;
+    padding-top: 232rpx;
   }
   .mask {
     position:fixed;

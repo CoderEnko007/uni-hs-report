@@ -3,8 +3,8 @@
              scroll-y="true"
              @scrolltolower='scrollToBottom'
              @scrolltoupper="scrollToTop"
-             :style="{height: winHeight-navHeight-41+'px'}">
-  <div class="card-board" v-for="(item, index) in list" :key="item.id" @click="handleBoardClick(item)">
+             :style="{height: scrollHeight}">
+  <div class="card-board" v-for="item in list" :key="item.id" @click="handleBoardClick(item)">
     <div class="cover">
       <img :src="item.cover" mode="aspectFill">
     </div>
@@ -32,9 +32,9 @@
       </div>
     </div>
   </div>
-  <load-more v-if="loading" :loading=true />
-  <load-more v-else-if="nodata" :nodata=true />
-  <load-more v-else :nomore=true />
+  <load-more v-if="loading" :loading='true' />
+  <load-more v-else-if="nodata" :nodata='true' />
+  <load-more v-else :nomore='true' />
 </scroll-view>
 </template>
 <script>
@@ -54,6 +54,18 @@ export default {
       'winHeight',
       'navHeight'
     ]),
+    scrollHeight() {
+      wx.getSystemInfo({
+        success: res => {
+          console.log(`computed scrollHeight---->1screenWidth:${res.screenWidth}, screenHeight:${res.screenHeight}`)
+          console.log(`computed scrollHeight---->1windowWidth:${res.windowWidth}, windowHeight:${res.windowHeight}`)
+        }
+      })
+      let ratio = this.winWidth/750
+      // 70+58+40
+      return this.winHeight-this.navHeight-(70+98)*ratio+'px'
+      // return this.winHeight-this.navHeight-115.5*ratio+'px'
+    }
   },
   data() {
     return {
@@ -103,7 +115,7 @@ export default {
     }
   }
   .title {
-    font-size: 16px;
+    font-size: 32rpx;
     font-weight: bold;
     margin: 18rpx 2rpx 0;
     .top {
@@ -112,7 +124,7 @@ export default {
     }
   }
   .desc {
-    font-size: 10px;
+    font-size: 20rpx;
     color: $palette-text-gray;
     margin: 12rpx 2rpx 0;
     overflow:hidden;
@@ -145,7 +157,7 @@ export default {
         left:60rpx;
         width: 220rpx;
         line-height: 40rpx;
-        font-size: 10px;
+        font-size: 20rpx;
         color: #000;
         overflow: hidden;
         text-overflow:ellipsis;
@@ -154,7 +166,7 @@ export default {
     }
     .info {
       line-height: 40rpx;
-      font-size: 10px;
+      font-size: 20rpx;
       color: $palette-text-gray;
       .icon {
         margin-right: 10upx;

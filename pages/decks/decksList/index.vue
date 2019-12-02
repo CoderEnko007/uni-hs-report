@@ -295,11 +295,11 @@ export default {
         display: inline-block;
         height: 24rpx;
         line-height: 24rpx;
-        margin-left:8px;
+        margin-left:16rpx;
         font-size: 19rpx;
         color: #999;
         border: 1rpx solid #ddd;
-        border-radius: 12px;
+        border-radius: 24rpx;
         padding: 3rpx 10rpx;
       }
       .btn-group {
@@ -328,7 +328,7 @@ export default {
             height: 100%;
             line-height: 96rpx;
             margin-left: 40rpx;
-            font-size: 14px;
+            font-size: 28rpx;
             font-weight: normal;
             color: #999;
           }
@@ -338,10 +338,10 @@ export default {
           }
           .separator {
             width: 25rpx;
-            height: 16px;
+            height: 32rpx;
             line-height:96rpx;
             text-align: center;
-            font-size: 14px;
+            font-size: 28rpx;
             color: #EEEEEE;
           }
         }
@@ -362,7 +362,7 @@ export default {
         position: relative;
         height: 100%;
         line-height: 86rpx;
-        font-size: 12px;
+        font-size: 24rpx;
         .picker-icon {
           position:absolute;
           top:50%;
@@ -373,7 +373,7 @@ export default {
         }
         .selector-item {
           text-align: center;
-          font-size: 13px;
+          font-size: 26rpx;
           color: $palette-blue;
         }
         .order-item {

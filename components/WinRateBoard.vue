@@ -47,7 +47,7 @@ export default {
     }
     .desc {
       margin: 25rpx 0 25rpx 13rpx;
-      font-size: 13px;
+      font-size: 26rpx;
       p.faction {
         color: #999999;
         line-height: 30rpx;

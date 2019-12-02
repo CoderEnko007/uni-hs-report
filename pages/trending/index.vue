@@ -11,8 +11,11 @@
     <div class="deck-list">
       <DeckList :list="deckList" @itemClick="handleDeckClick"></DeckList>
     </div>
-    <div class="ads" v-if="adsOpenFlag">
+    <!-- <div class="ads" v-if="adsOpenFlag">
       <ad unit-id="adunit-4c3a7a55067c0f6e"></ad>
+    </div> -->
+    <div class="video-ads" style="margin: 10rpx 30rpx;">
+      <ad unit-id="adunit-584598492a083dc8" ad-type="video" ad-theme="white"></ad>
     </div>
   </div>
 </template>
@@ -131,13 +134,13 @@ export default {
     h1 {
       height: 56rpx;
       line-height: 56rpx;
-      font-size: 28px;
+      font-size: 56rpx;
       font-weight: bold;
     }
     p.date {
       height: 44rpx;
       line-height: 44rpx;
-      font-size: 13px;
+      font-size: 26rpx;
       margin-top: 9rpx;
     }
     p.desc {
@@ -145,7 +148,7 @@ export default {
       height: 44rpx;
       right: 30rpx;
       bottom: 30rpx;
-      font-size: 13px;
+      font-size: 26rpx;
     }
   }
 }

@@ -89,7 +89,7 @@ export default {
       height: 100%;
       width: 232rpx;
       line-height: 89rpx;
-      font-size: 16px;
+      font-size: 32rpx;
       color: #666;
       text-align: center;
       &:after {

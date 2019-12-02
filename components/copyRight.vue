@@ -13,7 +13,7 @@ export default {
 .copyright {
   text-align:center;
   color:#ccc;
-  font-size:12px;
-  margin:10px 0 20px;
+  font-size:24rpx;
+  margin:20rpx 0 40rpx;
 }
 </style>

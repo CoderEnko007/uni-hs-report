@@ -48,9 +48,9 @@ export default {
   .panel-item {
     position: relative;
     width: 100%;
-    height: 60px;
-    line-height: 60px;
-    font-size: 14px;
+    height: 120rpx;
+    line-height: 120rpx;
+    font-size: 28rpx;
     background: #fff;
     padding: 0 30rpx;
     box-sizing: border-box;
@@ -83,21 +83,21 @@ export default {
         .name {
           height: 37rpx;
           line-height: 37rpx;
-          font-size: 13px;
+          font-size: 26rpx;
           color: #333;
         }
         .desc-meta {
           height: 30rpx;
           line-height: 30rpx;
           margin-top: 4rpx;
-          font-size: 11px;
+          font-size: 22rpx;
           color: #999;
           .dust-cost {
             display: inline-block;
             position: relative;
             height:32rpx;
             line-height:32rpx;
-            font-size: 11px;
+            font-size: 22rpx;
             img {
               position: absolute;
               width: 23rpx;
@@ -132,14 +132,14 @@ export default {
         .name {
           height: 22rpx;
           line-height: 22rpx;
-          font-size: 11px;
+          font-size: 22rpx;
           color: #999;
         }
         .desc-meta {
           height: 32rpx;
           line-height: 32rpx;
           margin-top: 10rpx;
-          font-size: 14px;
+          font-size: 28rpx;
           font-weight: bold;
           /*color: #333;*/
         }
@@ -150,7 +150,7 @@ export default {
         right: 0;
         transform: translateY(-50%);
         color: #999;
-        font-size: 14px;
+        font-size: 28rpx;
       }
     }
   }

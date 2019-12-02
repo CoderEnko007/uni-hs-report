@@ -52,7 +52,7 @@ export default {
       position: relative;
       width: 54rpx;
       height: 54rpx;
-      font-size: 12px;
+      font-size: 24rpx;
       color: white;
       text-align: center;
       opacity: 0.5;

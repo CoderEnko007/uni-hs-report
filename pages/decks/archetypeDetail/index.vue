@@ -13,21 +13,25 @@
           </div>
         </div>
         <div class="desc">
-          <div class="desc-item" v-show="archetypeDetail.real_winrate">
+          <div class="desc-item">
             <p class="item-name">总胜率</p>
-            <p class="item-meta color-light-green" :class="{'color-red': archetypeDetail.real_winrate<50}">{{archetypeDetail.real_winrate}}%</p>
+            <p class="item-meta color-light-green" :class="{'color-red': archetypeDetail.real_winrate<50}" v-if="archetypeDetail.real_winrate">{{archetypeDetail.real_winrate}}%</p>
+            <p class="item-meta" v-else>N/A</p>
           </div>
-          <div class="desc-item" v-show="archetypeDetail.real_games">
+          <div class="desc-item">
             <p class="item-name">总对局数</p>
-            <p class="item-meta">{{archetypeDetail.real_games}}</p>
+            <p class="item-meta" v-if="archetypeDetail.real_games">{{archetypeDetail.real_games}}</p>
+            <p class="item-meta" v-else>N/A</p>
           </div>
-          <div class="desc-item" v-show="archetypeDetail.popularity">
+          <div class="desc-item">
             <p class="item-name">热度</p>
-            <p class="item-meta">{{archetypeDetail.popularity}}%</p>
+            <p class="item-meta" v-if="archetypeDetail.popularity">{{archetypeDetail.popularity}}%</p>
+            <p class="item-meta" v-else>N/A</p>
           </div>
-          <div class="desc-item" v-show="archetypeDetail.faction_popularity">
+          <div class="desc-item">
             <p class="item-name">职业占比</p>
-            <p class="item-meta">{{archetypeDetail.faction_popularity}}%</p>
+            <p class="item-meta" v-if="archetypeDetail.faction_popularity">{{archetypeDetail.faction_popularity}}%</p>
+            <p class="item-meta" v-else>N/A</p>
           </div>
         </div>
       </div>
@@ -177,7 +181,7 @@
           :tableName="'对阵'+selectedFaction.name" @itemClick="handleDeckItemClick"></DeckTable>
       </div>
     </div>
-    <div class="video-ads" v-if="adsType==='video'">
+    <div class="video-ads" v-if="adsType==='video' || adsType==='both'">
       <ad unit-id="adunit-482444647f55f355" ad-type="video" ad-theme="white"></ad>
     </div>
     <load-more :nomore='true' />
@@ -301,21 +305,13 @@
           name: '德鲁伊',
           data: []
         }
-        this.matchupDetail = {
-          'Druid': [],
-          'Hunter': [],
-          'Mage': [],
-          'Paladin': [],
-          'Priest': [],
-          'Rogue': [],
-          'Shaman': [],
-          'Warlock': [],
-          'Warrior': [],
+        this.matchupDetail = { 
+          'Druid': [], 'Hunter': [], 'Mage': [], 'Paladin': [], 'Priest': [], 'Rogue': [], 'Shaman': [], 'Warlock': [], 'Warrior': [],
         }
         this.popDeck = Object.assign({}, defaultPopDeck)
         this.bestDeck = Object.assign({}, defaultBestDeck)
         this.bestMatchup = Object.assign({}, defaultBWGame),
-          this.worstMatchup = Object.assign({}, defaultBWGame)
+        this.worstMatchup = Object.assign({}, defaultBWGame)
       },
       getDeckCName(name) {
         for (let item of this.decksName) {
@@ -330,7 +326,6 @@
           title: '加载中',
           mask: false
         })
-        // wx.showNavigationBarLoading();
         let params = {}
         if (this.archetypeId) {
           params = {
@@ -342,8 +337,6 @@
           }
         } else {
           wx.hideLoading()
-          // wx.stopPullDownRefresh();
-          // wx.hideNavigationBarLoading()
           return
         }
         const res = await getArchetypeDetail(params)
@@ -414,8 +407,6 @@
             this.worstMatchup.show = true
           }
           wx.hideLoading()
-          // wx.stopPullDownRefresh();
-          // wx.hideNavigationBarLoading()
         }
       },
       genFactionIcons() {
@@ -510,7 +501,6 @@
     async mounted() {
       this.archetypeId = this.$root.$mp.query.id
       this.archetypeName = this.$root.$mp.query.name
-      // this.decksName = this.$store.state.cards.decksName
       await Promise.all([
         this.genFactionIcons(),
         this.genArchetypeDetail()
@@ -583,13 +573,13 @@
           .cname {
             height: 50rpx;
             line-height: 50rpx;
-            font-size: 25px;
+            font-size: 50rpx;
           }
           .ename {
             height: 24rpx;
             line-height: 24rpx;
             margin-top: 19rpx;
-            font-size: 12px;
+            font-size: 24rpx;
           }
         }
       }
@@ -609,12 +599,12 @@
           z-index: 2;
           .item-name {
             margin-top: 21rpx;
-            font-size: 13px;
+            font-size: 26rpx;
           }
           .item-meta {
             margin-top: 7rpx;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 32rpx;
           }
         }
       }
@@ -623,7 +613,7 @@
   .pop-deck, .board-panel {
     .no-data, .loading {
       padding: 0 30rpx;
-      font-size: 13px;
+      font-size: 26rpx;
       color: #999;
       height: 80rpx;
       text-align: center;
@@ -645,11 +635,11 @@
           .name-meta {
             height: 24rpx;
             line-height: 24rpx;
-            margin-left: 8px;
+            margin-left: 16rpx;
             font-size: 19rpx;
             color: #666;
             border: 1rpx solid #ddd;
-            border-radius: 12px;
+            border-radius: 24rpx;
             padding: 3rpx 10rpx;
           }
         }
@@ -664,7 +654,7 @@
         height: 33rpx;
         line-height: 33rpx;
         margin-bottom: 20rpx;
-        font-size: 12px;
+        font-size: 24rpx;
         color: #999;
         text-align: center;
         &:after, &:before {
@@ -672,7 +662,7 @@
           top: 50%;
           background: #ddd;
           content: "";
-          height: 1px;
+          height: 2rpx;
           width: 64rpx
         }
         &:before {
@@ -698,7 +688,7 @@
       .name {
         margin-right: 10rpx;
         color: $palette-blue;
-        font-size: 13px;
+        font-size: 26rpx;
       }
       .iconfont {
         color: $palette-blue;
@@ -706,7 +696,7 @@
     }
   }
   .panel {
-    margin: 0 15px;
+    margin: 0 30rpx;
   }
   .separator {
     width: 100%;
@@ -726,7 +716,7 @@
     }
   }
   .video-ads {
-    margin-top: 20rpx;
+    margin: 20rpx 30rpx 0;
   }
 }
 </style>

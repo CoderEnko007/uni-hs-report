@@ -113,7 +113,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-$spinkit-size: 4em !default;
+$spinkit-size: 2em !default;
 $spinkit-spinner-color: #337ab7 !default;
 .container {
 	position: absolute;
@@ -140,13 +140,13 @@ section {
 
 @keyframes sk-rotating-plane {
   0% {
-    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+    transform: perspective(240rpx) rotateX(0deg) rotateY(0deg);
   }
   50% {
-    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+    transform: perspective(240rpx) rotateX(-180.1deg) rotateY(0deg);
   }
   100% {
-    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+    transform: perspective(240rpx) rotateX(-180deg) rotateY(-179.9deg);
   }
 }
 
@@ -575,15 +575,15 @@ section {
 
 @keyframes sk-folding-cube-angle {
   0%, 10% {
-    transform: perspective(140px) rotateX(-180deg);
+    transform: perspective(280rpx) rotateX(-180deg);
     opacity: 0;
   }
   25%, 75% {
-    transform: perspective(140px) rotateX(0deg);
+    transform: perspective(280rpx) rotateX(0deg);
     opacity: 1;
   }
   90%, 100% {
-    transform: perspective(140px) rotateY(180deg);
+    transform: perspective(280rpx) rotateY(180deg);
     opacity: 0;
   }
 }

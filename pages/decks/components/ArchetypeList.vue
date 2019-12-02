@@ -30,7 +30,7 @@
       <scroll-view scroll-y='true'
         @scrolltolower='scrollToBottom'
         @scrolltoupper="scrollToTop"
-        :style="{height: winHeight-navHeight-194+'px'}">
+        :style="{height: scrollHeight}">
         <div class="table">
           <div class="table-tr content" v-for="(item, index) in genTableData" :key="index" @click="handleItemClick(item)">
             <div class="table-td col-1st">
@@ -114,6 +114,10 @@
         return this.rangePicker.list.map(item => {
           return item.text
         })
+      },
+      scrollHeight() {
+        let ratio = this.winWidth/750
+        return this.winHeight-this.navHeight-89*ratio-278*ratio+'px'
       }
     },
     methods: {
@@ -358,12 +362,12 @@
         top: 50%;
         right: 0;
         transform: translateY(-50%);
-        font-size: 10px;
-        height: 16px;
-        line-height: 16px;
-        border-radius: 10px;
+        font-size: 20rpx;
+        height: 32rpx;
+        line-height: 32rpx;
+        border-radius: 20rpx;
         text-align: center;
-        padding: 1px 6px;
+        padding: 2rpx 12rpx;
         background: $palette-blue;
         color: #fff;
         border: 1rpx solid $palette-blue;
@@ -386,7 +390,7 @@
         position: relative;
         height: 100%;
         line-height: 86rpx;
-        font-size: 13px;
+        font-size: 26rpx;
         .table-name {
           width: 265rpx;
           color: #999;
@@ -403,7 +407,7 @@
         }
         .selector-item {
           text-align: center;
-          font-size: 13px;
+          font-size: 26rpx;
           color: $palette-blue;
         }
         .order-item {
@@ -429,7 +433,7 @@
         .table-tr {
           display: table-row;
           width: 100%;
-          font-size: 13px;
+          font-size: 26rpx;
           .table-td {
             display: table-cell;
             span {
@@ -457,14 +461,18 @@
               transform: translateY(-50%);
               margin-left: 90rpx;
               p.cname {
+                width: 180rpx;
                 height: 37rpx;
                 line-height: 37rpx;
+                overflow:hidden;
+                text-overflow:ellipsis;
+                white-space:nowrap;
               }
               p.ename {
                 width: 180rpx;
                 height: 30rpx;
                 line-height: 30rpx;
-                font-size: 11px;
+                font-size: 22rpx;
                 color: #999;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -491,7 +499,7 @@
           }
           .order {
             position: relative;
-            font-size: 13px;
+            font-size: 26rpx;
             color: #333;
             img {
               position: absolute;
@@ -521,7 +529,7 @@
         }
         .float-right {
           float: right;
-          margin-right: 20px;
+          margin-right: 40rpx;
         }
       }
     }

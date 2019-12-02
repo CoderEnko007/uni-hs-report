@@ -18,6 +18,7 @@ const getters = {
   showBubble: state => state.settings.showBubble,
   adsOpenFlag: state => state.settings.adsOpenFlag,
   insertAdsFlag: state => state.settings.insertAdsFlag,
+  cardsInsertAdsFlag: state => state.settings.cardsInsertAdsFlag,
   fbiVersion: state => state.settings.fbiVersion,
   fbiKey: state => state.settings.fbiKey,
   fbiFlag: state => state.settings.fbiFlag,

@@ -13,7 +13,7 @@
       </div>
       <div class="sep pulse"></div>
       <div class="content">
-        <div class="block" v-for="(item, index) in 4" :key=index>
+        <div class="block" v-for="(item, index) in 4" :key='index'>
           <div class="line1 pulse"></div>
           <div class="line2 pulse"></div>
           <div class="line2 pulse"></div>
@@ -38,27 +38,6 @@
 </script>
 
 <style lang="scss" scoped>
-.pulse {
-  $from: #f5f5f5;
-  $to: scale-color($from, $lightness: -10%);
-
-  height: 100%;
-  width: 100%;
-  background: linear-gradient(-90deg, #efefef 0%, #fcfcfc 50%, #efefef 100%);
-  background-size: 400% 400%;
-  background-color: #f5f5f5;
-  animation: pulse 1.2s ease-in-out infinite;
-
-  @keyframes pulse {
-    0% {
-      background-position: 0% 0%
-    }
-
-    100% {
-      background-position: -135% 0%
-    }
-  }
-}
 .banner {
   width: 100%;
   height: 335upx;

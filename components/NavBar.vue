@@ -73,7 +73,7 @@ export default {
 <style lang="scss" scoped>
 .nav-bar {
   position: fixed !important;
-  min-height: 46px;
+  min-height: 92rpx;
   width: 100%;
   top: 0;
   background: #fff;
@@ -89,7 +89,7 @@ export default {
     margin: auto;
     max-width: 400rpx;
     text-align: center;
-    font-size: 18px;
+    font-size: 36rpx;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -117,12 +117,12 @@ export default {
       width: 100%;
       height: 64rpx;
       border: 1rpx solid #ECECEC;
-      border-radius: 16px;
+      border-radius: 32rpx;
       padding:0 12rpx;
       box-sizing:border-box;
     }
     .separator {
-      width: 1px;
+      width: 2rpx;
       height: 32rpx;
       background-color: #e5e5e5;
     }

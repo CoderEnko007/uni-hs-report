@@ -189,13 +189,13 @@ export default {
       left: 30rpx;
       top: 64rpx;
       h1 {
-        font-size: 28px;
+        font-size: 56rpx;
         color: #FFFFFF;
-        line-height: 28px;
+        line-height: 56rpx;
       }
       p {
         margin-top: 9rpx;
-        font-size: 13px;
+        font-size: 26rpx;
         color: #FFFFFF;
         line-height: 44rpx;
       }
@@ -215,7 +215,7 @@ export default {
       .desc {
         position:relative;
         min-height:200rpx;
-        font-size: 13px;
+        font-size: 26rpx;
         color: #666666;
         line-height: 40rpx;
         margin-bottom: 10rpx;
@@ -242,9 +242,9 @@ export default {
       }
     }
     p.text {
-      font-size: 13px;
+      font-size: 26rpx;
       color: #666666;
-      line-height: 40px;
+      line-height: 80rpx;
     }
     .email, .videoAd {
       height: 120rpx;
@@ -252,14 +252,14 @@ export default {
       border-bottom:1rpx solid #eee;
       .text {
         line-height:120rpx;
-        font-size: 15px;
+        font-size: 30rpx;
         color: #333333;
       }
       .desc {
         float: right;
         right: 101rpx;
         height: 40rpx;
-        font-size: 13px;
+        font-size: 26rpx;
         color: #999999;
         margin-right:13rpx;
         margin-top:40rpx;
@@ -270,7 +270,7 @@ export default {
         height: 40rpx;
         width: 88rpx;
         padding:0 15rpx;
-        font-size: 12px;
+        font-size: 24rpx;
         border-radius: 20rpx;
         box-sizing: border-box;
         border: 1rpx solid #ddd;
@@ -291,21 +291,21 @@ export default {
       border-bottom: 1 rpx solid #eee;
       .text {
         line-height: 120 rpx;
-        font-size: 15px;
+        font-size: 30rpx;
         color: #333333;
       }
       .play {
-        font-size:20px;
-        line-height:21px;
+        font-size: 40rpx;
+        line-height: 42rpx;
         vertical-align:middle;
         display:inline-block;
-        margin-left: 5px;
+        margin-left: 10rpx;
       }
     }
   }
   .feedback {
-    margin: 5px 5px 10px;
-    font-size: 12px;
+    margin: 10rpx 10rpx 20rpx;
+    font-size: 24rpx;
     color: $palette-light-blue;
     p {
       text-align:center;

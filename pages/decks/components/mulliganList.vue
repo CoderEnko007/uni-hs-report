@@ -224,22 +224,22 @@ export default {
     width: 302rpx;
     .card-header {
       width: 100%;
-      line-height: 29px;
+      line-height: 58rpx;
       text-align: center;
       color: #333;
-      font-size: 15px;
+      font-size: 30rpx;
     }
   }
   .data {
     display: flex;
     white-space: nowrap;
     text-align: center;
-    font-size: 14px;
+    font-size: 28rpx;
     width: 410rpx;
   }
   .table-tr {
     width: 100%;
-    font-size: 13px;
+    font-size: 26rpx;
     .table-td {
       display: inline-block;
       text-align: center;
@@ -251,18 +251,18 @@ export default {
     }
   }
   .data-block {
-    height: 58rpx;
-    margin-top: 4rpx;
+    height: 62rpx;
+    // padding-top: 4rpx;
     .data-item {
       display: inline-block;
       width: 165rpx;
-      line-height: 58rpx;
+      line-height: 62rpx;
       font-size: 25rpx;
       font-weight: bold;
       text-align: center;
       .iconfont {
         margin-left: 5rpx;
-        font-size: 13px;
+        font-size: 26rpx;
       }
     }
   }
@@ -272,7 +272,7 @@ export default {
 }
 .float-right {
   float: right;
-  margin-right: 20px;
+  margin-right: 40rpx;
 }
 .header {
   width: 100%;
@@ -287,7 +287,7 @@ export default {
 }
 .order {
   position: relative;
-  font-size: 13px;
+  font-size: 26rpx;
   color: #333;
   img {
     position:absolute;
@@ -302,7 +302,7 @@ export default {
   height: 58rpx;
   line-height: 58rpx;
   margin: 10rpx 30rpx 0;
-  font-size: 14px;
+  font-size: 28rpx;
   text-align: left;
   color: $palette-blue;
   white-space: nowrap;

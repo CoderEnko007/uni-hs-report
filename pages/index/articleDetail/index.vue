@@ -56,7 +56,7 @@
       <div class="footer">
         <FooterMenu :link="detail.link"></FooterMenu>
       </div>
-      <div class="float-btn" :style="{'bottom': isIphoneX?70+'px':50+'px'}">
+      <div class="float-btn" :style="{'bottom': isIphoneX?140+'rpx':100+'rpx'}">
         <floatBtnGroup @onCompare="openCompareDeckModal" :badgeCount="badgeCount" showCompare="true"></floatBtnGroup>
       </div>
       <compareDeckModal ref="cDeckModal" :currentBtnDeActive='true'></compareDeckModal>
@@ -214,7 +214,7 @@
   .article-detail {
     padding: 20rpx 30rpx 0;
     .title {
-      font-size: 16px;
+      font-size: 32rpx;
       font-weight: bold;
       .top {
         color: red;
@@ -244,7 +244,7 @@
           left: 50rpx;
           width: 220rpx;
           line-height: 40rpx;
-          font-size: 10px;
+          font-size: 20rpx;
           color: #000;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -253,7 +253,7 @@
       }
       .info {
         line-height: 40rpx;
-        font-size: 10px;
+        font-size: 20rpx;
         color: $palette-text-gray;
         .icon {
           margin-right: 10upx;
@@ -269,7 +269,7 @@
     }
     .sub-article {
       color: #0e67fa;
-      font-size: 16px;
+      font-size: 32rpx;
       text-decoration: underline;
       margin: 25rpx 0 0 0;
       .sub-card {
@@ -312,13 +312,13 @@
   }
   .float-btn {
     position: fixed;
-    bottom: 50px;
-    right: 20px;
+    bottom: 100rpx;
+    right: 40rpx;
     z-index: 999;
   }
   .notice {
     font-family: Helvetica, sans-serif;
-    font-size: 14px;
+    font-size: 28rpx;
     color: #666;
     line-height: 1.8;
     margin: 0 30rpx;

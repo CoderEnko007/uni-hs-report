@@ -2,28 +2,26 @@
   <scroll-view scroll-y='true'
     @scrolltolower='scrollToBottom'
     @scrolltoupper="scrollToTop"
-    :style="{height: winHeight-navHeight-166+'px'}">
+    :style="{height: scrollHeight+'px'}">
     <div class="card-list">
       <div class="card" v-for="(item, index) in list" :key="index" @click="handleClick(item, index)">
-        <img :src="item.image" mode="aspectFit">
+        <img :class="{'large': largeImg?true:false}" :src="item.image" mode="aspectFit">
         <p>{{item.name}}</p>
       </div>
     </div>
-    <div class="load-panel" style="margin-top:-20px; margin-bottom:5vh;">
-      <load-more v-if="loading" :loading=true />
-      <load-more v-else-if="nodata" :nodata=true />
-      <load-more v-else :nomore=true />
+    <div class="load-panel" style="margin-top:-40rpx; margin-bottom:5vh;">
+      <load-more v-if="loading" :loading='true' />
+      <load-more v-else-if="nodata" :nodata='true' />
+      <load-more v-else :nomore='true' />
     </div>
   </scroll-view>
 </template>
 <script>
-  import {
-    mapGetters
-  } from 'vuex'
+  import { mapGetters } from 'vuex'
   import loadMore from '@/components/load-more.vue'
   export default {
     name: 'CardList',
-    props: ['list', 'loading', 'nodata'],
+    props: ['list', 'loading', 'nodata', 'largeImg', 'noTabBar'],
     components: {
       loadMore
     },
@@ -31,8 +29,23 @@
       ...mapGetters([
         'winWidth',
         'winHeight',
-        'navHeight'
+        'navHeight',
+        'tabHeight'
       ]),
+      scrollHeight() {
+        // 89+104+74+60
+        const res = wx.getSystemInfoSync()
+        const tabHeight = res.screenHeight-res.windowHeight
+        console.log(res.windowHeight, this.navHeight, res.windowWidth, tabHeight)
+        let ratio = res.windowWidth/750
+        if (this.noTabBar) {
+          // 85+96
+          return res.windowHeight-this.navHeight-(85+96)*ratio+tabHeight
+          // return this.winHeight-this.navHeight-82*ratio
+        } else {
+          return res.windowHeight-this.navHeight-(89+234)*ratio
+        }
+      }
     },
     methods: {
       handleClick(item, index) {
@@ -66,14 +79,17 @@
       padding: 0 0 8rpx;
       margin-bottom: 65rpx;
       text-align: center;
-      font-size: 12px;
+      font-size: 24rpx;
 
       img {
         width: 100%;
         height: 100%;
         top: 0;
         left: 0;
-        transform: scale(1.3);
+        // transform: scale(1.1);
+      }
+      .large {
+        transform: scale(1.2);
       }
 
       p {

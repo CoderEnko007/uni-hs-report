@@ -85,16 +85,18 @@
 			wx.BaaS = requirePlugin('sdkPlugin')
 			wx.BaaS.wxExtend(wx.login, wx.getUserInfo, wx.requestPayment)
 			wx.BaaS.init(this.clientId)
+      
+      wx.preloadVideoAd && wx.preloadVideoAd(['adunit-0f4e12c094385f56'])
 
 			// 业务逻辑代码
       this.hotUpdate()
 			this.initSystemSetting()
 			this.initDecksName()
 			this.initCardSeries()
-			this.setNavHeight()
-			this.setWinWidthHeight()
 			this.setNotice()
 			this.Login()
+      this.setNavHeight()
+      this.setWinWidthHeight()
 		},
 		onShow: function(options) {
 			wx.BaaS.reportTemplateMsgAnalytics(options)
@@ -165,38 +167,38 @@
 }
 .header-title {
   width: 100%;
-  height: 30px;
-  line-height: 30px;
+  height: 60rpx;
+  line-height: 60rpx;
   color: white;
-  font-size: 14px;
+  font-size: 28rpx;
   font-weight: 500;
-  border-radius: 5px;
+  border-radius: 10rpx;
   margin: 5px 0;
-  padding-left: 14px;
+  padding-left: 28rpx;
   .header-btn {
     float: right;
     height:100%;
     line-height:60rpx;
-    margin-right: 15px;
-    border-radius:10px;
+    margin-right: 30rpx;
+    border-radius: 20rpx;
   }
 }
 .headline {
   position: relative;
   height: 96rpx;
   line-height: 96rpx;
-  font-size: 18px;
+  font-size: 36rpx;
   font-weight: bold;
   color: #333;
   .head-picker {
     display: inline-block;
     height: 24rpx;
     line-height: 24rpx;
-    margin-left:8px;
+    margin-left: 16rpx;
     font-size: 19rpx;
     color: #7e7e7e;
     border: 1rpx solid #ddd;
-    border-radius: 12px;
+    border-radius: 24rpx;
     padding: 3rpx 10rpx;
     // background: $palette-blue;
     // color: #fff;
@@ -229,7 +231,7 @@
 .loading {
   width: 100%;
   text-align: center;
-  font-size: 13px;
+  font-size: 26rpx;
   color: #ddd;
 }
 .notice-bar {
@@ -246,5 +248,26 @@
   width: 0;
   height: 0;
   color: transparent;
+}
+.pulse {
+  $from: #f5f5f5;
+  $to: scale-color($from, $lightness: -10%);
+
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(-90deg, #efefef 0%, #fcfcfc 50%, #efefef 100%);
+  background-size: 400% 400%;
+  background-color: #f5f5f5;
+  animation: pulse 1.2s ease-in-out infinite;
+
+  @keyframes pulse {
+    0% {
+      background-position: 0% 0%
+    }
+
+    100% {
+      background-position: -135% 0%
+    }
+  }
 }
 </style>

@@ -45,16 +45,16 @@ swiper {
       left: 30rpx;
       color: #FFF;
       h1 {
-        height: 28px;
-        line-height: 28px;
-        font-size: 28px;
+        height: 56rpx;
+        line-height: 56rpx;
+        font-size: 56rpx;
         font-weight: bold;
       }
       p {
-        height: 22px;
-        line-height: 22px;
+        height: 44rpx;
+        line-height: 44rpx;
         margin-top: 9rpx;
-        font-size: 13px;
+        font-size: 26rpx;
       }
     }
   }

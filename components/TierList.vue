@@ -10,7 +10,7 @@
         </div>
       </div>
     </div>
-    <div class="tier-block" :style="{'margin-top': showListFlag?'0':'-'+listHeight+'px'}">
+    <div class="tier-block" :style="{'margin-top': showListFlag?'0':'-'+listHeight*2+'rpx'}">
       <div class="tier-item"
            v-for="(item, index) in genTierList" :key="item.id"
            @click="handleItemClick(item)">
@@ -91,7 +91,7 @@ export default {
   .tier-header {
     position: relative;
     width: 100%;
-    height: 40px;
+    height: 80rpx;
     overflow: hidden;
     background:white;
     z-index:1;
@@ -99,28 +99,28 @@ export default {
       position: absolute;
       width: 100%;
       height: 100%;
-      line-height: 40px;
+      line-height: 80rpx;
       .title-block {
         padding:0 30rpx;
-        font-size: 14px;
+        font-size: 28rpx;
         font-weight: 700;
         color: #333;
         .title {
-          margin-left:26px;
+          margin-left: 52rpx;
         }
       }
       .icon {
-        width:40px;
+        width:80rpx;
         text-align:center;
         float: right;
-        font-size: 20px;
+        font-size: 40rpx;
         font-weight:100;
         color: #999;
       }
       img {
         position:absolute;
-        width: 20px;
-        height: 15px;
+        width: 40rpx;
+        height: 30rpx;
         top:50%;
         transform:translateY(-50%);
       }
@@ -137,9 +137,9 @@ export default {
     .tier-item {
       position: relative;
       width: 100%;
-      height: 60px;
-      line-height: 60px;
-      font-size: 14px;
+      height: 120rpx;
+      line-height: 120rpx;
+      font-size: 28rpx;
       background: #fff;
       padding:0 30rpx;
       &:active  {
@@ -171,18 +171,18 @@ export default {
           .name {
             height: 37rpx;
             line-height: 37rpx;
-            font-size: 13px;
+            font-size: 26rpx;
             color: #333;
           }
           .single-name {
-            font-size: 13px;
+            font-size: 26rpx;
             color: #333;
           }
           .desc-meta {
             height: 30rpx;
             line-height: 30rpx;
             margin-top: 4rpx;
-            font-size: 11px;
+            font-size: 22rpx;
             color: #999;
           }
         }
@@ -195,14 +195,14 @@ export default {
           .name {
             height: 22rpx;
             line-height: 22rpx;
-            font-size: 11px;
+            font-size: 22rpx;
             color: #999;
           }
           .desc-meta {
             height: 32rpx;
             line-height: 32rpx;
             margin-top: 10rpx;
-            font-size: 14px;
+            font-size: 28rpx;
             font-weight: bold;
             /*color: #333;*/
           }
@@ -214,7 +214,7 @@ export default {
         right: 0;
         transform: translateY(-50%);
         color: #999;
-        font-size: 14px;
+        font-size: 28rpx;
       }
     }
   }

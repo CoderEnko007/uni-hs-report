@@ -29,15 +29,15 @@ export default {
     height: 90rpx;
     line-height: 90rpx;
     padding: 0;
-    margin: 0 0 5px;
+    margin: 0 0 10rpx;
     /*background: rgba(0,0,0,0.48);*/
-    font-size: 14px;
+    font-size: 28rpx;
     text-align: center;
     border-radius: 50%;
     color:#000;
     background-color:#fff;
     /*box-shadow:0 4px 24px #eee;*/
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    box-shadow: 0 6rpx 12rpx rgba(0, 0, 0, 0.16), 0 6rpx 12rpx rgba(0, 0, 0, 0.23);
     // border:1rpx solid #eee;
     image {
       position: absolute;

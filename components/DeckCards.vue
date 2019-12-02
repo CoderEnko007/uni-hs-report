@@ -17,18 +17,18 @@
       </div>
       <div class="card-frame" :class="{'display-none': !card.name}">
         <div v-if="card.count && card.count!==1">
-          <img class="card-asset" :src="card.img" mode="aspectFill" :style="{right: 22+'px'}">
-          <span class="card-fade-countbox" :style="{background: 'linear-gradient(65deg,#313109,#313131 calc(100% - 120px),rgba(49,49,49,0) calc(100% - 50px),rgba(49,49,49,0))'}"></span>
+          <img class="card-asset" :src="card.img" mode="aspectFill" :style="{right: 44+'rpx'}">
+          <span class="card-fade-countbox" :style="{background: 'linear-gradient(65deg,#313109,#313131 calc(100% - 240rpx),rgba(49,49,49,0) calc(100% - 100rpx),rgba(49,49,49,0))'}"></span>
         </div>
         <div v-else>
           <img class="card-asset" :src="card.img" mode="aspectFill" :style="{right: 0}">
-          <span class="card-fade-countbox" :style="{background: 'linear-gradient(65deg,#313109,#313131 calc(100% - 96px),rgba(49,49,49,0) calc(100% - 26px),rgba(49,49,49,0));'}"></span>
+          <span class="card-fade-countbox" :style="{background: 'linear-gradient(65deg,#313109,#313131 calc(100% - 192rpx),rgba(49,49,49,0) calc(100% - 52rpx),rgba(49,49,49,0));'}"></span>
         </div>
         <span class="card-name">{{card.cname}}</span>
-        <div class="card-countbox" v-if="card.count && card.count!==1" style="width: 22px;">
+        <div class="card-countbox" v-if="card.count && card.count!==1" style="width: 44rpx;">
           <span class="card-count">{{card.count}}</span>
         </div>
-        <div class="card-countbox" v-else-if="card.count && card.count===1 && card.rarity === 'LEGENDARY'" style="width: 22px;">
+        <div class="card-countbox" v-else-if="card.count && card.count===1 && card.rarity === 'LEGENDARY'" style="width: 44rpx;">
           <span class="card-count">★</span>
         </div>
       </div>
