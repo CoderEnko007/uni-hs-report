@@ -68,7 +68,7 @@
       </p>
       <p v-else v-show="cardDetail.text" class="normal" style="display: flex;">
         <span class="f2" style="white-space: nowrap;">描述</span>：
-        <rich-text class="text" :nodes="cardDetail.text"></rich-text>
+        <rich-text class="text" :nodes="description"></rich-text>
       </p>
       <p v-show="cardDetail.flavor" class="flavor" @click="handleCopyBtn(cardDetail.flavor)">{{cardDetail.flavor}}</p>
     </div>
@@ -159,6 +159,20 @@ export default {
     showPreview() {
       return this.cardFormatted&&this.imageLoaded>=1
     },
+    description() {
+      console.log(this.cardDetail, this.upgradeCard, this.current)
+      if(!this.cardDetail.hero && (this.upgradeCard&&this.upgradeCard.gold_image)) {
+        if (this.current!==0) {
+          return this.upgradeCard.text
+        } else {
+          return this.cardDetail.text
+        }
+      } else if (!this.upgradeCard) {
+        return this.cardDetail.text
+      } else {
+        return null
+      }
+    }
   },
   methods: {
     async formatCardDetail(detail) {
@@ -179,7 +193,8 @@ export default {
           if (card.length&&card[0].image) {
             list.push({
               hsId: card[0].hsId,
-              image: card[0].image
+              image: card[0].image,
+              text: card[0].text
             })
           }
         }

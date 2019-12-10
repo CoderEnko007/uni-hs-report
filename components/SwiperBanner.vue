@@ -1,6 +1,6 @@
 <template>
-<div id="swiper">
-  <swiper indicator-dots autoplay circular interval="3000" indicator-active-color="#fff" indicator-color="rgba(255, 255, 255, .5)">
+<div class="container">
+  <swiper class="swiper-box" autoplay circular duration='200' :current="current" @change="change">
     <swiper-item class="item" v-for="(item, index) in banners" :key="item.id" @click="handleClick(item)">
       <img class="swiper-img" :src="item.image" mode="aspectFill">
       <div class="meta" v-if="index===0">
@@ -9,6 +9,12 @@
       </div>
     </swiper-item>
   </swiper>
+  <!-- 轮播指示点样式修改 -->
+  <view class="dots">
+  	<block v-for="(item,index) in banners.length" :key="item">
+  		<view class="dot" :class="index==current ? ' active' : ''"></view>
+  	</block>
+  </view>
 </div>
 </template>
 <script>
@@ -16,7 +22,8 @@ export default {
   props: ['banners', 'date'],
   data() {
     return {
-
+      current: 0,
+      mode: 'round'
     }
   },
   computed: {
@@ -30,15 +37,21 @@ export default {
   methods: {
     handleClick(item) {
       this.$emit('swiperClick', item)
+    },
+    change(e) {
+    	this.current = e.detail.current;
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-swiper {
-  height: 335rpx;
-  swiper-item {
+.container {
+  position: relative;
+  .swiper-box {
     position: relative;
+    width: 100%;
+    height: 335rpx;
+    // border-radius: 15rpx;
     .meta {
       position: absolute;
       top: 64rpx;
@@ -57,10 +70,34 @@ swiper {
         font-size: 26rpx;
       }
     }
+    .swiper-img {
+      width: 100%;
+      height: 100%;
+    }
   }
-}
-.swiper-img {
-  width: 100%;
-  height: 100%;
+  .dots {
+    position: absolute;
+    bottom: 20rpx;
+    left: 50%;
+    // 这里一定要注意兼容不然很可能踩坑
+    transform: translate(-50%, 0);
+    -webkit-transform: translate(-50%, 0);			
+    z-index: 99;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    .dot {
+      width: 30rpx;
+      height: 6rpx;
+      // transition: all .1s;
+      background: rgba(255, 255, 255, .4);
+      margin-right: 10rpx;
+    }
+    .active {
+      width: 30rpx;
+      height: 6rpx;
+      background: #ffffff;
+    }
+  }
 }
 </style>

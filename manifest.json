@@ -1,5 +1,5 @@
 {
-    "name" : "hs-report-station-beta",
+    "name" : "hs-report-station",
     "appid" : "__UNI__4009780",
     "description" : "",
     "versionName" : "1.0.0",
@@ -63,7 +63,7 @@
         "permission" : {},
         "plugins" : {
             "sdkPlugin" : {
-                "version" : "2.9.0",
+                "version" : "3.2.0",
                 "provider" : "wxc6b86e382a1e3294"
             }
         },

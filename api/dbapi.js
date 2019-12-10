@@ -131,7 +131,7 @@ export function getCardsList(params, limit=20, page=0, offset=0, orderBy='-set_i
     }
     let tempOffset = offset?offset:page*limit
     let query = wx.BaaS.Query.and(collectibleQuery, validQuery, costQuery, factionQuery, modeQuery, typeQuery, raceQuery, rarityQuery, seriesQuery, searchQuery)
-    tableObj.setQuery(query).orderBy(['-set_id', 'cost']).limit(limit).offset(tempOffset).find().then(res => {
+    tableObj.setQuery(query).orderBy(['-set_id', 'cost']).limit(limit).offset(tempOffset).find({'withCount': true}).then(res => {
       resolve(res.data)
     }, err => {
       reject(err)
@@ -189,7 +189,7 @@ export function getBattlegroundCards(params, limit=20, page=0, offset=0, orderBy
     }
     let tempOffset = offset?offset:page*limit
     let query = wx.BaaS.Query.and(tierQuery, heroQuery, typeQuery, attackQuery, healthQuery, typeQuery, keywordsQuery, vallidQuery, searchQuery)
-    tableObj.setQuery(query).orderBy(['-hero', orderBy]).limit(limit).offset(tempOffset).find().then(res => {
+    tableObj.setQuery(query).orderBy(['-hero', orderBy]).limit(limit).offset(tempOffset).find({'withCount': true}).then(res => {
       resolve(res.data)
     }, err => {
       reject(err)
@@ -311,24 +311,6 @@ export function getDeckName(params, limit=1000) {
   })
 }
 
-export function test(params, limit=1000, page=0, orderBy='-game_count') {
-  return new Promise((resolve, reject) => {
-    let tableObj = new wx.BaaS.TableObject(tableID.standDecksTableID)
-    if (params.mode && params.mode === 'Wild') {
-      tableObj = new wx.BaaS.TableObject(tableID.wildDecksTableID)
-    }
-    let cardQuery = new wx.BaaS.Query()
-    if (params && params.card) {
-      cardQuery.in('card_array', params.card)
-    }
-    tableObj.setQuery(cardQuery).orderBy(orderBy).limit(limit).offset(page*limit).find().then(res => {
-      resolve(res.data)
-    }, err => {
-      reject(err)
-    })
-  })
-}
-
 export function getDeckList(params, limit=20, page=0, orderBy='-game_count') {
   return new Promise((resolve, reject) => {
     let tableObj = new wx.BaaS.TableObject(tableID.standDecksTableID)
@@ -363,7 +345,7 @@ export function getDeckList(params, limit=20, page=0, orderBy='-game_count') {
       cardQuery.in('card_array', params.card)
     }
     let query = wx.BaaS.Query.and(timeRangeQuery, modeQuery, factionQuery, archetypeQuery, collectionQuery, cardQuery)
-    tableObj.setQuery(query).orderBy(orderBy).limit(limit).offset(page*limit).find().then(res => {
+    tableObj.setQuery(query).orderBy(orderBy).limit(limit).offset(page*limit).find({'withCount': true}).then(res => {
       resolve(res.data)
     }, err => {
       reject(err)
@@ -585,7 +567,7 @@ export function getCustomerSetting(userID) {
     let userObj = new wx.BaaS.User()
     let query = new wx.BaaS.Query()
     query.compare('user', '=', userObj.getWithoutData(userID))
-    tableObj.setQuery(query).expand('user').find().then(res => {
+    tableObj.setQuery(query).expand('user').find({"withCount": true}).then(res => {
       resolve(res.data)
     }, err => {
       reject(err)
@@ -653,7 +635,7 @@ export function getArticleList(params, limit=10, page=0, orderBy=['-top', '-orde
       searchQuery = wx.BaaS.Query.or(titleQuery, authorQuery)
     }
     let queryAll = wx.BaaS.Query.and(query, searchQuery)
-    MyContentGroup.setQuery(queryAll).orderBy(orderBy).limit(limit).offset(page*limit).find().then(res => {
+    MyContentGroup.setQuery(queryAll).orderBy(orderBy).limit(limit).offset(page*limit).find({'withCount': true}).then(res => {
       resolve(res.data)
     }, err => {
       reject(err)
@@ -719,7 +701,7 @@ export function getRevealCardsList(params, limit=20, page=0, orderBy='reveal_tim
     }
     
     let query = wx.BaaS.Query.and(timeQuery, factionQuery, validQuery, childList)
-    tableObj.setQuery(query).limit(limit).orderBy(orderBy).offset(page*limit).find().then(res => {
+    tableObj.setQuery(query).limit(limit).orderBy(orderBy).offset(page*limit).find({"withCount": true}).then(res => {
       resolve(res.data)
     }, err => {
       reject(err)

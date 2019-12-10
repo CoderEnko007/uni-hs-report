@@ -12,7 +12,7 @@
       <swiper class="content" :easing-function="easeInOutCubic" :duration="100" :style="'height:'+contentHeight" @change="swiperChange"
        :current="currentTab">
         <swiper-item>
-          <div class="swiper">
+          <div class="swiper-block">
             <div class="notice-bar" v-show="noticeContent.display">
               <cmd-notice-bar scrollable :text="noticeText.text" mode="close" @click="handleNoticeClick"></cmd-notice-bar>
             </div>
@@ -41,14 +41,14 @@
             <div class="extra-btn">
               <div class="data-vision" @click="handleHSVisionClick">
                 <img class="btn-img" src="/static/icons-v2/trending.png" mode="aspectFit">
-                <span class="text">职业趋势</span>
+                <span class="text">职业强度趋势</span>
                 <span class="iconfont">&#xe600;</span>
               </div>
-              <div class="data-vision" @click="handleRevealClick">
+              <!-- <div class="data-vision" @click="handleRevealClick">
                 <img class="btn-img" src="/static/icons-v2/Set_DRAGONS.png" style="width:42rpx" mode="aspectFit">
                 <span class="text">新卡发布</span>
                 <span class="iconfont">&#xe600;</span>
-              </div>
+              </div> -->
             </div>
           </div>
           <div class="ads" style="margin: 15upx 0 0 0;" v-if="adsType!=='video'">
@@ -364,7 +364,7 @@
         this.tierListNum = 0
         let params = {rankRange: this.rangePicker.list[this.rangePicker.selectedItem].rank_range}
         getArchetypeList(params).then(res => {
-          this.tierListNum = res.meta.total_count
+          this.tierListNum = res.objects.length
           for (let index in this.tierList) {
             if (this.tierList.hasOwnProperty(index)) {
               this.tierList[index].list = res.objects.filter(item => {
@@ -795,9 +795,13 @@
     margin-top: 85rpx;
     width: 100%;
     z-index: 1;
-    // .notice-bar {
-    //   margin-top: 10rpx;
-    // }
+    .swiper-block {
+      position: relative;
+      // margin: 0 30rpx;
+      // .notice-bar {
+      //   border-radius: 15rpx 15rpx 0 0;
+      // }
+    }
   }
   .rank-panel {
     padding: 0 30rpx;
@@ -882,7 +886,7 @@
   }
   .data-vision {
    position: relative;
-   width: 45%;
+   width: 100%;
    margin-top: 20rpx;
    background: #FAFAFA;
    line-height: 90rpx;
