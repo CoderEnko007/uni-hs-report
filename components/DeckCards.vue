@@ -37,10 +37,16 @@
 </template>
 <script>
 import {genTileImageURL, iFanrTileImageURL} from "@/utils";
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'DeckCards',
   props: ['cards', 'colNum', 'ifanrTile', 'smallSpacing', 'mulligan'],
+  computed: {
+    ...mapGetters([
+      'deck_tile_resource'
+    ])
+  },
   data() {
     return {
       formatData: null
@@ -50,8 +56,8 @@ export default {
     showCount(item) {
       return item.count === '★' || item.count > 1;
     },
-    genTileImage(hsId) {
-      return genTileImageURL(hsId)
+    genTileImage(hsId, source) {
+      return genTileImageURL(hsId, source)
     },
     iFanrTileImage(tile) {
       return iFanrTileImageURL(tile)
@@ -76,7 +82,7 @@ export default {
           if (this.ifanrTile) {
             card['img'] = card.img_tile_link
           } else {
-            card['img'] = this.genTileImage(card.card_hsid)
+            card['img'] = this.genTileImage(card.card_hsid, this.deck_tile_resource)
           }
 
           // if (card.rarity === 'LEGENDARY') {

@@ -15,6 +15,11 @@
       <span class="icon iconfont" v-else>&#xe603;</span>
       <span>收藏套牌</span>
     </button>
+    <div class="separator" v-if="showSubscribe"></div>
+    <button v-if="showSubscribe" @click="handleSubscribe">
+      <span class="icon iconfont">&#xe6ad;</span>
+      <span>订阅周报</span>
+    </button>
     <div class="separator" v-if="link"></div>
     <button v-if="link" @click="handleCopyLink">
       <span class="icon iconfont">&#xe789;</span>
@@ -26,7 +31,7 @@
 import { mapGetters } from 'vuex' 
 export default {
   name: 'FooterMenu',
-  props: ['showCollectBtn', 'showExportBtn', 'collected', 'link'],
+  props: ['showCollectBtn', 'showExportBtn', 'showSubscribe', 'collected', 'link'],
   data() {
     return {
 
@@ -48,6 +53,56 @@ export default {
             title: '网页已复制到剪贴板'
           })
         }
+      })
+    },
+    handleSubscribe() {
+      let tmplIds = 'jR3I60LZRN8RuTDwpiZHuQ24Euvte5hI2RLsIaw0PJQ'
+      wx.requestSubscribeMessage({
+        tmplIds: [tmplIds],
+        success: (res) => {
+          let subscription = []
+          if (res[tmplIds] === 'accept') {
+            subscription.push({
+              template_id: tmplIds,
+              subscription_type: 'once',
+            })
+            wx.BaaS.subscribeMessage({subscription}).then(res => {
+              // success
+              console.log('subscribeMessage success', res)
+            }, err => {
+              // fail
+              console.log('subscribeMessage fail', err)
+            })
+            wx.showToast({
+              title:'订阅成功'
+            })
+          } else if (res[tmplIds] === 'reject') {
+            wx.showModal({
+              title:'订阅消息',
+              content:'您已拒绝了订阅消息，如需重新订阅请前往设置打开。',
+              confirmText:'去设置',
+              success: res => {
+                if (res.confirm) {
+                  wx.openSetting({})
+                }
+              }
+            })
+          }
+        },
+        fail: err => {
+          console.log('requestSubscribeMessage err', err)
+          wx.showModal({
+            title:'订阅消息',
+            content:'您关闭了“接收订阅信息”，请前往设置打开！',
+            confirmText:'去设置',
+            // showCancel:false,
+            success: res => {
+              if (res.confirm) {
+                wx.openSetting({})
+              }
+            }
+          })
+        },
       })
     },
     handleExportBtn() {

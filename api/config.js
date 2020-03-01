@@ -17,6 +17,7 @@ const settingTableID = 70372
 const customerSettingTableID = 72200
 const battlegroundCardTableID = 87402
 const revealCardsTableID = 88786
+const activateCodeTableID = 90990
 
 const tableID = {
   winrateTableID,
@@ -37,6 +38,7 @@ const tableID = {
   settingTableID,
   customerSettingTableID,
   battlegroundCardTableID,
-  revealCardsTableID
+  revealCardsTableID,
+  activateCodeTableID
 }
 export default tableID

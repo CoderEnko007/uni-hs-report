@@ -14,7 +14,7 @@
     <!-- <div class="ads" v-if="adsOpenFlag">
       <ad unit-id="adunit-4c3a7a55067c0f6e"></ad>
     </div> -->
-    <div class="video-ads" style="margin: 10rpx 30rpx;">
+    <div class="video-ads" style="margin: 10rpx 30rpx;" v-if="adsOpenFlag">
       <ad unit-id="adunit-584598492a083dc8" ad-type="video" ad-theme="white"></ad>
     </div>
   </div>
@@ -40,6 +40,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'adsOpenFlag',
       'decksName',
       'navHeight'
     ]),
@@ -49,9 +50,9 @@ export default {
         return formatDate.getMonth()+1 + '月' + formatDate.getDate() + '日更新'
       }
     },
-    adsOpenFlag() {
-      return utils.adsOpenFlag
-    },
+    // adsOpenFlag() {
+    //   return utils.adsOpenFlag
+    // },
   },
   methods: {
     formatDeckList() {

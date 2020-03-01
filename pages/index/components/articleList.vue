@@ -52,18 +52,13 @@ export default {
     ...mapGetters([
       'winWidth',
       'winHeight',
-      'navHeight'
+      'navHeight',
+      'barHeight'
     ]),
     scrollHeight() {
-      wx.getSystemInfo({
-        success: res => {
-          console.log(`computed scrollHeight---->1screenWidth:${res.screenWidth}, screenHeight:${res.screenHeight}`)
-          console.log(`computed scrollHeight---->1windowWidth:${res.windowWidth}, windowHeight:${res.windowHeight}`)
-        }
-      })
       let ratio = this.winWidth/750
-      // 70+58+40
-      return this.winHeight-this.navHeight-(70+98)*ratio+'px'
+      let navHeight = (this.navHeight+this.barHeight*2)/2
+      return this.winHeight-navHeight-(70+98)*ratio+'px'
       // return this.winHeight-this.navHeight-115.5*ratio+'px'
     }
   },
@@ -75,8 +70,33 @@ export default {
   },
   methods: {
     handleBoardClick(item) {
-      uni.navigateTo({
-        url: `/pages/index/articleDetail/index?group_id=${item.group_id}&id=${item.id}`
+      let tmplIds = 'jR3I60LZRN8RuTDwpiZHuQ24Euvte5hI2RLsIaw0PJQ'
+      wx.requestSubscribeMessage({
+        tmplIds: [tmplIds],
+        success: (res) => {
+          let subscription = []
+          if (res[tmplIds] === 'accept') {
+            subscription.push({
+              template_id: tmplIds,
+              subscription_type: 'once',
+            })
+            wx.BaaS.subscribeMessage({subscription}).then(res => {
+              // success
+              console.log('subscribeMessage success', res)
+            }, err => {
+              // fail
+              console.log('subscribeMessage fail', err)
+            })
+          }
+        },
+        fail: err => {
+          console.log('requestSubscribeMessage err', err)
+        },
+        complete: res => {
+          uni.navigateTo({
+            url: `/pages/index/articleDetail/index?group_id=${item.group_id}&id=${item.id}`
+          })
+        }
       })
     },
     scrollToBottom(e) {

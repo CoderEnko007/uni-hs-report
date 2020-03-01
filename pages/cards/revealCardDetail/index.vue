@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div class="video-ads" style="margin: 10rpx 30rpx;">
+    <div class="video-ads" style="margin: 10rpx 30rpx;" v-if="adsOpenFlag">
       <ad unit-id="adunit-3f4b7b57a1b47647" ad-type="video" ad-theme="white"></ad>
     </div>
     <div :style="{'height': isIphoneX?124+'rpx':90+'rpx'}"></div>
@@ -94,7 +94,8 @@ export default {
       'cardsPageParams',
       'entourageParams',
       'isIphoneX',
-      'decksName'
+      'decksName',
+      'adsOpenFlag'
     ]),
   },
   methods: {

@@ -53,6 +53,7 @@ const defaultFilter = {
   archetype: 'all',
   mode: 'Standard',
   last_30_days: false,
+  currentSet: null,
   order: '-game_count'
 }
 const defaultOrder = [
@@ -92,6 +93,7 @@ export default {
         selectedItem: 0,
         list: [
           {text: '当前赛季卡组', last_30_days: false},
+          {text: '至少包含一张新卡牌', last_30_days: false, currentSet: -1 },
           {text: '最近30天卡组', last_30_days: true}
         ]
       },
@@ -99,6 +101,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'currentSet',
       'navHeight',
     ]),
     pickerList() {
@@ -231,6 +234,12 @@ export default {
       this.deckList = []
       this.tabList.selectedItem = e.mp.detail.value
       this.decksFilter.last_30_days = this.tabList.list[this.tabList.selectedItem].last_30_days
+      // 处理“至少包含一张新卡牌”的选项
+      if (this.tabList.selectedItem == 1) {
+        this.decksFilter.currentSet = this.currentSet
+      } else {
+        this.decksFilter.currentSet = null
+      }
       this.genDeckList(true)
     },
   },

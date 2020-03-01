@@ -53,7 +53,9 @@
 			"style": {}
 		}, {
 			"path": "pages/mine/index",
-			"style": {}
+			"style": {
+        "enablePullDownRefresh": true
+      }
 		}, {
 			"path": "pages/mine/about/index",
 			"style": {}
@@ -63,8 +65,12 @@
 		}, {
 			"path": "pages/index/articleDetail/index",
 			"style": {}
-		}
-	],
+		}, {
+      "path" : "pages/mine/activation/index",
+      "style" : {
+        "enablePullDownRefresh": true
+      }
+    }],
 	"globalStyle": {
 		"backgroundTextStyle": "light",
 		"navigationBarBackgroundColor": "#fff",

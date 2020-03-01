@@ -114,12 +114,12 @@ export default {
   methods: {
     handleCardClick(item) {
       wx.navigateTo({
-        url: `/pages/cards/cardDetail/main?id=${item.dbfId}`
+        url: `/pages/cards/cardDetail/index?id=${item.dbfId}`
       })
     },
     gotoDeckDetail(item) {
       wx.navigateTo({
-        url: `/pages/decks/deckDetail/main?id=${item.id}`
+        url: `/pages/decks/deckDetail/index?id=${item.id}`
       })
     },
     copyDeckCode(code) {

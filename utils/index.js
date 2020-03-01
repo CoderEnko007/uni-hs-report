@@ -135,6 +135,7 @@ export function ShadeColor(colorMAX,colorMIN,num){
 const cardsBaseURL = 'https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/'
 const cardsBaseURL512 = 'https://art.hearthstonejson.com/v1/render/latest/zhCN/512x/'
 const cardsTileURL = 'https://art.hearthstonejson.com/v1/tiles/'
+const fbiCardsTileURL = 'https://hs.fbigame.com/static/images/tiles/'
 const iFanrCardsTileURL = 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/'
 const cardsOrigURL = 'https://art.hearthstonejson.com/v1/256x/'
 // const dustImage = 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1g2xiBmlyPDaVLks.png'
@@ -149,8 +150,12 @@ export function gen512CardsImageURL(hsId) {
 export function genOrigImageURL(hsId) {
   return cardsOrigURL+hsId+'.jpg'
 }
-export function genTileImageURL(hsId) {
-  return cardsTileURL+hsId+'.png'
+export function genTileImageURL(hsId, source) {
+  if (source === 'fbi') {
+    return fbiCardsTileURL+hsId+'.png'
+  } else {
+    return cardsTileURL+hsId+'.png'
+  }
 }
 export function iFanrTileImageURL(tile) {
   return iFanrCardsTileURL+tile
@@ -354,15 +359,15 @@ const race = {
 }
 
 const heroesID = {
-  'Druid': [274, 50484],
-  'Hunter': [31, 2826],
-  'Mage': [637, 39117, 2829],
-  'Paladin': [671, 53187, 46116, 2827],
-  'Priest': [813, 54816, 41887],
-  'Rogue': [930, 40195],
-  'Shaman': [1066, 55963, 53237, 40183],
-  'Warlock': [893, 51834, 47817],
-  'Warrior': [7, 2828]
+  'Druid': [274, 50484, 57761],
+  'Hunter': [31, 2826, 57759, 60335],
+  'Mage': [637, 39117, 2829, 57765],
+  'Paladin': [671, 53187, 46116, 2827, 57757],
+  'Priest': [813, 54816, 41887, 57767],
+  'Rogue': [930, 40195, 57755],
+  'Shaman': [1066, 55963, 53237, 40183, 57753],
+  'Warlock': [893, 51834, 47817, 57763],
+  'Warrior': [7, 2828, 57751, 58787]
 }
 
 const gameMode = [
@@ -383,6 +388,7 @@ const battlegroundMinionType = [
   {id: 17, name: '机械'},
   {id: 26, name: '全部'},
   {id: 20, name: '野兽'},
+  {id: 24, name: '龙'},
   {id: 14, name: '鱼人'}
 ]
 
@@ -393,6 +399,7 @@ const battlegroundKeywords = [
   {id: 66, name: '磁力', ename: 'modular'},
   {id: 21, name: '发现', ename: 'discover'},
   {id: 11, name: '风怒', ename: 'windfury'},
+  {id: 78, name: '复生', ename: 'reborn'},
   {id: 34, name: '进化', ename: 'adapt'},
   {id: 32, name: '剧毒', ename: 'poisonous'},
   {id: 17, name: '免疫', ename: 'immune'},

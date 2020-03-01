@@ -64,9 +64,9 @@ export default {
       'userInfo',
       'navHeight'
     ]),
-    adsOpenFlag() {
-      return utils.adsOpenFlag
-    },
+    // adsOpenFlag() {
+    //   return utils.adsOpenFlag
+    // },
   },
   data() {
     return {

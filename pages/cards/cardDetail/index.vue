@@ -88,7 +88,7 @@
         <SpinKit :mode="'sk-spinner-pulse'"></SpinKit>
       </div>
     </div>
-    <div class="video-ads" style="margin: 10rpx 30rpx;" v-show="cardDetail.name">
+    <div class="video-ads" style="margin: 10rpx 30rpx;" v-if="adsOpenFlag&&cardDetail.name">
       <ad unit-id="adunit-3f4b7b57a1b47647" ad-type="video" ad-theme="white"></ad>
     </div>
     <div :style="{'height': isIphoneX?130+'rpx':90+'rpx'}"></div>
@@ -99,9 +99,9 @@
         <button class="btn next" @click="handleNext" :class="{'de-active': !nextBtnEnable}" :style="{'margin-bottom':isIphoneX?40+'rpx':0}"><span>下一张</span></button>
       </div>
     </div>
-    <!-- <div class="float-btn" :style="{'top': isIphoneX?130+'px':100+'px'}">
+    <div class="float-btn" v-show="imageLoaded" :style="{'top': isIphoneX?navHeight+barHeight+70+'rpx':navHeight+barHeight+50+'rpx'}">
       <floatBtnGroup showShare="true"></floatBtnGroup>
-    </div> -->
+    </div>
   </div>
 </template>
 <script>
@@ -205,6 +205,7 @@ export default {
   computed: {
     ...mapGetters([
       'navHeight',
+      'barHeight',
       'fbiVersion',
       'fbiKey',
       'fbiFlag',
@@ -213,7 +214,8 @@ export default {
       'entourageParams',
       'isIphoneX',
       'decksName',
-      'cardsInsertAdsFlag'
+      'cardsInsertAdsFlag',
+      'adsOpenFlag'
     ]),
     getEnAudio() {
       if (this.cardDetail.audios) {
@@ -442,7 +444,7 @@ export default {
           this.rangePicker.selectedItem = 1
         }
       }
-      let deckRes = await getDeckList({mode: this.deckListMode, card: [this.cardDetail.dbfId]}, 1000, 0, '-game_count')
+      let deckRes = await getDeckList({mode: this.deckListMode, last_30_days: false, card: [this.cardDetail.dbfId]}, 1000, 0, '-game_count')
       this.deckList = utils.translateDeckName(deckRes.objects, this.decksName)
       // this.totalDecks = deckRes.meta.total_count
     },
@@ -599,7 +601,7 @@ export default {
     },
   },
   onLoad() {
-   if (wx.createInterstitialAd) {
+   if (this.adsOpenFlag && wx.createInterstitialAd) {
      this.interstitialAd = wx.createInterstitialAd({
        adUnitId: 'adunit-f0ee7b7386b219dd'
      })
@@ -672,7 +674,8 @@ export default {
     // }
     return {
       title: this.cardDetail.name,
-      path: `/pages/cards/cardDetail/index?id=${this.cardDetail.dbfId}`
+      path: `/pages/cards/cardDetail/index?id=${this.cardDetail.dbfId}`,
+      // imageUrl: this.cardDetail.cardImg
     }
   }
 }
@@ -863,12 +866,15 @@ export default {
     top: 50%;
     right: 0;
     transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
     font-size: 20rpx;
-    height: 32rpx;
-    line-height: 32rpx;
+    height: 38rpx;
+    line-height: 38rpx;
     border-radius: 20rpx;
     text-align: center;
-    padding: 2rpx 12rpx;
+    padding: 2rpx 14rpx;
     background: $palette-blue;
     color: #fff;
     border: 1rpx solid $palette-blue;
@@ -878,7 +884,7 @@ export default {
 .float-btn {
   position: fixed;
   top: 200rpx;
-  right: 20rpx;
+  right: 35rpx;
 }
 .loading {
   position: relative;

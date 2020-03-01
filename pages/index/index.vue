@@ -51,12 +51,15 @@
               </div> -->
             </div>
           </div>
-          <div class="ads" style="margin: 15upx 0 0 0;" v-if="adsType!=='video'">
-            <ad unit-id="adunit-900bbac5f4c50939" @error="handleAdError" @load="handleAdLoaded"></ad>
+          <div class="ads" style="margin: 15upx 0 0 0;" v-if="adsOpenFlag&&adsType!=='video'">
+            <ad unit-id="adunit-900bbac5f4c50939" @error="handleAdError" @load="handleBannerAdLoaded"></ad>
+          </div>
+          <div class="video-ads" style="margin: 20rpx 30rpx 0;" v-if="adsOpenFlag&&adsType==='video'">
+            <ad unit-id="adunit-03a8570563bafc46" ad-type="video" ad-theme="white" @error="handleAdError" @load="handleVideoAdLoaded"></ad>
           </div>
           <div class="tier-panel">
             <div class="headline">
-              <span class="title">强度排行</span>
+              <span class="title">梯队排行</span>
               <div class="head-picker">
                 <picker mode="selector" :value="rangePicker.selectedItem" :range="rangePickerList" @change="handleRankRangeChange">
                   <span class='selector-item'>标准模式 {{rangePicker.list[rangePicker.selectedItem].text}}</span>
@@ -68,17 +71,12 @@
                 <span>导出日报</span>
               </div>
             </div>
-           <!-- <div class="data-vision" style="margin: 0 30rpx;" @click="handleHSVisionTierClick">
-              <img class="btn-img" src="/static/icons-v2/trending.png" mode="aspectFit">
-              <span class="text">环境结构分布</span>
-              <span class="iconfont">&#xe600;</span>
-            </div> -->
             <div class="tier-content">
               <div class="tier-block" v-for="(tier, index) in tierList" :key="tier.name">
                 <TierList :tierData="tier" @itemClick="handleTierClick" @onCollapse="handleCollapse"></TierList>
-                <div class="video-ads" style="margin: 10rpx 30rpx;" v-if="index===0 && adsType==='video'">
-                  <ad unit-id="adunit-03a8570563bafc46" ad-type="video" ad-theme="white" @load="handleAdLoaded"></ad>
-                </div>
+               <!-- <div class="video-ads" style="margin: 10rpx 30rpx;" v-if="index===0 && adsType==='video'">
+                  <ad unit-id="adunit-03a8570563bafc46" ad-type="video" ad-theme="white" @load="handleVideoAdLoaded"></ad>
+                </div> -->
               </div>
             </div>
           </div>
@@ -180,6 +178,7 @@
     },
     computed: {
       ...mapGetters([
+        'adsOpenFlag',
         'winWidth',
         'winHeight',
         'navHeight',
@@ -188,11 +187,16 @@
         'barHeight'
       ]),
       contentHeight() {
+        let ratio = this.winWidth/750
+        let navHeight = (this.navHeight+this.barHeight*2)/2
+        let adsHeight = this.adHeight
+        if (!this.adsOpenFlag) {
+          adsHeight = 40
+        }
         if (this.activeIndex == 0) {
-          return 471 + this.adHeight + this.barHeight + 51 + 60 * this.tierListNum + 65 - this.collapseHeight + 'px'
-          // return 471 + 150 + 51 + 60 * this.tierListNum + 25 + 'px'
+          return 335*ratio + (96+390+90+20)*ratio + adsHeight + 96*ratio + 80*ratio*4 + 120*ratio*this.tierListNum + 35 - this.collapseHeight + 'px'
         } else {
-          return this.winHeight - this.navHeight - 41 + "px"
+          return this.winHeight - navHeight - 41 + "px"
         }
       },
       modePickerList() {
@@ -275,11 +279,15 @@
       },
       handleAdError(e) {
         console.log('ad error', e)
-        this.adHeight = 160
+        this.adHeight = 40
       },
-      handleAdLoaded(e) {
+      handleBannerAdLoaded(e) {
+        console.log('banner ad loaded', e)
+        this.adHeight = 140
+      },
+      handleVideoAdLoaded(e) {
         console.log('ad loaded', e)
-        this.adHeight = 107*3+150
+        this.adHeight = 267
       },
       compareFunction(key) {
         return function(obj1, obj2) {
@@ -378,6 +386,11 @@
           this.stopPullDown(false)
         })
       },
+      getSystemSetting() {
+      	this.$store.dispatch('setSystemSetting').then(res => {
+      		// console.log('setSystemSetting', res)
+      	})
+      },
       handleBannerClick(item) {
         if (item.articleID) {
           uni.navigateTo({
@@ -404,7 +417,7 @@
         this.selectedGameType = item.mode
       },
       handleRankRangeChange(e) {
-        if (e.mp.detail.value!=='0' && e.mp.detail.value!==this.rangePicker.selectedItem) {
+        if (e.mp.detail.value!=='0' && e.mp.detail.value!==this.rangePicker.selectedItem && this.adsOpenFlag) {
           try {
             let value = wx.getStorageSync('ads_video_date')
             let now = new Date()
@@ -729,6 +742,7 @@
       // this.$refs.articlePage.genDataList(true)
     },
     onPullDownRefresh() {
+      this.getSystemSetting()
       this.getIfanrSettings()
       this.genBanners()
       this.genRankData()

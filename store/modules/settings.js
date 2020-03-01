@@ -15,10 +15,13 @@ const settings = {
     arenaTableID: 70488,
     card_resource: null,
     ifanr_arena_card_resource: false,
+    deck_tile_resource: 'hsreplay',
     adsOpenFlag: true,
     insertAdsFlag: true,
     cardsInsertAdsFlag: true,
     adNotice: null,
+    current_set: null,
+    showRemoveAdsBtn: false,
   },
   mutations: {
     setAdsOpenFlag: (state, val) => {
@@ -40,7 +43,6 @@ const settings = {
       state.barHeight = barHeight
     },
     SET_TAB_HEIGHT: (state, val) => {
-      console.log('tab height', val)
       state.tabHeight = val
     },
     IS_IPHONE_X: (state) => {
@@ -70,9 +72,18 @@ const settings = {
     SET_IFANR_ARENA_CARD_RESOURCE: (state, val) => {
       state.ifanr_arena_card_resource = val
     },
+    SET_DECK_TILE_RESOURCE: (state, val) => {
+      state.deck_tile_resource = val
+    },
     SET_AD_NOTICE: (state, val) => {
       state.adNotice = val
     },
+    SET_CURRENT_SET: (state, val) => {
+      state.current_set = val
+    },
+    SET_SHOW_REMOVE_ADS_FLAG: (state, val) => {
+      state.showRemoveAdsBtn = val
+    }
   },
   actions: {
     resetInsertAdsFlag({commit, state}) {
@@ -96,8 +107,11 @@ const settings = {
         wx.getSystemInfo({
           success: res => {
             //导航高度
-            let navHeight = res.statusBarHeight + 46;
+            let wWidth = res.windowWidth
+            // let navHeight = res.statusBarHeight + (92*wWidth/750)/2;
+            // let navHeight = res.statusBarHeight + 46;
             // let navHeight = res.statusBarHeight*2+25
+            let navHeight = 88;
             commit('SET_NAV_HEIGHT', navHeight)
             commit('SET_BAR_HEIGHT', res.statusBarHeight)
             console.log(`navHeight:${navHeight}, statusBarHeight:${res.statusBarHeight}`)
@@ -140,7 +154,10 @@ const settings = {
             commit('SET_CARD_RESOURCE', res.objects[0].card_resource)
             commit('SET_ARENA_TABLEID', res.objects[0].arena_table_id)
             commit('SET_IFANR_ARENA_CARD_RESOURCE', res.objects[0].ifanr_arena_card_resource)
+            commit('SET_DECK_TILE_RESOURCE', res.objects[0].deck_tile_resource)
             commit('SET_AD_NOTICE', res.objects[0].ad_notice)
+            commit('SET_CURRENT_SET', res.objects[0].current_set)
+            commit('SET_SHOW_REMOVE_ADS_FLAG', res.objects[0].showRemoveAdsBtn)
           }
           resolve(res.objects)
         }).catch(err => {

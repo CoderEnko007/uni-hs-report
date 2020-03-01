@@ -1,7 +1,8 @@
 <template>
-  <div class="nav-container" :style="{'min-height': isIphoneX?90+'px':66+'px', 'background': background}">
-    <div class="nav-bar" :style="{height: navHeight+'px'}">
-      <div class="nav-title" >
+  <div class="nav-container" :style="{height: navHeight+barHeight*2+'rpx', 'background': background}">
+    <div class="nav-bar" :style="{height: navHeight+'rpx', paddingTop: barHeight+'px'}">
+    <!-- <div class="nav-bar" :style="{height: 88+'rpx', paddingTop: barHeight+'px'}"> -->
+      <div class="nav-title" :style="{top: barHeight+'px'}">
         <span class="title" v-if="navTitle">{{navTitle}}</span>
         <span class="title" v-else>{{defaultTitle}}</span>
       </div>
@@ -17,7 +18,8 @@
         </div>
       </div>
     </div>
-    <div :style="{'height': navHeight+'px'}"></div>
+    <!-- <div :style="{'height': navHeight+'px'}"></div> -->
+    <div :style="{'height': navHeight+'rpx'}"></div>
   </div>
 </template>
 <script>
@@ -35,7 +37,8 @@ export default {
   computed: {
     ...mapGetters([
       'navHeight',
-      'isIphoneX'
+      'isIphoneX',
+      'barHeight'
     ])
   },
   methods: {
@@ -73,7 +76,7 @@ export default {
 <style lang="scss" scoped>
 .nav-bar {
   position: fixed !important;
-  min-height: 92rpx;
+  // min-height: 92rpx;
   width: 100%;
   top: 0;
   background: #fff;
@@ -81,7 +84,8 @@ export default {
   z-index: 9999;
   .nav-title {
     position: absolute;
-    height:100%;
+    display: inline-block;
+    // height:100%;
     top: 0;
     left: 0;
     right: 0;
@@ -89,16 +93,16 @@ export default {
     margin: auto;
     max-width: 400rpx;
     text-align: center;
-    font-size: 36rpx;
+    font-size: 32rpx;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     font-weight: 600;
     .title {
       position: absolute;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
-      bottom: 12px;
+      transform: translate(-50%, -50%);
       display: inline;
     }
   }
@@ -109,8 +113,10 @@ export default {
     animation: fadeIn 0.5s;
     .nav-capsule {
       position: absolute;
+      top: 50%;
       left: 15rpx;
-      bottom: 18rpx;
+      transform: translateY(-50%);
+      // bottom: 18rpx;
       display: flex;
       align-items: center;
       justify-content: space-around;

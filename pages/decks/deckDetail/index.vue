@@ -94,7 +94,7 @@
           缺少对战数据
         </div>
       </div>
-      <div class="video-ads">
+      <div class="video-ads" v-if="adsOpenFlag">
         <ad unit-id="adunit-658c5ed4c9982d96" ad-type="video" ad-theme="white"></ad>
       </div>
       <div class="separator"></div>
@@ -238,7 +238,8 @@ export default {
       'showBubble',
       'compareDeck1',
       'compareDeck2',
-      'isIphoneX'
+      'isIphoneX',
+      'adsOpenFlag'
     ]),
     badgeCount() {
       let count = 0
@@ -254,9 +255,9 @@ export default {
     gameCount() {
       return this.deckDetail.real_game_count?this.deckDetail.real_game_count:this.deckDetail.game_count
     },
-    adsOpenFlag() {
-      return utils.adsOpenFlag
-    },
+    // adsOpenFlag() {
+    //   return utils.adsOpenFlag
+    // },
   },
   methods: {
     sortFunction() {
@@ -392,8 +393,12 @@ export default {
       })
     },
     copyDeckCode() {
+      let data = this.deckDetail.deck_code
+      if (this.deckDetail.cname) {
+        data = `### HS情报站：${this.deckDetail.cname}\n${this.deckDetail.deck_code}`
+      } 
       wx.setClipboardData({
-        data: this.deckDetail.deck_code,
+        data: data,
         success: function(res) {
           wx.showToast({
             title: '复制成功'
@@ -606,6 +611,7 @@ export default {
           ctx.closePath()
           ctx.restore()
           // 绘制卡牌tile图片
+          console.log(formatData[index])
           let res = await getImageInfoAsync(formatData[index].img)
           if (pages[pages.length-1].route !== 'pages/decks/deckDetail/index') {
             console.log('not canvas page')
@@ -750,7 +756,7 @@ export default {
       });
     },
     tabBarClick(e) {
-      if (e.currentTarget.id == 1) {
+      if (this.adsOpenFlag && e.currentTarget.id == 1) {
         try {
           let value = wx.getStorageSync('ads_video_date_1')
           let now = new Date()
@@ -783,7 +789,7 @@ export default {
       }
     },
     async initVideoAds() {
-      if (wx.createRewardedVideoAd) {
+      if (this.adsOpenFlag && wx.createRewardedVideoAd) {
         this.videoAd = wx.createRewardedVideoAd({
           adUnitId: 'adunit-6c39abb54de729f4'
         })
@@ -1175,12 +1181,13 @@ export default {
     position: fixed;
     bottom: 0;
     background-color: white;
-    z-index: 9999;
+    z-index: 1000;
   }
   .float-btn {
     position: fixed;
     bottom: 100rpx;
     right: 40rpx;
+    z-index: 999;
   }
   .video-ads {
     margin: 20rpx 30rpx;

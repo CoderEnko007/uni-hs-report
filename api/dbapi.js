@@ -231,7 +231,7 @@ export function getArenaCards(params, tableid=tableID.arenaCardsTableID, limit=2
       let dateQuery = new wx.BaaS.Query()
       dateQuery.compare('updated_at', '>=', queryDate)
       let query = wx.BaaS.Query.and(costQuery, classificationQuery, searchQuery, dateQuery)
-      tableObj.setQuery(query).orderBy(orderBy).limit(limit).offset(page*limit).find().then(res => {
+      tableObj.setQuery(query).orderBy(orderBy).limit(limit).offset(page*limit).find({'withCount': true}).then(res => {
         resolve(res.data)
       }, err => {
         reject(err)
@@ -344,7 +344,15 @@ export function getDeckList(params, limit=20, page=0, orderBy='-game_count') {
     if (params && params.card) {
       cardQuery.in('card_array', params.card)
     }
-    let query = wx.BaaS.Query.and(timeRangeQuery, modeQuery, factionQuery, archetypeQuery, collectionQuery, cardQuery)
+    let currentSetQuery = new wx.BaaS.Query()
+    if (params && params.currentSet>0) {
+      currentSetQuery.in('set_array', [params.currentSet])
+    }
+    let wildSetQuery = new wx.BaaS.Query()
+    if (params && params.wildSet) {
+      wildSetQuery.in('set_array', params.wildSet)
+    }
+    let query = wx.BaaS.Query.and(timeRangeQuery, modeQuery, factionQuery, archetypeQuery, collectionQuery, cardQuery, currentSetQuery, wildSetQuery)
     tableObj.setQuery(query).orderBy(orderBy).limit(limit).offset(page*limit).find({'withCount': true}).then(res => {
       resolve(res.data)
     }, err => {
@@ -722,6 +730,34 @@ export function getRevealCardDetail(params) {
     }
     tableObj.setQuery(query).find().then(res => {
       resolve(res.data.objects)
+    }, err => {
+      reject(err)
+    })
+  })
+}
+
+export function getActivateCode(code) {
+  return new Promise((resolve, reject) => {
+    let tableObj = new wx.BaaS.TableObject(tableID.activateCodeTableID)
+    let query = new wx.BaaS.Query()
+    query.compare('code', '=', code)
+    tableObj.setQuery(query).find().then(res => {
+      resolve(res.data.objects)
+    }, err => {
+      reject(err)
+    })
+  })
+}
+
+export function setActivateCode(recordID, obj) {
+  return new Promise((resolve, reject) => {
+    let tableObj = new wx.BaaS.TableObject(tableID.activateCodeTableID)
+    let myRecord = tableObj.getWithoutData(recordID)
+    console.log('bbb', myRecord, obj)
+    myRecord.set('state', obj.state)
+    myRecord.set('user', obj.user)
+    myRecord.update().then(res => {
+      resolve(res)
     }, err => {
       reject(err)
     })

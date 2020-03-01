@@ -27,19 +27,31 @@
       <span class="text">关于小程序</span>
       <span class="iconfont arrowIcon">&#xe600;</span>
     </div>
+    <div class="panel" @click="handleActivateClick" v-if="showRemoveAdsBtn">
+      <span class="text">激活码去广告</span>
+      <span class="iconfont arrowIcon">&#xe600;</span>
+    </div>
+    <div class="panel" style="display: flex;align-items: center;justify-content: space-between;flex-wrap: nowrap;" v-else>
+      <div class="state" @click="handleRefreshVIP">
+        <span>激活状态：</span>
+        <span v-if="vipObj.isVip">{{vipObj.timesString}}</span>
+        <span v-else>未激活或者激活码到期</span>
+        <!-- <span class="iconfont">&#xe67b;</span> -->
+      </div>
+    </div>
     <!--<div class="panel" @click="handleVideoClick">-->
       <!--<span class="iconfont playIcon">&#xe697;</span>-->
       <!--<span class="text" style="margin-left:5px;">点击播放激励视频给作者加鸡腿（15秒）</span>-->
     <!--</div>-->
-    <div class="code">
+    <!-- <div class="code">
       <h1 class="text">赞赏作者</h1>
-      <!-- <div class="capsule" @click="handleCopyBtn"><span>支付宝推广红包</span></div> -->
+      <div class="capsule" @click="handleCopyBtn"><span>支付宝推广红包</span></div>
       <div class="content" @click="handleClickCodeImg">
         <p>「炉石传说情报站」小程序由个人独立开发，源于兴趣，旨在免费为大家提供及时的卡组数据。</p>
         <p>您的赞助将用于支付昂贵的服务器费用，感谢您的支持</p>
         <p style="font-weight: bold">点击此处打开赞赏码，长按扫描随意打赏</p>
       </div>
-    </div>
+    </div> -->
     <div class="feedback">
       <button open-type="feedback">问题反馈 | 意见建议</button>
     </div>
@@ -48,7 +60,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import {getDeckList, getUserCollectionDecks, addCustomerSetting, getCustomerSetting, updateCustomerSetting} from "@/api/dbapi";
+import {getUserCollectionDecks, addCustomerSetting, getCustomerSetting, updateCustomerSetting} from "@/api/dbapi";
 import NavBar from '@/components/NavBar'
 import xModal from "@/components/x-modal/x-modal.vue"
 
@@ -59,23 +71,23 @@ export default {
   },
   data() {
     return {
-      videoAd: null,
-      showVideoAdBtn: true,
       deckList: [],
       logo: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1g9QyXTPpyOMVypO.png',
       codeImg: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1g9oGSrxprEojAfB.jpg',
       aliCodeText: '打开支付宝，首页搜索栏中直接粘贴，即可领取每日红包，金额随机',
       hideModal: true,
+      vipObj: {
+        isVip: false,
+        timesString: ''
+      }
     }
   },
   computed: {
     ...mapGetters([
       'userInfo',
-      'navHeight'
+      'navHeight',
+      'showRemoveAdsBtn'
     ]),
-    getDeckList() {
-      return this.deckList
-    }
   },
   methods: {
     userInfoHandler(data) {
@@ -102,6 +114,39 @@ export default {
       } else {
         wx.stopPullDownRefresh();
       }
+    },
+    getVIPLeftTime() {
+      let activate_state = this.userInfo.activate_state
+      let now = new Date().getTime()
+      if (activate_state&&activate_state.expired_time && activate_state.expired_time>now) {
+        let dateDiff = activate_state.expired_time - now
+        let dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000));//计算出相差天数
+        let leave1 = dateDiff % (24 * 3600 * 1000)    //计算天数后剩余的毫秒数
+        let hours = Math.floor(leave1 / (3600 * 1000))//计算出小时数
+        let leave2 = dateDiff % (3600 * 1000)
+        let minutes = Math.floor(leave2 / (60 * 1000))
+        let timesString = '剩余'
+        if (dayDiff != 0) {
+            timesString += dayDiff + '天';
+        }
+        if (hours != 0 || dayDiff != 0) {
+            timesString += hours + '小时';
+        } 
+        if (minutes != 0 || hours != 0 || dayDiff != 0) {
+            timesString += minutes + '分钟';
+        } 
+        if (dayDiff===0 && hours===0 && minutes===0) {
+          let leave3 = dateDiff % (60 * 1000)
+          let seconds = Math.floor(leave3 / 1000)
+          timesString += seconds + '秒';
+        }
+        console.log(timesString)
+        this.vipObj.timesString = timesString
+        this.vipObj.isVip = true
+      } else {
+        this.vipObj.isVip = false
+      }
+      wx.stopPullDownRefresh();
     },
     handleDeckClick(item) {
       let url = ''
@@ -155,82 +200,31 @@ export default {
         }
       })
     },
-    async handleVideoClick() {
-      let videoAdUseable = true//wx.canIUse('createRewardedVideoAd')
-      if (videoAdUseable) {
-        if (this.videoAd) {
-          this.videoAd.show().catch(() => {
-            // 失败重试
-            this.videoAd.load()
-              .then(() => videoAd.show())
-              .catch(err => {
-                console.log('激励视频 广告显示失败', err)
-              })
-          })
-        }
+    handleRefreshVIP() {
+      this.getVIPLeftTime()
+    },
+    handleActivateClick() {
+      if (this.userInfo.id) {
+        wx.navigateTo({
+          url: `/pages/mine/activation/index`
+        })
       } else {
         wx.showToast({
-          title: '微信版本过低，无法播放激励视频',
-          icon: 'none',
-          duration: 2500
+          title: '请登录',
+          icon: 'none'
         })
       }
     },
-    initVideoAd() {
-      if (wx.createRewardedVideoAd) {
-          this.videoAd = wx.createRewardedVideoAd({
-              adUnitId: 'adunit-e8e54c4290dbf4ad'
-          })
-          this.videoAd.onClose(async (status) => {
-              console.log('激励视频关闭', status)
-              if (status && status.isEnded || status === undefined) {
-                  let res = await getCustomerSetting(this.userInfo.id)
-                  console.log(res)
-                  let temp = ''
-                  if (res.meta.total_count > 0) {
-                      let ad_click_num = res.objects[0].ad_click_num + 1
-                      temp = await updateCustomerSetting({
-                          ad_click_num: ad_click_num,
-                      }, res.objects[0].id)
-                  } else {
-                      temp = await addCustomerSetting({}, this.userInfo.id)
-                  }
-                  console.log(temp)
-                  let now = new Date()
-                  try {
-                      wx.setStorageSync('ads_video_date', new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000)
-                  } catch (e) {
-                      console.log(e)
-                  }
-                  wx.showToast({
-                      title: '感谢！',
-                      icon: 'none',
-                      duration: 2500
-                  })
-              } else {
-                  wx.showToast({
-                      title: '没有完整播放视频哦，喵。。。',
-                      icon: 'none',
-                      duration: 2500
-                  })
-              }
-          })
-          this.videoAd.onError((res) => {
-              console.log('激励视频错误', res)
-              wx.showToast({
-                  title: '出了点小问题，无法播放激励视频',
-                  icon: 'none',
-                  duration: 2500
-              })
-          })
-      }
-    }
-  },
-  onLoad() {
-    // this.initVideoAd()
+    getSystemSetting() {
+    	this.$store.dispatch('setSystemSetting').then(res => {
+    		// console.log('setSystemSetting', res)
+    	})
+    },
   },
   onShow() {
-    this.genUserCollection()
+    // this.genUserCollection()
+    this.getSystemSetting()
+    this.getVIPLeftTime()
   },
   onShareAppMessage(res) {
     return {
@@ -239,7 +233,9 @@ export default {
     }
   },
   onPullDownRefresh() {
-    this.genUserCollection()
+    // this.genUserCollection()
+    this.getSystemSetting()
+    this.getVIPLeftTime()
   },
 }
 </script>
@@ -309,6 +305,10 @@ export default {
     line-height: 120rpx;
     vertical-align: middle;
     display: inline-block;
+  }
+  .refresh-btn {
+    border: 1rpx solid #5a5a5a;
+    border-radius: 30rpx;
   }
 }
 .nga-block {

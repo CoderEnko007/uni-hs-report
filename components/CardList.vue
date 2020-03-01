@@ -30,20 +30,21 @@
         'winWidth',
         'winHeight',
         'navHeight',
-        'tabHeight'
+        'tabHeight',
+        'barHeight'
       ]),
       scrollHeight() {
         // 89+104+74+60
         const res = wx.getSystemInfoSync()
         const tabHeight = res.screenHeight-res.windowHeight
-        console.log(res.windowHeight, this.navHeight, res.windowWidth, tabHeight)
-        let ratio = res.windowWidth/750
+        const ratio = res.windowWidth/750
+        const navHeight = (this.navHeight+this.barHeight*2)/2
         if (this.noTabBar) {
           // 85+96
-          return res.windowHeight-this.navHeight-(85+96)*ratio+tabHeight
+          return res.windowHeight-navHeight-(85+96)*ratio+tabHeight
           // return this.winHeight-this.navHeight-82*ratio
         } else {
-          return res.windowHeight-this.navHeight-(89+234)*ratio
+          return res.windowHeight-navHeight-(89+234)*ratio
         }
       }
     },

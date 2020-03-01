@@ -131,11 +131,13 @@ export default {
       'winHeight',
       'arenaTableID',
       'ifanr_arena_card_resource',
+      'barHeight'
     ]),
     scrollHeight() {
       const res = wx.getSystemInfoSync()
-      let ratio = res.windowWidth/750
-      return res.windowHeight-this.navHeight-89*ratio-383*ratio
+      const navHeight = (this.navHeight+this.barHeight*2)/2
+      const ratio = res.windowWidth/750
+      return res.windowHeight-navHeight-89*ratio-383*ratio
     }
   },
   methods: {

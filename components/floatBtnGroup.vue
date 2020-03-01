@@ -4,7 +4,8 @@
   <!--<button open-type="contact" class="contact"><img src="/static/img/wechat.png"></button>-->
   <div class="badge__count" v-show="badgeCount>0">{{badgeCount}}</div>
   <button @click="handleCompareClick" v-if="showCompare"><span>对比</span></button>
-  <button open-type="share" class="share" v-if="showShare"><img src="/static/icons-v2/share.png"></button>
+  <!-- <button open-type="share" class="share" v-if="showShare"><img src="/static/icons-v2/share.png"></button> -->
+  <button open-type="share" class="share" v-if="showShare"><span class="icon iconfont">&#xe63b;</span></button>
 </div>
 </template>
 <script>
@@ -68,7 +69,11 @@ export default {
     box-sizing:border-box;
   }
   .share {
-    background: $palette-blue;
+    .icon {
+      font-size: 42rpx;
+      color: #3b2e7e;
+      color: $palette-blue;
+    }
   }
 }
 </style>

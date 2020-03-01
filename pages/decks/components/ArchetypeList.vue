@@ -98,10 +98,12 @@
     },
     computed: {
       ...mapGetters([
+        'adsOpenFlag',
         'decksName',
         'navHeight',
         'winWidth',
-        'winHeight'
+        'winHeight',
+        'barHeight'
       ]),
       genTableData() {
         this.sortTableData()
@@ -116,13 +118,14 @@
         })
       },
       scrollHeight() {
+        let navHeight = (this.navHeight+this.barHeight*2)/2
         let ratio = this.winWidth/750
-        return this.winHeight-this.navHeight-89*ratio-278*ratio+'px'
+        return this.winHeight-navHeight-89*ratio-278*ratio+'px'
       }
     },
     methods: {
       async initVideoAds() {
-        if (wx.createRewardedVideoAd) {
+        if (this.adsOpenFlag && wx.createRewardedVideoAd) {
           this.videoAd = wx.createRewardedVideoAd({
             adUnitId: 'adunit-6c39abb54de729f4'
           })
@@ -229,6 +232,7 @@
       },
       genWinRateData() {
         wx.showNavigationBarLoading();
+        this.loading = true
         let params = {
           faction: this.selectedFaction.id,
           rankRange: this.rangePicker.list[this.rangePicker.selectedItem].rank_range
@@ -305,7 +309,7 @@
         }
       },
       handleRankRangeChange(e) {
-        if (e.mp.detail.value!=='0' && e.mp.detail.value!==this.rangePicker.selectedItem) {
+        if (this.adsOpenFlag && e.mp.detail.value!=='0' && e.mp.detail.value!==this.rangePicker.selectedItem) {
           try {
             let value = wx.getStorageSync('ads_video_date')
             let now = new Date()
@@ -362,9 +366,12 @@
         top: 50%;
         right: 0;
         transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
         font-size: 20rpx;
-        height: 32rpx;
-        line-height: 32rpx;
+        height: 38rpx;
+        line-height: 38rpx;
         border-radius: 20rpx;
         text-align: center;
         padding: 2rpx 12rpx;

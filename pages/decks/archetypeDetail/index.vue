@@ -181,7 +181,7 @@
           :tableName="'对阵'+selectedFaction.name" @itemClick="handleDeckItemClick"></DeckTable>
       </div>
     </div>
-    <div class="video-ads" v-if="adsType==='video' || adsType==='both'">
+    <div class="video-ads" v-if="adsOpenFlag && (adsType==='video' || adsType==='both')">
       <ad unit-id="adunit-482444647f55f355" ad-type="video" ad-theme="white"></ad>
     </div>
     <load-more :nomore='true' />
@@ -279,7 +279,8 @@
         'decksName',
         'navHeight',
         'archetypeList',
-        'insertAdsFlag'
+        'insertAdsFlag',
+        'adsOpenFlag'
       ]),
       detailLoaded() {
         return this.archetypeDetail.archetype !== undefined
@@ -292,9 +293,9 @@
           return utils.faction[this.archetypeDetail.faction].image
         }
       },
-      adsOpenFlag() {
-        return utils.adsOpenFlag
-      },
+      // adsOpenFlag() {
+      //   return utils.adsOpenFlag
+      // },
     },
     methods: {
       resetPageData() {
@@ -484,7 +485,7 @@
       async getIfanrSettings() {
         let res = await getSetting()
         this.adsType = res.objects[0].arch_ads_type
-        if (this.adsType !== 'video') {
+        if (this.adsOpenFlag && this.adsType !== 'video') {
           if (wx.createInterstitialAd) {
             this.interstitialAd = wx.createInterstitialAd({
               adUnitId: 'adunit-6f9a474b5991f367'

@@ -68,7 +68,7 @@ export default {
       line-height: 64rpx;
       width: 120rpx;
       padding: 0;
-      font-size: 26rpx;
+      font-size: 28rpx;
       color: white;
       background-color: $palette-blue;
       border-radius: 74rpx;

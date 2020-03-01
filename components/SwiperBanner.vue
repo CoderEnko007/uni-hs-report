@@ -1,6 +1,6 @@
 <template>
 <div class="container">
-  <swiper class="swiper-box" autoplay circular duration='200' :current="current" @change="change">
+  <swiper class="swiper-box" autoplay circular duration='200' @change="change">
     <swiper-item class="item" v-for="(item, index) in banners" :key="item.id" @click="handleClick(item)">
       <img class="swiper-img" :src="item.image" mode="aspectFill">
       <div class="meta" v-if="index===0">
@@ -11,8 +11,8 @@
   </swiper>
   <!-- 轮播指示点样式修改 -->
   <view class="dots">
-  	<block v-for="(item,index) in banners.length" :key="item">
-  		<view class="dot" :class="index==current ? ' active' : ''"></view>
+  	<block v-for="(item,index) in banners" :key="item.id">
+  		<view class="dot" :class="index==currentIndex ? ' active' : ''"></view>
   	</block>
   </view>
 </div>
@@ -22,7 +22,7 @@ export default {
   props: ['banners', 'date'],
   data() {
     return {
-      current: 0,
+      currentIndex: 0,
       mode: 'round'
     }
   },
@@ -39,7 +39,9 @@ export default {
       this.$emit('swiperClick', item)
     },
     change(e) {
-    	this.current = e.detail.current;
+      // console.log('start', this.currentIndex)
+    	this.currentIndex = e.detail.current;
+      // console.log('end', this.currentIndex)
     }
   }
 }

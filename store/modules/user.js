@@ -5,7 +5,8 @@ const user = {
     openID: null,
     userInfo: {
       avatar: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1fyBVjNlIfqzYgwy.png'
-    }
+    },
+    activateState: null
   },
 
   mutations: {
@@ -14,6 +15,9 @@ const user = {
     },
     SET_USERINFO: (state, userinfo) => {
       state.userInfo = userinfo
+    },
+    SET_ACTIVATESTATE: (state, val) => {
+      state.activateState = val
     }
   },
 

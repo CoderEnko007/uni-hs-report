@@ -40,21 +40,23 @@
           </div>
         </div>
       </div>
+    </div>
+    <!-- video广告不能使用v-show动态渲染，否则宽度会超出 -->
+    <div v-if="dataReady">
       <div class="other-block" :style="{'padding-bottom': isIphoneX?155+'rpx':115+'rpx'}">
         <div class="notice" v-if="showAdNotice">
           <p>{{adNotice}}</p>
         </div>
-        <div class="video-ads" v-if="adsType==='video'">
+        <div class="video-ads" v-if="adsOpenFlag && adsType==='video'">
           <ad unit-id="adunit-658c5ed4c9982d96" ad-type="video" ad-theme="white"></ad>
         </div>
-        <div class="ads" v-else>
+        <div class="ads" v-if="adsOpenFlag && adsType==='banner'">
           <ad unit-id="adunit-2bb4a9cea22fa148"></ad>
-          <!-- <ad unit-id="adunit-658c5ed4c9982d96" ad-type="video" ad-theme="white"></ad> -->
         </div>
         <copyRight></copyRight>
       </div>
       <div class="footer">
-        <FooterMenu :link="detail.link"></FooterMenu>
+        <FooterMenu :link="detail.link" showSubscribe="true"></FooterMenu>
       </div>
       <div class="float-btn" :style="{'bottom': isIphoneX?140+'rpx':100+'rpx'}">
         <floatBtnGroup @onCompare="openCompareDeckModal" :badgeCount="badgeCount" showCompare="true"></floatBtnGroup>
@@ -105,6 +107,7 @@
         'compareDeck2',
         'isIphoneX',
         'adNotice',
+        'adsOpenFlag'
       ]),
       badgeCount() {
         let count = 0
@@ -308,7 +311,7 @@
     position: absolute;
     width: 100%;
     background: white;
-    // z-index: 1;
+    z-index: 1;
   }
   .float-btn {
     position: fixed;
@@ -324,6 +327,6 @@
     margin: 0 30rpx;
   }
   .video-ads {
-    margin: 10rpx 0;
+    margin: 10rpx 30rpx;
   }
 </style>

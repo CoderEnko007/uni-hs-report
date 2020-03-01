@@ -42,6 +42,16 @@
 			Login() {
 				this.$store.dispatch('Login').then(res => {
 					console.log('success', res)
+          if (res.result.data.activate_state) {
+            let activate_state = res.result.data.activate_state
+            if (activate_state.hasOwnProperty('expired_time')&&(activate_state.expired_time>new Date().getTime())) {
+              this.$store.commit('setAdsOpenFlag', false)
+            } else {
+              this.$store.commit('setAdsOpenFlag', true)
+            }
+          } else {
+            this.$store.commit('setAdsOpenFlag', true)
+          }
           this.$store.dispatch('getCollectedDecks', res.result.data.id).then(res => {
             // console.log('aaa', res)
           })

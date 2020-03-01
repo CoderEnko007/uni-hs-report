@@ -62,6 +62,8 @@
     archetype: 'all',
     mode: 'Standard',
     last_30_days: false,
+    currentSet: null,
+    wildSet: null,
     order: '-game_count'
   }
   const defaultOrder = [
@@ -92,8 +94,9 @@
         tabList: {
           selectedItem: 0,
           list: [
-            { text: '当前赛季卡组', last_30_days: false },
-            { text: '最近30天卡组', last_30_days: true }
+            { text: '当前赛季卡组', last_30_days: false},
+            { text: '最近30天卡组', last_30_days: true},
+            { text: '至少包含一张新卡牌', last_30_days: false, currentSet: -1 },
           ]
         },
         deckMode: utils.rankMode,
@@ -112,8 +115,10 @@
     computed: {
       ...mapGetters([
         'decksName',
+        'currentSet',
         'winWidth',
-        'winHeight'
+        'winHeight',
+        'series'
       ]),
       timePickerList() {
         return this.tabList.list.map(item => {
@@ -146,6 +151,12 @@
         this.tabList.selectedItem = e.mp.detail.value
         this.decksFilter.last_30_days = this.tabList.list[this.tabList.selectedItem].last_30_days
         this.decksFilter.archetype = 'all'
+        // 处理“至少包含一张新卡牌”的选项
+        if (this.tabList.selectedItem == 2) {
+          this.decksFilter.currentSet = this.currentSet
+        } else {
+          this.decksFilter.currentSet = null
+        }
         this.genDeckList(true)
         this.genPickerList()
       },
@@ -255,6 +266,19 @@
               }
             }
           }
+        }
+        if (this.decksFilter.mode === 'Wild') {
+          // this.decksFilter.wildSet = this.series.filter(v => {
+          //   return v.mode === 'Wild'
+          // })
+          console.log(this.series)
+          this.decksFilter.wildSet = this.series.filter(v => {
+            return v.mode === 'Wild'
+          }).map(v => {
+            return v.id
+          })
+        } else {
+          this.decksFilter.wildSet = null
         }
         getDeckList(this.decksFilter, 12, this.page, this.decksFilter.order).then(res => {
           if (init) {

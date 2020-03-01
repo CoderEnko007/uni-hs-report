@@ -24,8 +24,11 @@ const getters = {
   fbiFlag: state => state.settings.fbiFlag,
   card_resource: state => state.settings.card_resource,
   ifanr_arena_card_resource: state => state.settings.ifanr_arena_card_resource,
+  deck_tile_resource: state => state.settings.deck_tile_resource,
   arenaTableID: state => state.settings.arenaTableID,
-  adNotice:state => state.settings.adNotice,
+  adNotice: state => state.settings.adNotice,
+  currentSet: state => state.settings.current_set,
+  showRemoveAdsBtn: state => state.settings.showRemoveAdsBtn,
   compareDeck1: state => state.compare.compareDeck1,
   compareDeck2: state => state.compare.compareDeck2
 }

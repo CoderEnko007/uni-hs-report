@@ -60,14 +60,16 @@ export default {
       'decksName',
       'winWidth',
       'winHeight',
-      'navHeight'
+      'navHeight',
+      'barHeight'
     ]),
     factions() {
       return utils.faction
     },
     scrollHeight() {
+      let navHeight = (this.navHeight+this.barHeight*2)/2
       let ratio = this.winWidth/750
-      return (this.winHeight-this.navHeight-89*ratio-278*ratio)+'px'
+      return (this.winHeight-navHeight-89*ratio-278*ratio)+'px'
     }
   },
   methods: {
