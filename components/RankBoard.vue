@@ -37,12 +37,8 @@ export default {
   },
   watch: {
     // list(val) {
-    //   console.log(val.map(item=>{
-    //     return {
-    //       'win_rate': item.win_rate,
-    //       'popularity': item.popularity
-    //     }
-    //   }))
+    //   console.log(val)
+    //   console.log(utils.faction)
     // }
   }
 }
@@ -66,9 +62,10 @@ export default {
     width: 345rpx;
     height: 74rpx;
     .number {
-      width: 30rpx;
+      width: 59rpx;
       height: 30rpx;
-      margin-left: 29rpx;
+      // margin-left: 29rpx;
+      text-align: center;
       font-size: 26rpx;
       color: #999999;
       line-height: 30rpx;

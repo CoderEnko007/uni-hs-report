@@ -1,7 +1,7 @@
-const winrateTableID = 65239
+const winrateTableID = 96629
 const standDecksTableID = 53174
 const wildDecksTableID = 55625
-const tierTableID = 65018 //49232
+const tierTableID = 96648 //65018 //49232
 const archetypeTableID = 56176
 const rankTableID = 59996
 const seriesTableID = 51271
@@ -18,6 +18,7 @@ const customerSettingTableID = 72200
 const battlegroundCardTableID = 87402
 const revealCardsTableID = 88786
 const activateCodeTableID = 90990
+const battlegroundTierTableID = 96576
 
 const tableID = {
   winrateTableID,
@@ -38,6 +39,7 @@ const tableID = {
   settingTableID,
   customerSettingTableID,
   battlegroundCardTableID,
+  battlegroundTierTableID,
   revealCardsTableID,
   activateCodeTableID
 }

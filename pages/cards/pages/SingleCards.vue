@@ -4,15 +4,7 @@
       <div class="search-bar">
         <SearchBar :search.sync="filter.search" :reset='true' @resetFilter="resetFilter" @handleConfirm="handleSearch" placeholder="请输入卡牌名称、规则或者属性"></SearchBar>
       </div>
-      <div class="cost_filter">
-        <ul class="cards_cost">
-          <li v-for="i in costList" :key="i.cost">
-            <a :class="{type_icon: true, type_icon_active: i.cost===filter.cost}" @click="handleCostClick(i.cost)">
-              <img class="cost_num" :src="i.icon" mode="aspectFit">
-            </a>
-          </li>
-        </ul>
-      </div>
+      <CostPanel @itemClick="handleCostClick" ref='costPanel'></CostPanel>
       <div class="filter_tabbar">
         <ul class="filter_tab_list">
           <li v-for="(item, index) in filterTabBar"
@@ -53,6 +45,7 @@
   import { getCardPicture } from "@/utils";
   import utils from '@/utils'
   import HeroesPanel from '@/components/HeroesPanel'
+  import CostPanel from '@/components/CostPanel'
   import SearchBar from '@/components/SearchBar'
   import FilterMenu from '@/components/FilterMenu'
   import CardList from '@/components/CardList'
@@ -80,6 +73,7 @@
     components: {
       SearchBar,
       HeroesPanel,
+      CostPanel,
       FilterMenu,
       CardList,
     },
@@ -94,20 +88,9 @@
     },
     data() {
       return {
-        test: '',
         filter: Object.assign({}, defaultFilter),
         selectedFaction: '',
         factionIcons: [],
-        costList: [
-          {cost: 0, icon: '/static/mana/0.png'},
-          {cost: 1, icon: '/static/mana/1.png'},
-          {cost: 2, icon: '/static/mana/2.png'},
-          {cost: 3, icon: '/static/mana/3.png'},
-          {cost: 4, icon: '/static/mana/4.png'},
-          {cost: 5, icon: '/static/mana/5.png'},
-          {cost: 6, icon: '/static/mana/6.png'},
-          {cost: 7, icon: '/static/mana/7+.png'}
-        ],
         filterTabBar: utils.deepCopy(defaultFilterList),
         selectedFilterTabItem: null,
         page: 0,
@@ -125,6 +108,7 @@
             this.$refs[this.filterTabBar[index].name][0].resetFilter()
           }
         }
+        this.$refs.costPanel.clearCost()
         this.genCardsList(true)
       },
       genFactionIcons() {
@@ -261,7 +245,9 @@
             // let image = utils.genCardsImageURL(item.hsId)
             // let image = item.img_card_link
             let image = ''
-            if (this.card_resource === 'fbi') {
+            if (item.use_backup_img === true) {
+                image = item.img_card_link
+            } else if (this.card_resource === 'fbi') {
               image = this.genCardImage(item.hsId)
             } else if (this.card_resource === 'hsreplay') {
               image = utils.genCardsImageURL(item.hsId)
@@ -343,49 +329,6 @@
   }
   .panel-faction {
     padding: 0 30rpx 20rpx;
-  }
-  .cost_filter {
-    position: relative;
-    padding: 0 30rpx;
-    .cards_cost {
-      display: flex;
-      justify-content: space-around;
-      width: 100%;
-      li {
-        display:flex;
-        text-align:center;
-        position: relative;
-        height: 75rpx;
-        line-height: 75rpx;
-        a {
-          margin: auto;
-        }
-        .type_icon {
-          position: relative;
-          width: 54rpx;
-          height: 54rpx;
-          display: inline-block;
-          background: url('../../../static/mana/mana1.png') no-repeat;
-          background-size: 100% 100%;
-        }
-        .type_icon_active {
-          position: relative;
-          width: 54rpx;
-          height: 54rpx;
-          display: inline-block;
-          background: url('../../../static/mana/mana_active.png') no-repeat;
-          background-size: 100% 100%;
-        }
-        .cost_num {
-          position: absolute;
-          width: 44rpx;
-          height: 34rpx;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-        }
-      }
-    }
   }
   .filter_tabbar {
     position: relative;

@@ -7,9 +7,9 @@
       <div class="tier-filter">
         <ul class="cards-tier">
           <li v-for="i in tierList" :key="i.tier">
-            <a :class="{'type-icon': true, 'type-icon-active': i.tier===filter.tier}" @click="handleTierClick(i.tier)">
+            <div :class="{'type-icon': true, 'type-icon-active': i.tier===filter.tier}" @click="handleTierClick(i.tier)">
               <img class="tier-num" :src="i.icon" mode="aspectFit">
-            </a>
+            </div>
           </li>
         </ul>
       </div>
@@ -279,39 +279,54 @@
     .cards-tier {
       display: flex;
       justify-content: space-around;
+      align-items: center;
       width: 100%;
+      height: 75rpx;
       li {
         display:flex;
         text-align:center;
         position: relative;
-        height: 75rpx;
-        line-height: 75rpx;
-        a {
-          margin: auto;
-        }
+        align-items: cneter;
+        height: 54rpx;
         .type-icon {
           position: relative;
           width: 54rpx;
-          height: 54rpx;
+          height: 100%;
           display: inline-block;
           background: url('../../../static/mana/bg-coin.png') no-repeat;
           background-size: 100% 100%;
+          &::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            opacity: 0;
+            background: url('../../../static/mana/bg-coin-active_1.png') center center / contain no-repeat;
+            transition: opacity 0.15s ease 0s;
+          }
         }
         .type-icon-active {
-          position: relative;
-          width: 54rpx;
-          height: 54rpx;
-          display: inline-block;
-          background: url('../../../static/mana/bg-coin-active.png') no-repeat;
-          background-size: 100% 100%;
+          // position: relative;
+          // width: 54rpx;
+          // height: 54rpx;
+          // display: inline-block;
+          // background: url('../../../static/mana/bg-coin-active.png') no-repeat;
+          // background-size: 100% 100%;
+          &::before {
+            opacity: 1 !important;
+          }
         }
         .tier-num {
           position: absolute;
           width: 44rpx;
           height: 34rpx;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          margin: auto;
         }
       }
     }

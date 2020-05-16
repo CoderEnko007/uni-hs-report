@@ -15,7 +15,7 @@
             :key="index"
             @click="modeBtnClick(item)">
             <img class="btn-img" :src="decksFilter.mode===item.mode?item.active_icon:item.icon" mode="aspectFit">
-            <button class="c-button" :class="decksFilter.mode===item.mode?'btn-active':''">{{item.text}}</button>
+            <div class="c-button" :class="decksFilter.mode===item.mode?'btn-active':''">{{item.text}}</div>
             <div class="separator" v-if="index !== 1">|</div>
           </div>
         </div>
@@ -271,7 +271,6 @@
           // this.decksFilter.wildSet = this.series.filter(v => {
           //   return v.mode === 'Wild'
           // })
-          console.log(this.series)
           this.decksFilter.wildSet = this.series.filter(v => {
             return v.mode === 'Wild'
           }).map(v => {
@@ -350,6 +349,7 @@
             height: 100%;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             flex-wrap: nowrap;
 
             .btn-img {
@@ -360,7 +360,7 @@
               transform: translateY(-50%);
             }
 
-            button {
+            .c-button {
               height: 100%;
               line-height: 96rpx;
               margin-left: 40rpx;
@@ -377,7 +377,7 @@
             .separator {
               width: 25rpx;
               height: 32rpx;
-              line-height: 96rpx;
+              line-height: 100%;
               text-align: center;
               font-size: 28rpx;
               color: #EEEEEE;
@@ -397,6 +397,7 @@
         height: 86rpx;
         padding: 0 30rpx;
         /*box-shadow: 0 3px 2px -3px #000;*/
+        border-top: 1rpx solid #eee;
         border-bottom: 1rpx solid #eee;
         box-sizing: border-box;
 

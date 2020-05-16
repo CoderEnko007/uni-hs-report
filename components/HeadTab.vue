@@ -41,14 +41,15 @@ export default {
     height: 100%;
     color: $palette-blue;
     background-color: #fff;
-    padding: 9rpx 16rpx;
+    // padding: 9rpx 16rpx;
     box-sizing: border-box;
     font-size: 26rpx;
     display: flex;
-    text-align: center;
-    span {
-      margin: auto;
-    }
+    justify-content: center;
+    align-items: center;
+    // span {
+    //   margin: auto;
+    // }
   }
   .tab-item-active {
     color: #fff;

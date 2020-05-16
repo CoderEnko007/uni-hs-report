@@ -45,7 +45,7 @@
         </div>
       </div>
       <div class="board-panel" v-if="popDeck.show || bestDeck.show">
-        <ticket-report-wrapper class="board" v-show="popDeck.show">
+        <div class="board" v-show="popDeck.show">
           <div class="deck-item" @click="handlePopDeckClick">
             <div class="icon">
               <img :src="genFactionIcon" mode="aspectFit">
@@ -65,8 +65,8 @@
             </div>
             <span class="iconfont">&#xe600;</span>
           </div>
-        </ticket-report-wrapper>
-        <ticket-report-wrapper class="board" v-show="bestDeck.show">
+        </div>
+        <div class="board" v-show="bestDeck.show">
           <div class="deck-item" @click="handleBestDeckClick">
             <div class="icon">
               <img :src="genFactionIcon" mode="aspectFit">
@@ -86,7 +86,7 @@
             </div>
             <span class="iconfont">&#xe600;</span>
           </div>
-        </ticket-report-wrapper>
+        </div>
       </div>
       <div class="board-panel" v-else-if="!detailLoaded">
         <div class="loading">
@@ -168,9 +168,12 @@
         <DeckCards :cards="archetypeDetail.pop_cards" @cardClick="handleCardClick"></DeckCards>
       </div>
     </div>
-    <!-- <div class="ads" v-if="adsOpenFlag">
+    <div class="ads" v-if="adsOpenFlag && adsType!=='video'">
       <ad unit-id="adunit-5507cac6947d0ea4"></ad>
-    </div> -->
+    </div>
+    <div class="video-ads" v-if="adsOpenFlag && adsType==='video'">
+      <ad unit-id="adunit-482444647f55f355" ad-type="video" ad-theme="white"></ad>
+    </div>
     <div class="matchup">
       <div class="headline"><span class="title">对抗情况</span></div>
       <div class="panel">
@@ -180,9 +183,6 @@
         <DeckTable :selectedFaction="selectedFaction" :date="updateDate" :tableTitle="tableTitle" :tableData="selectedFaction.data"
           :tableName="'对阵'+selectedFaction.name" @itemClick="handleDeckItemClick"></DeckTable>
       </div>
-    </div>
-    <div class="video-ads" v-if="adsOpenFlag && (adsType==='video' || adsType==='both')">
-      <ad unit-id="adunit-482444647f55f355" ad-type="video" ad-theme="white"></ad>
     </div>
     <load-more :nomore='true' />
   </div>
@@ -255,7 +255,7 @@
           { id: 'popularity', name: '对局占比' },
           { id: 'winrate', name: '胜率' },
         ],
-        factions: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'],
+        factions: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior', 'DemonHunter'],
         matchupDetail: {
           'Druid': [],
           'Hunter': [],
@@ -266,12 +266,12 @@
           'Shaman': [],
           'Warlock': [],
           'Warrior': [],
+          'DemonHunter': [],
         },
         popDeck: Object.assign({}, defaultPopDeck),
         bestDeck: Object.assign({}, defaultBestDeck),
         bestMatchup: Object.assign({}, defaultBWGame),
         worstMatchup: Object.assign({}, defaultBWGame),
-        adsType: 'video'
       }
     },
     computed: {
@@ -280,7 +280,8 @@
         'navHeight',
         'archetypeList',
         'insertAdsFlag',
-        'adsOpenFlag'
+        'adsOpenFlag',
+        'ifanrSettings'
       ]),
       detailLoaded() {
         return this.archetypeDetail.archetype !== undefined
@@ -293,9 +294,13 @@
           return utils.faction[this.archetypeDetail.faction].image
         }
       },
-      // adsOpenFlag() {
-      //   return utils.adsOpenFlag
-      // },
+      adsType() {
+        if (this.ifanrSettings && this.ifanrSettings.arch_ads_type) {
+          return this.ifanrSettings.arch_ads_type
+        } else {
+          return 'video'
+        }
+      }
     },
     methods: {
       resetPageData() {
@@ -307,7 +312,7 @@
           data: []
         }
         this.matchupDetail = { 
-          'Druid': [], 'Hunter': [], 'Mage': [], 'Paladin': [], 'Priest': [], 'Rogue': [], 'Shaman': [], 'Warlock': [], 'Warrior': [],
+          'Druid': [], 'Hunter': [], 'Mage': [], 'Paladin': [], 'Priest': [], 'Rogue': [], 'Shaman': [], 'Warlock': [], 'Warrior': [], 'DemonHunter': []
         }
         this.popDeck = Object.assign({}, defaultPopDeck)
         this.bestDeck = Object.assign({}, defaultBestDeck)
@@ -386,9 +391,15 @@
             this.bestMatchup.cname = this.getDeckCName(bestMatchupData[0])
             this.bestMatchup.win_rate = parseFloat(bestMatchupData[1]).toFixed(2)
             this.bestMatchup.game_count = bestMatchupData[2]
-            let bestMatchupFaction = bestMatchupData[0].split(' ')
-            bestMatchupFaction = bestMatchupData[0] === 'Handlock' ? 'Warlock' : bestMatchupFaction[
-              bestMatchupFaction.length - 1]
+            if (bestMatchupData.length === 4) {
+              var bestMatchupFaction = bestMatchupData[3]
+            } else {
+              var bestMatchupFaction = bestMatchupData[0].split(' ')
+              bestMatchupFaction = bestMatchupData[0] === 'Handlock' ? 'Warlock' : bestMatchupFaction[bestMatchupFaction.length - 1]
+              if (bestMatchupFaction.indexOf('Demon Hunter')>0) {
+                bestMatchupFaction = 'DemonHunter'
+              }
+            }
             this.bestMatchup.image = utils.faction[bestMatchupFaction].image
             this.bestMatchup.faction = bestMatchupFaction
             this.bestMatchup.show = true
@@ -400,9 +411,15 @@
             this.worstMatchup.cname = this.getDeckCName(worstMatchupData[0])
             this.worstMatchup.win_rate = parseFloat(worstMatchupData[1]).toFixed(2)
             this.worstMatchup.game_count = worstMatchupData[2]
-            let worstMatchupFaction = worstMatchupData[0].split(' ')
-            worstMatchupFaction = bestMatchupData[0] === 'Handlock' ? 'Warlock' : worstMatchupFaction[
-              worstMatchupFaction.length - 1]
+            if (worstMatchupData.length === 4) {
+              var worstMatchupFaction = worstMatchupData[3]
+            } else {
+              var worstMatchupFaction = worstMatchupData[0].split(' ')
+              worstMatchupFaction = worstMatchupData[0] === 'Handlock' ? 'Warlock' : worstMatchupFaction[worstMatchupFaction.length - 1]
+              if (worstMatchupFaction.indexOf('DemonHunter')>0) {
+                worstMatchupFaction = 'DemonHunter'
+              }
+            }
             this.worstMatchup.image = utils.faction[worstMatchupFaction].image
             this.worstMatchup.faction = worstMatchupFaction
             this.worstMatchup.show = true
@@ -483,9 +500,7 @@
         })
       },
       async getIfanrSettings() {
-        let res = await getSetting()
-        this.adsType = res.objects[0].arch_ads_type
-        if (this.adsOpenFlag && this.adsType !== 'video') {
+        if (this.adsOpenFlag) {
           if (wx.createInterstitialAd) {
             this.interstitialAd = wx.createInterstitialAd({
               adUnitId: 'adunit-6f9a474b5991f367'
@@ -572,9 +587,13 @@
           margin-left: 107rpx;
           color: #fff;
           .cname {
+            width: 500rpx;
             height: 50rpx;
             line-height: 50rpx;
             font-size: 50rpx;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .ename {
             height: 24rpx;

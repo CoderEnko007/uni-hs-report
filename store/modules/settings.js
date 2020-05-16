@@ -22,6 +22,7 @@ const settings = {
     adNotice: null,
     current_set: null,
     showRemoveAdsBtn: false,
+    ifanrSettings: null
   },
   mutations: {
     setAdsOpenFlag: (state, val) => {
@@ -83,6 +84,9 @@ const settings = {
     },
     SET_SHOW_REMOVE_ADS_FLAG: (state, val) => {
       state.showRemoveAdsBtn = val
+    },
+    SET_IFANR_SETTINGS: (state, val) => {
+      state.ifanrSettings = val
     }
   },
   actions: {
@@ -158,6 +162,7 @@ const settings = {
             commit('SET_AD_NOTICE', res.objects[0].ad_notice)
             commit('SET_CURRENT_SET', res.objects[0].current_set)
             commit('SET_SHOW_REMOVE_ADS_FLAG', res.objects[0].showRemoveAdsBtn)
+            commit('SET_IFANR_SETTINGS', res.objects[0])
           }
           resolve(res.objects)
         }).catch(err => {

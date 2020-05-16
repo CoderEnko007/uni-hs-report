@@ -85,10 +85,11 @@
         rangePicker: {
           selectedItem: 0,
           list: [
-            { text: '全分段', rank_range: 'All' },
-            { text: 'R10-R6分段', rank_range: 'Six_Through_Ten' },
-            { text: 'R5-R1分段', rank_range: 'One_Through_Five' },
-            { text: '传说分段', rank_range: 'Legend_Only' }
+            {text: '青铜-黄金', rank_range: 'BRONZE_THROUGH_GOLD'},
+            {text: '钻石-传说', rank_range: 'DIAMOND_THROUGH_LEGEND'},
+            {text: '钻石4-钻石1', rank_range: 'DIAMOND_FOUR_THROUGH_DIAMOND_ONE'},
+            {text: '传说分段', rank_range: 'LEGEND'},
+            {text: '传说Top1000', rank_range: 'TOP_1000_LEGEND'}
           ]
         },
         tempSelectedItem: 0,
@@ -349,7 +350,6 @@
       }
     },
     mounted() {
-      console.log('mounted')
       this.initVideoAds()
       this.genFactionIcons()
       this.genWinRateData()
@@ -391,6 +391,7 @@
       height: 86rpx;
       padding: 0 30rpx;
       /*box-shadow: 0 3px 2px -3px #000;*/
+      border-top: 1rpx solid #eee;
       border-bottom: 1rpx solid #eee;
       box-sizing: border-box;
       .filter-item {

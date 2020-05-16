@@ -56,6 +56,7 @@ export default {
       'winWidth',
       'winHeight',
       'navHeight',
+      'barHeight',
       'tabHeight'
     ]),
     timerDesc() {
@@ -91,16 +92,10 @@ export default {
       }
     },
     scrollHeight() {
-      // wx.getSystemInfo({
-      //   success: res => {
-      //     console.log(`computed scrollHeight2---->screenWidth:${res.screenWidth}, screenHeight:${res.screenHeight}`)
-      //     console.log(`computed scrollHeight2---->windowWidth:${res.windowWidth}, windowHeight:${res.windowHeight}`)
-      //   }
-      // })
+      const navHeight = (this.navHeight+this.barHeight*2)/2
       const res = wx.getSystemInfoSync()
-      let ratio = res.windowWidth/750
-      // return this.winHeight-this.navHeight+20+'px'
-      return res.windowHeight-this.navHeight-85*ratio+this.tabHeight+'px'
+      const ratio = res.windowWidth/750
+      return res.windowHeight-navHeight-85*ratio+'px'
     }
   },
   data() {
@@ -132,7 +127,7 @@ export default {
       let orderBy = this.revealed?'-reveal_time':'reveal_time'
       let res = await getRevealCardsList({
         revealed: this.revealed,
-      }, 20, this.page, orderBy)
+      }, 20, this.page, 0, orderBy)
       if (init) {
         this.cardList = res.objects
       } else {

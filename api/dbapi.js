@@ -197,6 +197,32 @@ export function getBattlegroundCards(params, limit=20, page=0, offset=0, orderBy
   })
 }
 
+export function getBattlegroundTierList(params, limit=1000, page=0, orderBy='avg_final_placement') {
+  return new Promise((resolve, reject) => {
+    let tableObj = new wx.BaaS.TableObject(tableID.battlegroundTierTableID)
+    let timeFrameQuery = new wx.BaaS.Query()
+    if (params.hasOwnProperty('time_frame')) {
+      timeFrameQuery.compare('time_frame', '=', params.time_frame)
+    } else {
+      timeFrameQuery.compare('time_frame', '=', 'LAST_7_DAYS')
+    }
+    let mmrRangeQuery = new wx.BaaS.Query()
+    if (params.hasOwnProperty('mmr_range')) {
+      mmrRangeQuery.compare('mmr_range', '=', params.mmr_range)
+    } else {
+      mmrRangeQuery.compare('mmr_range', '=', 'TOP_50_PERCENT')
+    }
+    let query = wx.BaaS.Query.and(timeFrameQuery, mmrRangeQuery)
+    tableObj.setQuery(query).orderBy(orderBy).limit(limit).offset(page*limit).find({'withCount': true}).then(res => {
+      resolve(res.data)
+    }, err => {
+      reject(err)
+    })
+  })
+}
+
+// export function getBattlegroundHeroTierDetail()
+
 export function getArenaCards(params, tableid=tableID.arenaCardsTableID, limit=20, page=0, orderBy='-times_played') {
   return new Promise((resolve, reject) => {
     let tableObj = new wx.BaaS.TableObject(tableid)
@@ -675,7 +701,7 @@ export function getDeckCardList(params) {
   })
 }
 
-export function getRevealCardsList(params, limit=20, page=0, orderBy='reveal_time') {
+export function getRevealCardsList(params, limit=20, page=0, offset=0, orderBy='-reveal_time') {
   return new Promise((resolve, reject) => {
     let tableObj = new wx.BaaS.TableObject(tableID.revealCardsTableID)
     let timeQuery = new wx.BaaS.Query()
@@ -683,13 +709,10 @@ export function getRevealCardsList(params, limit=20, page=0, orderBy='reveal_tim
     if (params&&params.hasOwnProperty('revealed')) {
       if (params.revealed) {
         timeQuery.compare('reveal_time', '<=', ts_now)
+        timeQuery.isNotNull('cover')
       } else {
         timeQuery.compare('reveal_time', '>', ts_now)
       }
-    }
-    let factionQuery = new wx.BaaS.Query()
-    if (params&&params.faction) {
-      factionQuery.compare('cardClass', '=', params.faction)
     }
     let revealCard = new wx.BaaS.Query()
     if (params&&params.hasOwnProperty('card_detail')) {
@@ -699,6 +722,38 @@ export function getRevealCardsList(params, limit=20, page=0, orderBy='reveal_tim
         timeQuery.isNull('name')
       }
     }
+    let costQuery = new wx.BaaS.Query()
+    if (params && params.hasOwnProperty('cost') && params.cost!=null) {
+      if (params.cost<7) {
+        costQuery.compare('cost', '=', parseInt(params.cost))
+      } else {
+        costQuery.compare('cost', '>=', params.cost)
+      }
+    }
+    let factionQuery = new wx.BaaS.Query()
+    if (params.faction && params.faction.id !== 'all') {
+      factionQuery.compare('cardClass', '=', params.faction.id)
+    }
+    let typeQuery = new wx.BaaS.Query()
+    if (params.type && params.type.id !== 'all') {
+      typeQuery.compare('type', '=', params.type.id.toUpperCase())
+    }
+    let rarityQuery = new wx.BaaS.Query()
+    if (params.rarity && params.rarity.id !== 'all') {
+      rarityQuery.compare('rarity', '=', params.rarity.id)
+    }
+    let raceQuery = new wx.BaaS.Query()
+    if (params.race && params.race.id !== 'all') {
+      raceQuery.compare('race', '=', params.race.id)
+    }
+    let searchQuery = new wx.BaaS.Query()
+    if (params.search) {
+      let nameQuery = new wx.BaaS.Query()
+      nameQuery.contains('name', params.search)
+      let otherQuery = new wx.BaaS.Query()
+      otherQuery.contains('text', params.search)
+      searchQuery = wx.BaaS.Query.or(nameQuery, otherQuery)
+    }
     let childList = new wx.BaaS.Query()
     if (params&&params.childList) {
       childList.in('dbfId', params.childList)
@@ -707,9 +762,9 @@ export function getRevealCardsList(params, limit=20, page=0, orderBy='reveal_tim
     if (params&&params.hasOwnProperty('collectible')) {
       validQuery.compare('collectible', '=', params.collectible)
     }
-    
-    let query = wx.BaaS.Query.and(timeQuery, factionQuery, validQuery, childList)
-    tableObj.setQuery(query).limit(limit).orderBy(orderBy).offset(page*limit).find({"withCount": true}).then(res => {
+    let tempOffset = offset?offset:page*limit
+    let query = wx.BaaS.Query.and(timeQuery, factionQuery, costQuery, typeQuery, rarityQuery, raceQuery, searchQuery, validQuery, childList)
+    tableObj.setQuery(query).limit(limit).orderBy([orderBy, '-created_at']).offset(tempOffset).find({"withCount": true}).then(res => {
       resolve(res.data)
     }, err => {
       reject(err)
@@ -753,7 +808,6 @@ export function setActivateCode(recordID, obj) {
   return new Promise((resolve, reject) => {
     let tableObj = new wx.BaaS.TableObject(tableID.activateCodeTableID)
     let myRecord = tableObj.getWithoutData(recordID)
-    console.log('bbb', myRecord, obj)
     myRecord.set('state', obj.state)
     myRecord.set('user', obj.user)
     myRecord.update().then(res => {

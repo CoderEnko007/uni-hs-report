@@ -7,15 +7,7 @@
       <div class="panel-faction">
         <HeroesPanel :dataList="factionIcons" :selected="selectedFaction.id" @itemClick="handleIconsClick"></HeroesPanel>
       </div>
-      <div class="cost_filter">
-        <ul class="cards_cost">
-          <li v-for="i in costList" :key="i.cost">
-            <a :class="{type_icon: true, type_icon_active: i.cost===filter.cost}" @click="handleCostClick(i.cost)">
-              <img class="cost_num" :src="i.icon" mode="aspectFit">
-            </a>
-          </li>
-        </ul>
-      </div>
+      <CostPanel @itemClick="handleCostClick" ref='costPanel'></CostPanel>
       <div class="list-header">
         <div class="cards-title">
           {{selectedFaction.name?selectedFaction.name:''}}单卡数据
@@ -71,6 +63,7 @@ import { mapGetters } from 'vuex'
 import utils from '@/utils'
 import { getArenaCards } from "@/api/dbapi";
 import HeroesPanel from '@/components/HeroesPanel'
+import CostPanel from '@/components/CostPanel'
 import loadMore from '@/components/load-more.vue'
 import SearchBar from '@/components/SearchBar'
 import FilterMenu from '@/components/FilterMenu'
@@ -89,6 +82,7 @@ export default {
     SearchBar,
     FilterMenu,
     HeroesPanel,
+    CostPanel,
     DeckCards
   },
   data() {
@@ -137,13 +131,15 @@ export default {
       const res = wx.getSystemInfoSync()
       const navHeight = (this.navHeight+this.barHeight*2)/2
       const ratio = res.windowWidth/750
-      return res.windowHeight-navHeight-89*ratio-383*ratio
+      // return res.windowHeight-navHeight-89*ratio-383*ratio
+      return res.windowHeight-navHeight-89*ratio-362*ratio
     }
   },
   methods: {
     resetFilter() {
       this.filter = Object.assign({}, defaultFilter)
       this.selectedFaction = ''
+      this.$refs.costPanel.clearCost()
       this.genCardsList(true)
     },
     genFactionIcons() {
@@ -239,52 +235,8 @@ export default {
 .panel-faction {
   padding: 0 30rpx 20rpx;
 }
-.cost_filter {
-  position: relative;
-  padding: 0 38rpx 20rpx;
-  border-bottom:1rpx solid #eee;
-  .cards_cost {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    li {
-      display:flex;
-      text-align:center;
-      position: relative;
-      height: 75rpx;
-      line-height: 75rpx;
-      a {
-        margin: auto;
-      }
-      .type_icon {
-        position: relative;
-        width: 54rpx;
-        height: 54rpx;
-        display: inline-block;
-        background: url('../../../static/mana/mana1.png') no-repeat;
-        background-size: 100% 100%;
-      }
-      .type_icon_active {
-        position: relative;
-        width: 54rpx;
-        height: 54rpx;
-        display: inline-block;
-        background: url('../../../static/mana/mana_active.png') no-repeat;
-        background-size: 100% 100%;
-      }
-      .cost_num {
-        position: absolute;
-        width: 44rpx;
-        height: 34rpx;
-        top: 47%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-    }
-  }
-}
 .cards-list {
-  padding: 390rpx 21rpx 0;
+  padding: 360rpx 21rpx 0;
   .scroll-list {
     display: flex;
     flex-wrap: nowrap;
@@ -331,6 +283,7 @@ export default {
   line-height: 88rpx;
   box-sizing: border-box;
   border-bottom:1rpx solid #eee;
+  border-top: 1rpx solid #eee;
   .cards-title {
     display:inline-block;
     width: 300rpx;

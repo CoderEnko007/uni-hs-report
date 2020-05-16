@@ -21,16 +21,16 @@
           <div class="rank-panel">
             <div class="headline">
               <span class="title">职业排名</span>
-              <div class="head-picker">
+              <!-- <div class="head-picker">
                 <picker mode="selector" :value="modeFilter.selectedItem" :range="modePickerList" @change="handleModeChange">
                   <span class='selector-item'>{{modeFilter.list[modeFilter.selectedItem].text}}</span>
                   <span class="iconfont" :style="{'vertical-align': 'middle'}">&#xe668;</span>
                 </picker>
-              </div>
+              </div> -->
               <div class="btn-group">
                 <div class="btn-block" v-for="(item, index) in rankMode" :key="item.name" @click="modeBtnClick(rankMode[index])">
                   <img class="btn-img" :src="selectedGameType===item.mode?item.active_icon:item.icon" mode="aspectFit">
-                  <button class="c-button" :class="selectedGameType===item.mode?'btn-active':''">{{item.text}}</button>
+                  <div class="c-button" :class="selectedGameType===item.mode?'btn-active':''">{{item.text}}</div>
                   <div class="separator" v-if="index !== 2">|</div>
                 </div>
               </div>
@@ -45,7 +45,7 @@
                 <span class="iconfont">&#xe600;</span>
               </div>
               <!-- <div class="data-vision" @click="handleRevealClick">
-                <img class="btn-img" src="/static/icons-v2/Set_DRAGONS.png" style="width:42rpx" mode="aspectFit">
+                <img class="btn-img" src="/static/icons-v2/set-outland.png" style="width:42rpx" mode="aspectFit">
                 <span class="text">新卡发布</span>
                 <span class="iconfont">&#xe600;</span>
               </div> -->
@@ -88,7 +88,7 @@
     </div>
     <x-modal :text='noticeText.text' :no-cancel='true' :no-title='true' confirm-text='朕知道了' :hidden.sync='hideModal'></x-modal>
     <div style="position: fixed; top: 9999999999999px; overflow: hidden">
-      <canvas :style="{width: canvasWidth*2+'rpx', height: canvasHeight*2+'rpx'}" canvas-id="dailyReport"></canvas>
+      <canvas :style="{width: canvasWidth+'px', height: canvasHeight+'px'}" canvas-id="dailyReport"></canvas>
     </div>
   </div>
 </template>
@@ -160,10 +160,11 @@
         rangePicker: {
           selectedItem: 0,
           list: [
-            {text: '全分段', rank_range: 'All'},
-            {text: 'R10-R6分段', rank_range: 'Six_Through_Ten'},
-            {text: 'R5-R1分段', rank_range: 'One_Through_Five'},
-            {text: '传说分段', rank_range: 'Legend_Only'}
+            {text: '青铜-黄金', rank_range: 'BRONZE_THROUGH_GOLD'},
+            {text: '钻石-传说', rank_range: 'DIAMOND_THROUGH_LEGEND'},
+            {text: '钻石4-钻石1', rank_range: 'DIAMOND_FOUR_THROUGH_DIAMOND_ONE'},
+            {text: '传说分段', rank_range: 'LEGEND'},
+            {text: '传说Top1000', rank_range: 'TOP_1000_LEGEND'}
           ]
         },
         tempSelectedItem: 0,
@@ -194,9 +195,9 @@
           adsHeight = 40
         }
         if (this.activeIndex == 0) {
-          return 335*ratio + (96+390+90+20)*ratio + adsHeight + 96*ratio + 80*ratio*4 + 120*ratio*this.tierListNum + 35 - this.collapseHeight + 'px'
+          return 335*ratio + (96+390+90+20)*ratio + adsHeight + 96*ratio + 80*ratio*4 + 120*ratio*this.tierListNum + 60*ratio - this.collapseHeight + 'px'
         } else {
-          return this.winHeight - navHeight - 41 + "px"
+          return this.winHeight - navHeight - 82*ratio + "px"
         }
       },
       modePickerList() {
@@ -357,7 +358,7 @@
       },
       genRankData() {
         let date = formatNowTime(new Date())
-        getRankData(date, null, 27).then(res => {
+        getRankData(date, null, 100).then(res => {
           this.initRankDataArray()
           this.report_date = res.date
           this.origRankList = res.list
@@ -547,6 +548,8 @@
         this.canvasWidth = 300+canvasMargin
         this.canvasHeight = 720
         let headHeight = 120
+        ctx.setFillStyle('#fff')
+        ctx.fillRect(0, 0, this.canvasWidth, 3*this.canvasHeight)
         ctx.save()
         ctx.setFillStyle('#fff')
         ctx.fillRect(0, 0, this.canvasWidth, headHeight)
@@ -560,11 +563,12 @@
         ctx.font = 'normal bold 16px sans-serif';
         ctx.fillText('卡组强度排行', this.canvasWidth/2, 45)
         ctx.restore()
+        ctx.save()
         let rankRange = this.rangePicker.list[this.rangePicker.selectedItem].text
+        ctx.setFillStyle('#000')
         ctx.font = 'normal normal 12px sans-serif';
         ctx.textAlign = 'left'
         ctx.fillText('分段：', canvasMargin+30, 70)
-        ctx.save()
         ctx.font = 'normal bold 13px sans-serif';
         ctx.setFillStyle('red')
         ctx.fillText(rankRange, canvasMargin+65, 70)
@@ -579,11 +583,19 @@
 
         ctx.textAlign = 'center'
         ctx.font = 'normal normal 13px sans-serif';
-        let colWidth = (this.canvasWidth-canvasMargin*2)/4
-        ctx.fillText('强 度', colWidth/2+canvasMargin, 95)
-        ctx.fillText('卡 组', colWidth+colWidth/2+canvasMargin, 95)
-        ctx.fillText('胜 率', colWidth*2+colWidth/2+canvasMargin, 95)
-        ctx.fillText('热 度', colWidth*3+colWidth/2+canvasMargin, 95)
+        let colWidth = (this.canvasWidth-10-canvasMargin*2)/4
+        ctx.save()
+        ctx.setFillStyle('#B5B5B5')
+        ctx.fillRect(2, 80, colWidth, 23)
+        ctx.fillRect(4+colWidth, 80, colWidth, 23)
+        ctx.fillRect(6+colWidth*2, 80, colWidth, 23)
+        ctx.fillRect(8+colWidth*3, 80, colWidth, 23)
+        ctx.setFillStyle('#000')
+        ctx.fillText('强 度', colWidth/2+canvasMargin+2, 96)
+        ctx.fillText('卡 组', colWidth+colWidth/2+canvasMargin+4, 96)
+        ctx.fillText('胜 率', colWidth*2+colWidth/2+canvasMargin+6, 96)
+        ctx.fillText('热 度', colWidth*3+colWidth/2+canvasMargin+8, 96)
+        ctx.restore()
 
         let rankPower = [
           {name: '第1梯队', height:0, num: 0},
@@ -591,8 +603,8 @@
           {name: '第3梯队', height:0, num: 0},
           {name: '第4梯队', height:0, num: 0},
         ]
-        let factionColor = {'Druid': '#f79647', 'Hunter': '#9bbb56', 'Mage': '#b8dee9', 'Paladin': '#e6b8b8',
-                            'Priest': '#e5e5e5', 'Rogue': '#ffff01', 'Shaman': '#538dd6', 'Warlock': '#cdc0da', 'Warrior': '#c5bd98'}
+        let factionColor = {'Druid': '#EE7B20', 'Hunter': '#9bbb56', 'Mage': '#6AC8EC', 'Paladin': '#EF8BB7', 'Priest': '#e5e5e5', 
+                            'Rogue': '#ffff01', 'Shaman': '#246CB4', 'Warlock': '#9283BC', 'Warrior': '#C79C6F', 'DemonHunter': '#16debc'}
         let listHeight = 0
         let itemHeight = 25
         let winrateGColor = gradientColor('#239c15', '#297607', this.tierList[0].list.length+this.tierList[1].list.length)
@@ -604,7 +616,7 @@
             if (tierIndex === '__proto__') {
               continue
             }
-            rankPower[tierIndex].height=this.tierList[tierIndex].list.length*itemHeight+1 // 每个梯队后面加1px的分割线
+            rankPower[tierIndex].height=this.tierList[tierIndex].list.length*itemHeight // 每个梯队后面加1px的分割线
             rankPower[tierIndex].num = this.tierList[tierIndex].list.length
             let prevTierHeight = 0
             if (tierIndex > 0) {
@@ -612,13 +624,17 @@
             }
             listHeight += rankPower[tierIndex].height
             ctx.save()
-            ctx.setFillStyle('#fbf3e8')
-            ctx.fillRect(canvasMargin, headHeight+prevTierHeight-17, colWidth, rankPower[tierIndex].height)
+            if (tierIndex%2) {
+              ctx.setFillStyle('#DCDEDD')
+            } else {
+              ctx.setFillStyle('#FFFFFF')
+            }
+            ctx.fillRect(canvasMargin+2, headHeight+prevTierHeight-17+2, colWidth, rankPower[tierIndex].height-2)
             ctx.restore()
             ctx.save()
             ctx.font = 'normal bold 12px sans-serif'
             ctx.setFillStyle('#34383b')
-            ctx.fillText(rankPower[tierIndex].name, colWidth/2+canvasMargin, headHeight+prevTierHeight)
+            ctx.fillText(rankPower[tierIndex].name, colWidth/2+canvasMargin+2, headHeight+prevTierHeight)
             ctx.restore()
             let list = this.tierList[tierIndex].list
             for (let itemIndex in list) {
@@ -628,45 +644,49 @@
                 }
                 ctx.save()
                 ctx.setFillStyle(factionColor[list[itemIndex].faction])
-                ctx.fillRect(canvasMargin+colWidth, headHeight+prevTierHeight+itemIndex*itemHeight-17, colWidth, itemHeight)
+                ctx.fillRect(canvasMargin+colWidth+4, headHeight+prevTierHeight+itemIndex*itemHeight-17+2, colWidth, itemHeight-2)
                 ctx.setFillStyle('#000')
-                ctx.font = 'normal normal 12px sans-serif'
+                ctx.font = 'normal bold 12px sans-serif'
                 let filterDeck = this.decksName.filter(v => {
                   return v.ename === list[itemIndex].archetype_name
                 })
                 let cname = filterDeck.length>0?filterDeck[0].cname:list[itemIndex].archetype_name
-                ctx.fillText(cname, colWidth/2+canvasMargin+colWidth, headHeight+prevTierHeight+itemIndex*itemHeight)
+                ctx.fillText(cname, colWidth/2+canvasMargin+colWidth+4, headHeight+prevTierHeight+itemIndex*itemHeight+1)
                 ctx.restore()
                 ctx.save()
                 if (itemNums%2 === 0) {
                   ctx.setFillStyle('#fff')
                 } else {
-                  ctx.setFillStyle('#faf8f9')
+                  ctx.setFillStyle('#DCDEDD')
                 }
-                ctx.fillRect(canvasMargin+2*colWidth, headHeight+prevTierHeight+itemIndex*itemHeight-17, 2*colWidth, itemHeight)
-                ctx.setFillStyle('#faf8f9')
+                ctx.fillRect(canvasMargin+2*colWidth+6, headHeight+prevTierHeight+itemIndex*itemHeight-17+2, colWidth, itemHeight-2)
+                ctx.fillRect(canvasMargin+3*colWidth+8, headHeight+prevTierHeight+itemIndex*itemHeight-17+2, colWidth, itemHeight-2)
                 ctx.restore()
                 ctx.save()
                 ctx.font = 'normal bold 12px sans-serif'
                 ctx.setFillStyle(winrateColor[itemNums++])
-                ctx.fillText(list[itemIndex].win_rate+'%', colWidth/2+canvasMargin+colWidth*2, headHeight+prevTierHeight+itemIndex*itemHeight)
+                ctx.fillText(list[itemIndex].win_rate+'%', colWidth/2+canvasMargin+colWidth*2+6, headHeight+prevTierHeight+itemIndex*itemHeight+1)
                 ctx.restore()
+                ctx.save()
+                ctx.font = 'normal bold 12px sans-serif'
+                ctx.setFillStyle('#000')
                 if (list[itemIndex].popularity1) {
-                  ctx.fillText(list[itemIndex].popularity1.toFixed(1)+'%', colWidth/2+canvasMargin+colWidth*3, headHeight+prevTierHeight+itemIndex*itemHeight)
+                  ctx.fillText(list[itemIndex].popularity1.toFixed(1)+'%', colWidth/2+canvasMargin+colWidth*3+8, headHeight+prevTierHeight+itemIndex*itemHeight+1)
                 } else {
-                  ctx.fillText('暂无', colWidth/2+canvasMargin+colWidth*3, headHeight+prevTierHeight+itemIndex*itemHeight)
+                  ctx.fillText('暂无', colWidth/2+canvasMargin+colWidth*3+8, headHeight+prevTierHeight+itemIndex*itemHeight+1)
                 }
+                ctx.restore()
               }
             }
-            ctx.save()
-            ctx.setStrokeStyle('#ccc')
-            ctx.moveTo(canvasMargin, headHeight+prevTierHeight-17)
-            ctx.lineTo(this.canvasWidth-canvasMargin, headHeight+prevTierHeight-17)
-            ctx.stroke()
-            ctx.restore()
+            // ctx.save()
+            // ctx.setStrokeStyle('#fff')
+            // ctx.moveTo(canvasMargin+2, headHeight+prevTierHeight-17)
+            // ctx.lineTo(this.canvasWidth-canvasMargin, headHeight+prevTierHeight-17)
+            // ctx.stroke()
+            // ctx.restore()
           }
         }
-        ctx.setStrokeStyle('#ccc')
+        ctx.setStrokeStyle('#fff')
         ctx.moveTo(canvasMargin, headHeight+listHeight-17)
         ctx.lineTo(this.canvasWidth-canvasMargin, headHeight+listHeight-17)
         ctx.stroke()
@@ -694,6 +714,8 @@
         }
         let destWidth = this.canvasWidth//375 * 750 / uni.getSystemInfoSync().windowWidth
         let destHeight = this.canvasHeight//(this.canvasHeight * 375 / this.canvasWidth) * 750 / uni.getSystemInfoSync().windowWidth
+        // let destWidth = 375 * 750 / wx.getSystemInfoSync().windowWidth
+        // let destHeight = (this.canvasHeight * 375 / this.canvasWidth) * 750 / wx.getSystemInfoSync().windowWidth
         uni.canvasToTempFilePath({
           canvasId: 'dailyReport',
           destWidth: 3*destWidth,
@@ -840,6 +862,7 @@
         transform: translateY(-50%);
         display: flex;
         justify-content: space-between;
+        align-items: center;
         flex-wrap: nowrap;
         .btn-block {
           position: relative;
@@ -854,7 +877,7 @@
             top: 50%;
             transform: translateY(-50%);
           }
-          button {
+          .c-button {
             height: 100%;
             line-height: 96rpx;
             margin-left: 40rpx;
@@ -901,7 +924,7 @@
   .data-vision {
    position: relative;
    width: 100%;
-   margin-top: 20rpx;
+   margin: 10px 10rpx 0;
    background: #FAFAFA;
    line-height: 90rpx;
    border-radius: 24rpx;

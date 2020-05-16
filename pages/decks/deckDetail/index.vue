@@ -12,7 +12,7 @@
           </div>
           <div class="name">
             <p class="cname">{{deckDetail.cname}}</p>
-            <div class="dust-cost" v-show="deckDetail.dust_cost">
+            <div class="dust-cost" v-show="deckDetail.dust_cost!==null">
               <img :src="dustImage" mode="aspectFit">
               <p>{{deckDetail.dust_cost}}</p>
             </div>
@@ -81,9 +81,9 @@
         </div>
         <div class="deck-code m-30">
           <div class="code"><span>{{deckDetail.deck_code}}</span></div>
-          <ticket-report-wrapper style="float: right;">
+          <div style="float: right;">
             <button @click="copyDeckCode">复制神秘代码</button>
-          </ticket-report-wrapper>
+          </div>
         </div>
       </div>
       <div class="mulligan-list" :hidden="activeIndex != 1">
@@ -94,8 +94,11 @@
           缺少对战数据
         </div>
       </div>
-      <div class="video-ads" v-if="adsOpenFlag">
+      <div class="ads" v-if="adsOpenFlag && adsType==='video'">
         <ad unit-id="adunit-658c5ed4c9982d96" ad-type="video" ad-theme="white"></ad>
+      </div>
+      <div class="video-ads" v-if="adsOpenFlag && adsType!=='video'">
+        <ad unit-id="adunit-d6bb528c4e28a808"></ad>
       </div>
       <div class="separator"></div>
       <div class="winrate-block m-30">
@@ -108,21 +111,15 @@
         </div>
       </div>
       <div class="separator"></div>
-      <!-- <div class="ads" v-if="adsOpenFlag">
-        <ad unit-id="adunit-d6bb528c4e28a808"></ad>
-      </div> -->
       <div class="data-chart">
         <div class="headline m-30"><span class="title">费用分布</span></div>
         <!-- <BarChart :chartData="costChartData" canvasId="costBar"></BarChart> -->
         <canvas canvas-id="canvasColumn" id="canvasColumn" class="charts" v-if="!costChartImg"></canvas>
         <img class="charts" :src="costChartImg" mode="aspectFit" v-else>
       </div>
-      <!-- <div class="video-ads">
-        <ad unit-id="adunit-658c5ed4c9982d96" ad-type="video" ad-theme="white"></ad>
-      </div> -->
       <div class="safe-panel" :style="{'height': isIphoneX?100+'rpx':60+'rpx'}"></div>
       <div style="position: fixed; top: 9999999999999px; overflow: hidden">
-        <canvas :style="{width: canvasWidth*2+'rpx', height: canvasHeight*2+'rpx', 'margin-left': '30rpx'}" canvas-id="deck-pic"></canvas>
+        <canvas :style="{width: canvasWidth+'px', height: canvasHeight+'px', 'margin-left': '30rpx'}" canvas-id="deck-pic"></canvas>
       </div>
       <div class="float-btn" :style="{'bottom': isIphoneX?140+'rpx':100+'rpx'}">
         <floatBtnGroup @onCompare="openCompareDeckModal" :badgeCount="badgeCount" showCompare="true"></floatBtnGroup>
@@ -138,7 +135,7 @@
 import utils from '@/utils'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import {getDeckDetail, setUserCollection, cancelUserCollection, getArchetypeDetail, getDeckCardList, addCustomerSetting, getCustomerSetting, updateCustomerSetting} from "@/api/dbapi";
-import {getComponentByTag, iFanrTileImageURL, getImageInfoAsync} from "@/utils";
+import {getComponentByTag, iFanrTileImageURL, genTileImageURL, getImageInfoAsync} from "@/utils";
 import DeckCards from '@/components/DeckCards'
 import FooterMenu from '@/components/FooterMenu'
 import NavBar from '@/components/NavBar'
@@ -146,7 +143,6 @@ import WinRateBoard from '@/components/WinRateBoard'
 import AddBubble from '@/components/AddBubble'
 import floatBtnGroup from '@/components/floatBtnGroup'
 import compareDeckModal from '@/components/compareDeckModal'
-// import BarChart from '@/components/BarChart'
 import uCharts from '@/components/u-charts/u-charts.js';
 import SpinKit from '@/components/SpinKit'
 import mulliganList from '../components/mulliganList'
@@ -182,7 +178,6 @@ export default {
     compareDeckModal,
     SpinKit,
     mulliganList,
-    // BarChart
   },
   data() {
     return {
@@ -214,7 +209,7 @@ export default {
       deckChecked: false,
       showArchetype: false,
       canvasHeight: 270,
-      canvasWidth: 165,
+      canvasWidth: 185,
       cWidth:'',
       cHeight:'',
       pixelRatio:1,
@@ -231,6 +226,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'winWidth',
       'collectedDecks',
       'decksName',
       'navHeight',
@@ -239,7 +235,9 @@ export default {
       'compareDeck1',
       'compareDeck2',
       'isIphoneX',
-      'adsOpenFlag'
+      'adsOpenFlag',
+      'ifanrSettings',
+      'deck_tile_resource'
     ]),
     badgeCount() {
       let count = 0
@@ -255,9 +253,21 @@ export default {
     gameCount() {
       return this.deckDetail.real_game_count?this.deckDetail.real_game_count:this.deckDetail.game_count
     },
-    // adsOpenFlag() {
-    //   return utils.adsOpenFlag
-    // },
+    adsType() {
+      if (this.ifanrSettings && this.ifanrSettings.deck_ads_type) {
+        return this.ifanrSettings.deck_ads_type
+      } else {
+        return 'video'
+      }
+    },
+    formatCanvasWidth() {
+      let ratio = this.winWidth/750
+      return this.canvasWidth*ratio
+    },
+    formatCanvasHeight() {
+      let ratio = this.winWidth/750
+      return this.canvasHeight*ratio
+    }
   },
   methods: {
     sortFunction() {
@@ -301,9 +311,7 @@ export default {
       }
       params.mode = this.deckMode
       const res = await getDeckDetail(params, this.trending, this.collected)
-      // getDeckDetail(params, this.trending, this.collected).then(res => {
       if (!res) {
-        // wx.hideLoading()
         wx.showModal({
           title: '提示',
           content: '抱歉，暂未收录该卡组',
@@ -371,7 +379,6 @@ export default {
           item.win_rate = parseFloat(item.win_rate).toFixed(1)
           return item
         })
-        // wx.hideLoading()
         wx.hideNavigationBarLoading()
         wx.stopPullDownRefresh();
       }
@@ -538,7 +545,8 @@ export default {
       if(this.deckDetail.card_list) {
         formatData = JSON.parse(this.deckDetail.card_list)
         for (let card of formatData) {
-          card['img'] = iFanrTileImageURL(card.tile)
+          // card['img'] = iFanrTileImageURL(card.tile)
+          card['img'] = genTileImageURL(card.card_hsid, this.deck_tile_resource)
           if (card.rarity === 'LEGENDARY') {
             card['count'] = '★'
           }
@@ -583,11 +591,6 @@ export default {
       ctx.restore()
 
       // 绘制卡牌主体部分
-      let grd=ctx.createLinearGradient(27,0,136,0);
-      grd.addColorStop(0, "#313109")
-      grd.addColorStop(.2, "#313131")
-      grd.addColorStop(.83, "rgba(49,49,49,00)")
-      grd.addColorStop(1, "rgba(49,49,49,00)")
       let pages = getCurrentPages();
       for (let index in formatData) {
         if (formatData.hasOwnProperty(index)) {
@@ -611,30 +614,48 @@ export default {
           ctx.closePath()
           ctx.restore()
           // 绘制卡牌tile图片
-          console.log(formatData[index])
           let res = await getImageInfoAsync(formatData[index].img)
           if (pages[pages.length-1].route !== 'pages/decks/deckDetail/index') {
             console.log('not canvas page')
             return
           }
           let tileRatio = res.height/29
+          let countWidth = 22
           if (formatData[index].count !== 1) {
-            ctx.drawImage(res.path, 30, 0, 100*tileRatio, res.height, 43, headHeight+index*tileHeight, 100, 29) //27+13,费用框占27px，间隔13px，宽度100
+            let tileWidth = 120
+            let dx = this.canvasWidth-tileWidth-countWidth
+            let sx = res.width-tileWidth*tileRatio-2*tileRatio
+            ctx.drawImage(res.path, sx, 0, tileWidth*tileRatio, res.height, dx, headHeight+index*tileHeight, tileWidth, 29) //27+13,费用框占27px，间隔13px，宽度100
           } else {
-            ctx.drawImage(res.path, 0, 0, 122*tileRatio, res.height, 43, headHeight+index*tileHeight, 122, 29)
+            let dx = 65
+            let tileWidth = this.canvasWidth-dx
+            let sx = res.width-tileWidth*tileRatio-2*tileRatio
+            ctx.drawImage(res.path, sx, 0, tileWidth*tileRatio, res.height, dx, headHeight+index*tileHeight, tileWidth, 29)
           }
           // 绘制卡牌张数
           if (formatData[index].count !== 1) {
             ctx.save()
             ctx.setFillStyle('#313131')
-            ctx.fillRect(143, headHeight+index*tileHeight, 22, 29)
+            ctx.fillRect(this.canvasWidth-countWidth, headHeight+index*tileHeight, countWidth, 29)
             ctx.font = 'normal bolder 13px sans-serif';
             ctx.textAlign = 'center'
             ctx.setFillStyle('#f4d442')
-            ctx.fillText(formatData[index].count, 154, headHeight+index*tileHeight+19)
+            ctx.fillText(formatData[index].count, this.canvasWidth-countWidth/2, headHeight+index*tileHeight+19)
             ctx.restore()
           }
           // 绘制卡牌蒙版
+          let grd=ctx.createLinearGradient(27,0,136,0);
+          if (formatData[index].count !== 1) {
+            grd.addColorStop(0, "#313109")
+            grd.addColorStop(.3, "#313131")
+            grd.addColorStop(.63, "rgba(49,49,49,00)")
+            grd.addColorStop(1, "rgba(49,49,49,00)")
+          } else {
+            grd.addColorStop(0, "#313109")
+            grd.addColorStop(.6, "#313131")
+            grd.addColorStop(.81, "rgba(49,49,49,00)")
+            grd.addColorStop(1, "rgba(49,49,49,00)")
+          }
           ctx.fillStyle = grd
           ctx.fillRect(27, headHeight+index*tileHeight, 136, 29)
           // 绘制卡牌名
@@ -671,12 +692,14 @@ export default {
       if (pages[pages.length-1].route !== 'pages/decks/deckDetail/index') {
         return
       }
-      let destWidth = 219
-      let destHeight = this.canvasHeight*219/this.canvasWidth
-      // let destWidth = 219 * 750 / wx.getSystemInfoSync().windowWidth
-      // let destHeight = (this.canvasHeight * 219 / this.canvasWidth) * 750 / wx.getSystemInfoSync().windowWidth
+      // let destWidth = 219
+      // let destHeight = this.canvasHeight*destWidth/this.canvasWidth
+      let destWidth = 219 * 750 / wx.getSystemInfoSync().windowWidth
+      let destHeight = (this.canvasHeight * 219 / this.canvasWidth) * 750 / wx.getSystemInfoSync().windowWidth
       wx.canvasToTempFilePath({
         canvasId: 'deck-pic',
+        width: this.canvasWidth,
+        height: this.canvasHeight,
         destWidth: destWidth,
         destHeight: destHeight,
         quality: 1,
@@ -931,6 +954,7 @@ export default {
       .deck-name {
         position: relative;
         width: 100%;
+        min-height: 98rpx;
         margin-left: 40rpx;
         .icon {
           position: relative;
@@ -950,9 +974,13 @@ export default {
           margin-left: 107rpx;
           color: #fff;
           .cname {
+            width: 360rpx;
             height:50rpx;
             line-height:50rpx;
             font-size: 50rpx;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .dust-cost {
             position: relative;
@@ -1024,13 +1052,12 @@ export default {
     /*margin: 0 30rpx;*/
     .capsule {
       position: relative;
-      display:inline-block;
-      /*width: 128rpx;*/
+      display: flex;
+      align-items: center;
       height: 48rpx;
       line-height: 48rpx;
       padding:0 18rpx;
       margin-right: 10rpx;
-      text-align: center;
       font-size: 26rpx;
       color: #666;
       border: 1rpx solid #ddd;
@@ -1054,9 +1081,11 @@ export default {
       }
     }
     .rarity-panel {
+      display: flex;
       margin-top: 30rpx;
     }
     .type-panel {
+      display: flex;
       margin-top: 15rpx;
       .capsule {
         .name {

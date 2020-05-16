@@ -33,9 +33,9 @@
     </div>
     <div class="panel" style="display: flex;align-items: center;justify-content: space-between;flex-wrap: nowrap;" v-else>
       <div class="state" @click="handleRefreshVIP">
-        <span>激活状态：</span>
-        <span v-if="vipObj.isVip">{{vipObj.timesString}}</span>
-        <span v-else>未激活或者激活码到期</span>
+        <span class="text">激活状态：</span>
+        <span class="text" v-if="vipObj.isVip">{{vipObj.timesString}}</span>
+        <span class="text" v-else>未激活或者激活码到期</span>
         <!-- <span class="iconfont">&#xe67b;</span> -->
       </div>
     </div>

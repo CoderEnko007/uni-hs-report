@@ -19,6 +19,9 @@ export default {
 
 <style lang="scss" scoped>
 .bubble {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 46rpx;
   line-height: 46rpx;
   background-color: rgba(255,255,255,.7);
@@ -29,14 +32,12 @@ export default {
     line-height: 46rpx;
     display: inline-block;
     font-size: 24rpx;
-    vertical-align:middle;
   }
   img {
     display: inline-block;
     width: 32rpx;
     height: 32rpx;
     margin:0 10rpx;
-    vertical-align:middle;
   }
   &:after {
     position: absolute;

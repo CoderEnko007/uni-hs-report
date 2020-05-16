@@ -3,7 +3,6 @@
     <nav-bar :showCapsule="true" navTitle="单卡详情"></nav-bar>
     <div class="header" @click="previewCard">
       <img :src="cardDetail.cardImg" class="card-img" mode="aspectFit" @load="imageLoad">
-      <!-- <LoadingCard :showFlag="!imageLoaded"></LoadingCard> -->
       <div class="rank-board" v-show="!imageLoaded">
         <SpinKit :mode="'sk-spinner-pulse'"></SpinKit>
       </div>
@@ -93,11 +92,7 @@
     </div>
     <div :style="{'height': isIphoneX?130+'rpx':90+'rpx'}"></div>
     <div class="footer">
-      <!-- <FooterMenu></FooterMenu> -->
-      <div class="btn-group" :style="{'height':isIphoneX?130+'rpx':90+'rpx'}">
-        <button class="btn previous" @click="handlePrevious" :class="{'de-active': !prevBtnEnable}" :style="{'margin-bottom':isIphoneX?40+'rpx':0}"><span>上一张</span></button>
-        <button class="btn next" @click="handleNext" :class="{'de-active': !nextBtnEnable}" :style="{'margin-bottom':isIphoneX?40+'rpx':0}"><span>下一张</span></button>
-      </div>
+      <preNextBtnGroup @previousClick="handlePrevious" @nextClick="handleNext" :prevBtnEnable="prevBtnEnable" :nextBtnEnable="nextBtnEnable"></preNextBtnGroup>
     </div>
     <div class="float-btn" v-show="imageLoaded" :style="{'top': isIphoneX?navHeight+barHeight+70+'rpx':navHeight+barHeight+50+'rpx'}">
       <floatBtnGroup showShare="true"></floatBtnGroup>
@@ -117,6 +112,7 @@ import SpinKit from '@/components/SpinKit'
 import DecksBoard from '@/components/DecksBoard'
 import uniPagination from "@/components/uni-pagination/uni-pagination"
 import HeroesPanel from '@/components/HeroesPanel'
+import preNextBtnGroup from '@/components/preNextBtnGroup'
 
 const heroes = {
   Druid: {name: '德鲁伊', image: '/static/heroIcons/druid.png'},
@@ -128,6 +124,7 @@ const heroes = {
   Shaman: {name: '萨满', image: '/static/heroIcons/shaman.png'},
   Warlock: {name: '术士', image: '/static/heroIcons/warlock.png'},
   Warrior: {name: '战士', image: '/static/heroIcons/warrior.png'},
+  DemonHunter: {name: '恶魔猎手', image: '/static/heroIcons/demonhunter.png'},
   Neutral: {name: '中立', image: ''}
 }
 const defaultCardDetail = {
@@ -148,7 +145,8 @@ export default {
     SpinKit,
     DecksBoard,
     uniPagination,
-    HeroesPanel
+    HeroesPanel,
+    preNextBtnGroup
   },
   data() {
     return {
@@ -353,7 +351,9 @@ export default {
       this.cardDetail.bgImg = genOrigImageURL(this.cardDetail.hsId)
       // this.cardDetail.cardImg = gen512CardsImageURL(this.cardDetail.hsId)
       // this.cardDetail.cardImg = this.cardDetail.img_card_link
-      if (this.card_resource === 'fbi') {
+      if (this.cardDetail.use_backup_img === true) {
+        this.cardDetail.cardImg = this.cardDetail.img_card_link
+      } else if (this.card_resource === 'fbi') {
         this.cardDetail.cardImg = this.genCardImage(this.cardDetail.hsId)
       } else if (this.card_resource === 'hsreplay') {
         this.cardDetail.cardImg = utils.genCardsImageURL(this.cardDetail.hsId)
@@ -764,6 +764,8 @@ export default {
       font-weight: bold;
     }
     .en-audio, .zh-audio {
+      display: flex;
+      flex-wrap: wrap;
       width: 100%;
       .title {
         font-size: 28rpx;
@@ -771,7 +773,8 @@ export default {
         line-height: 52rpx;
       }
       .audio-item {
-        display: inline-block;
+        display: flex;
+        align-items: center;
         width: 150rpx;
         height: 60rpx;
         line-height: 60rpx;
@@ -826,31 +829,6 @@ export default {
     bottom: 0;
     box-shadow:0px 0px 4px #c0c0c0;
     z-index: 999;
-    .btn-group {
-      position: relative;
-      display: flex;
-      flex-wrap: nowrap;
-      justify-content: space-around;
-      align-items: center;
-      width: 750rpx;
-      height: 90rpx;
-      background-color: #fff;
-      .btn {
-        width: 40%;
-        height: 60rpx;
-        line-height: 60rpx;
-        text-align: center;
-        border-radius: 10rpx;
-        background-color: $palette-blue;
-        color: #fff;
-        font-size: 26rpx;
-      }
-      .de-active {
-        background: rgba(67, 62, 136, .2);
-        color: rgba(67, 62, 136, .5);
-        border: 1rpx solid rgba(67, 62, 136, .5);
-      }
-    }
   }
 }
 .audio-play {

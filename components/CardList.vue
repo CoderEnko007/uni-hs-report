@@ -21,7 +21,7 @@
   import loadMore from '@/components/load-more.vue'
   export default {
     name: 'CardList',
-    props: ['list', 'loading', 'nodata', 'largeImg', 'noTabBar'],
+    props: ['list', 'loading', 'nodata', 'largeImg', 'noTabBar', 'wHeight'],
     components: {
       loadMore
     },
@@ -39,12 +39,13 @@
         const tabHeight = res.screenHeight-res.windowHeight
         const ratio = res.windowWidth/750
         const navHeight = (this.navHeight+this.barHeight*2)/2
+        const wHeight = this.wHeight?this.wHeight:0
         if (this.noTabBar) {
           // 85+96
-          return res.windowHeight-navHeight-(85+96)*ratio+tabHeight
+          return res.windowHeight-navHeight-(85+96+wHeight)*ratio+tabHeight
           // return this.winHeight-this.navHeight-82*ratio
         } else {
-          return res.windowHeight-navHeight-(89+234)*ratio
+          return res.windowHeight-navHeight-(89+234+wHeight)*ratio
         }
       }
     },

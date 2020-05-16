@@ -19,7 +19,7 @@
       </div>
     </div>
     <!-- <div :style="{'height': navHeight+'px'}"></div> -->
-    <div :style="{'height': navHeight+'rpx'}"></div>
+    <!-- <div :style="{'height': navHeight+'rpx'}"></div> -->
   </div>
 </template>
 <script>

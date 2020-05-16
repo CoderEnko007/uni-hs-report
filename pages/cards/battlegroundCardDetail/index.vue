@@ -25,7 +25,8 @@
                       <div class="attack">{{cardDetail.attack*2}}</div>
                       <div class="health">{{cardDetail.health*2}}</div>
                     </div>
-                    <rich-text class="text" :nodes="cardDetail.text"></rich-text>
+                    <rich-text class="text" :nodes="cardDetail.upgradeText" v-if="cardDetail.upgradeText"></rich-text>
+                    <rich-text class="text" :nodes="cardDetail.text" v-else></rich-text>
                   </div>
                 </div>
               </div>

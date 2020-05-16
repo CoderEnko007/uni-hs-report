@@ -29,6 +29,7 @@ const getters = {
   adNotice: state => state.settings.adNotice,
   currentSet: state => state.settings.current_set,
   showRemoveAdsBtn: state => state.settings.showRemoveAdsBtn,
+  ifanrSettings: state => state.settings.ifanrSettings,
   compareDeck1: state => state.compare.compareDeck1,
   compareDeck2: state => state.compare.compareDeck2
 }

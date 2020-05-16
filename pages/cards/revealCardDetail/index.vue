@@ -19,7 +19,8 @@
       <div class="headline"><span class="title">衍生卡</span></div>
       <div class="card-list">
         <div class="card" v-for="(item, index) in entourageList" :key="index" @click="handleEntourageClick(item)">
-          <img :src="item.image" mode="aspectFit">
+          <img :src="item.image" mode="aspectFit" @load="childImageLoad(item)">
+          <div class="rank-board" v-show="!item.loaded && item.image">            <SpinKit :mode="'sk-spinner-pulse'"></SpinKit>          </div>
         </div>
       </div>
     </div>
@@ -27,12 +28,9 @@
       <ad unit-id="adunit-3f4b7b57a1b47647" ad-type="video" ad-theme="white"></ad>
     </div>
     <div :style="{'height': isIphoneX?124+'rpx':90+'rpx'}"></div>
-    <!-- <div class="footer">
-      <div class="btn-group" :style="{'height':isIphoneX?124+'rpx':90+'rpx'}">
-        <button class="btn previous" @click="handlePrevious" :class="{'de-active': !prevBtnEnable}" :style="{'margin-bottom':isIphoneX?30+'rpx':0}"><span>上一张</span></button>
-        <button class="btn next" @click="handleNext" :class="{'de-active': !nextBtnEnable}" :style="{'margin-bottom':isIphoneX?30+'rpx':0}"><span>下一张</span></button>
-      </div>
-    </div> -->
+    <div class="footer">
+      <preNextBtnGroup @previousClick="handlePrevious" @nextClick="handleNext" :prevBtnEnable="prevBtnEnable" :nextBtnEnable="nextBtnEnable"></preNextBtnGroup>
+    </div>
   </div>
 </template>
 <script>
@@ -41,9 +39,9 @@ import { mapGetters } from 'vuex'
 import utils from '@/utils'
 import {genOrigImageURL, genCardsImageURL, gen512CardsImageURL} from '@/utils'
 import {getRevealCardDetail, getRevealCardsList, getSeriesData} from "@/api/dbapi";
-import FooterMenu from '@/components/FooterMenu'
 import NavBar from '@/components/NavBar'
 import SpinKit from '@/components/SpinKit'
+import preNextBtnGroup from '@/components/preNextBtnGroup'
 import uniPagination from "@/components/uni-pagination/uni-pagination"
 
 const heroes = {
@@ -56,6 +54,7 @@ const heroes = {
   Shaman: {name: '萨满', image: '/static/heroIcons/shaman.png'},
   Warlock: {name: '术士', image: '/static/heroIcons/warlock.png'},
   Warrior: {name: '战士', image: '/static/heroIcons/warrior.png'},
+  Warrior: {name: '恶魔猎手', image: '/static/heroIcons/demonhunter.png'},
   Neutral: {name: '中立', image: ''}
 }
 const defaultCardDetail = {
@@ -69,10 +68,10 @@ const defaultCardDetail = {
 }
 export default {
   components: {
-    FooterMenu,
     NavBar,
     SpinKit,
     uniPagination,
+    preNextBtnGroup
   },
   data() {
     return {
@@ -97,10 +96,27 @@ export default {
       'decksName',
       'adsOpenFlag'
     ]),
+    prevBtnEnable() {
+      if (this.cardDetail.collectible) {
+        return this.cardsPageParams.offset>0
+      } else {
+        return this.entourageParams.index>0
+      }
+    },
+    nextBtnEnable() {
+      if (this.cardDetail.collectible) {
+        return this.cardsPageParams.offset<this.cardsPageParams.counts-1
+      } else {
+        return this.entourageParams.index<this.entourageParams.counts-1
+      }
+    },
   },
   methods: {
     imageLoad(e) {
       this.imageLoaded = true
+    },
+    childImageLoad(item) {
+      item.loaded = true
     },
     genCardImage(hsId) {
       return getCardPicture(this, hsId, false, this.fbiFlag, this.fbiVersion, this.fbiKey)
@@ -108,6 +124,14 @@ export default {
     async formatCardDetail(detail) {
       this.cardDetail = detail
       this.cardDetail.cardImg = this.cardDetail.img_card_link
+      if (heroes[this.cardDetail.cardClass]) {
+        this.cardDetail.type = heroes[this.cardDetail.cardClass].name+'-'+utils.type[this.cardDetail.type].name
+      } else {
+        this.cardDetail.type = utils.type[this.cardDetail.type].name
+      }
+      if (this.cardDetail.race) {
+        this.cardDetail.type += '-'+utils.race[this.cardDetail.race].name
+      }
       for (let item of this.$store.state.cards.series) {
         if(this.cardDetail.set_id === item.id) {
           this.cardDetail.series = item.name
@@ -122,12 +146,12 @@ export default {
         let childList = await getRevealCardsList({
           'childList': this.cardDetail.entourage,
         })
-        console.log(childList.objects)
         this.entourageList = childList.objects.map(item => {
           return {
             name: item.name,
             dbfId: item.dbfId,
-            image: item.img_card_link
+            image: item.img_card_link,
+            loaded: false
           }
         })
         let emptyNum = this.entourageList.length % 3
@@ -139,16 +163,6 @@ export default {
       } else {
         this.entourageList = []
       }
-      if (heroes[this.cardDetail.cardClass]) {
-        this.cardDetail.type = heroes[this.cardDetail.cardClass].name+'-'+utils.type[this.cardDetail.type].name
-      } else {
-        this.cardDetail.type = utils.type[this.cardDetail.type].name
-      }
-      if (this.cardDetail.race) {
-        this.cardDetail.type += '-'+utils.race[this.cardDetail.race].name
-      }
-      wx.stopPullDownRefresh();
-      wx.hideNavigationBarLoading()
     },
     async initCardDetail() {
       this.standardSetList = await getSeriesData('Standard')
@@ -171,6 +185,62 @@ export default {
           })
         }
       })
+    },
+    handlePrevious() {
+      if (this.cardDetail.collectible) {
+        if (this.cardsPageParams.offset>0) {
+          getRevealCardsList(this.cardsPageParams.filter, 21, null, this.cardsPageParams.offset-1).then(res => {
+              this.$store.commit('setCardsPageParams', {
+                filter: this.cardsPageParams.filter,
+                offset: this.cardsPageParams.offset-1,
+                counts: this.cardsPageParams.counts
+              })
+              this.formatCardDetail(res.objects[0])
+          })
+        }
+      } else {
+        if (this.entourageParams.index>0) {
+          this.cardHsId = this.entourageParams.list[this.entourageParams.index-1].hsId
+          getRevealCardDetail({dbfId: null, hsId: this.cardHsId}).then(res => {
+            this.formatCardDetail(res[0])
+            this.$store.commit('setEntourageParams', {
+              list: this.entourageParams.list,
+              index: this.entourageParams.index-1,
+              counts: this.entourageParams.counts
+            })
+          }).catch(err => {
+            console.log(err)
+          })
+        }
+      }
+    },
+    handleNext() {
+      if (this.cardDetail.collectible) {
+        if (this.cardsPageParams.offset<this.cardsPageParams.counts-1) {
+          getRevealCardsList(this.cardsPageParams.filter, 21, null, this.cardsPageParams.offset+1).then(res => {
+              this.$store.commit('setCardsPageParams', {
+                filter: this.cardsPageParams.filter,
+                offset: this.cardsPageParams.offset+1,
+                counts: this.cardsPageParams.counts
+              })
+              this.formatCardDetail(res.objects[0])
+          })
+        }
+      } else {
+        if (this.entourageParams.index<this.entourageParams.counts-1) {
+          this.cardHsId = this.entourageParams.list[this.entourageParams.index+1].hsId
+          getRevealCardDetail({dbfId: null, hsId: this.cardHsId}).then(res => {
+            this.formatCardDetail(res[0])
+            this.$store.commit('setEntourageParams', {
+              list: this.entourageParams.list,
+              index: this.entourageParams.index+1,
+              counts: this.entourageParams.counts
+            })
+          }).catch(err => {
+            console.log(err)
+          })
+        }
+      }
     },
     handleEntourageClick(item) {
       wx.navigateTo({
@@ -209,6 +279,7 @@ export default {
     width: 100%;
     height: 700rpx;
     overflow: hidden;
+    background: #FAFAFA;
     .card-img {
       position: absolute;
       width: 100%;
@@ -268,6 +339,7 @@ export default {
     padding: 18rpx 18rpx 0;
     overflow: hidden;
     .card {
+      position: relative;
       width: 30%;
       height: 260rpx;
       padding: 0 0 8rpx;
@@ -275,11 +347,11 @@ export default {
       text-align: center;
       font-size: 24rpx;
       img {
+        position: absolute;
         width: 100%;
         height: 100%;
         top: 0;
         left: 0;
-        transform:scale(1.3);
       }
     }
   }
