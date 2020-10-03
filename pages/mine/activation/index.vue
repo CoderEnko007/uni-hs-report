@@ -29,7 +29,7 @@
       <span>费用</span>
     </div>
     <div class="desc">
-      <p>12元/月 30元/三月</p>
+      <p>12元/月 30元/三月 100元/一年</p>
     </div>
     <div class="headline">
       <span>支付方式</span>

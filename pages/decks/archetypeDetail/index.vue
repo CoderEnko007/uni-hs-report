@@ -1,8 +1,12 @@
 <template>
-  <div class="container">
-    <nav-bar :showCapsule="true" navTitle="职业形态"></nav-bar>
-    <div class="banner" :style="{'background-image': bannerImg?'url('+bannerImg+')':''}">
-      <div class="overview">
+  <div class="container" :style="{'padding-bottom': isIphoneX?120+'rpx':80+'rpx'}">
+    <div class="status-bar" :style="{height:statusBarHeight, opacity:statusBarOpacity}"></div>
+    <nav-bar :onlyCapsule="true"></nav-bar>
+    <div class="banner">
+      <div class="bg-image">
+        <img :src="bannerImg" mode='aspectFit' @load="bannerImgLoaded">
+      </div>
+      <div class="overview" v-show="bImgLoaded">
         <div class="archetype-name">
           <div class="icon">
             <img :src="genFactionIcon" mode="aspectFit">
@@ -168,11 +172,11 @@
         <DeckCards :cards="archetypeDetail.pop_cards" @cardClick="handleCardClick"></DeckCards>
       </div>
     </div>
+    <div class="ads" v-if="adsOpenFlag && adsType==='video'">
+      <ad unit-id="adunit-482444647f55f355" ad-type="video" ad-theme="white"></ad>
+    </div>
     <div class="ads" v-if="adsOpenFlag && adsType!=='video'">
       <ad unit-id="adunit-5507cac6947d0ea4"></ad>
-    </div>
-    <div class="video-ads" v-if="adsOpenFlag && adsType==='video'">
-      <ad unit-id="adunit-482444647f55f355" ad-type="video" ad-theme="white"></ad>
     </div>
     <div class="matchup">
       <div class="headline"><span class="title">对抗情况</span></div>
@@ -272,12 +276,15 @@
         bestDeck: Object.assign({}, defaultBestDeck),
         bestMatchup: Object.assign({}, defaultBWGame),
         worstMatchup: Object.assign({}, defaultBWGame),
+        scrollTop: 0,
+        bImgLoaded: false
       }
     },
     computed: {
       ...mapGetters([
         'decksName',
         'navHeight',
+        'barHeight',
         'archetypeList',
         'insertAdsFlag',
         'adsOpenFlag',
@@ -300,9 +307,25 @@
         } else {
           return 'video'
         }
+      },
+      statusBarHeight() {
+        return uni.upx2px(this.navHeight)+this.barHeight+'px'
+      },
+      statusBarOpacity() {
+        let navHeight = uni.upx2px(this.navHeight)+this.barHeight
+        let opacity = (this.scrollTop-uni.upx2px(550))/(uni.upx2px(200)-navHeight)
+        if (opacity>0) {
+          opacity = opacity<=1?opacity:1
+        } else {
+          opacity = 0
+        }
+        return opacity
       }
     },
     methods: {
+      bannerImgLoaded() {
+        this.bImgLoaded = true
+      },
       resetPageData() {
         this.archetypeDetail = Object.assign({}, defaultDetail)
         this.bannerImg = null
@@ -516,6 +539,7 @@
     },
     async mounted() {
       this.archetypeId = this.$root.$mp.query.id
+      // this.archetypeName = 'Spell Druid'
       this.archetypeName = this.$root.$mp.query.name
       await Promise.all([
         this.genFactionIcons(),
@@ -529,6 +553,9 @@
     },
     onLoad() {
       this.getIfanrSettings()
+    },
+    onPageScroll(e) {
+      this.scrollTop = e.scrollTop
     },
     onShareAppMessage(res) {
       return {
@@ -546,10 +573,17 @@
 @import '../../../style/common';
 .container {
   width: 100%;
+  .status-bar {
+    position: fixed;
+    width: 100%;
+    z-index: 3;
+    opacity: 0;
+    background-color: white;
+  }
   .banner {
     position: relative;
     width: 100%;
-    height: 400rpx;
+    height: 750rpx;
     overflow: hidden;
     background-size: 100%;
     &:after {
@@ -559,46 +593,54 @@
       left: 0;
       bottom: 0;
       right: 0;
-      background: linear-gradient(to bottom, rgba(0, 0, 0, .1), rgba(0, 0, 0, .4));
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, .35));
       z-index: 1;
+    }
+    .bg-image {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      img {
+        width: 100%;
+        height: 100%;
+      }
     }
     .overview {
       width: 100%;
-      padding: 97rpx 0 40rpx;
+      padding: 289rpx 0 40rpx;
       box-sizing: border-box;
       .archetype-name {
         position: relative;
-        width: 100%;
-        margin-left: 40rpx;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         z-index: 2;
         .icon {
-          float: left;
           width: 88rpx;
           img {
-            position: absolute;
             width: 88rpx;
             height: 88rpx;
-            top: 50%;
-            transform: translateY(-50%);
+            border: 4rpx solid #a79179;
+            border-radius: 100%;
           }
         }
         .name {
           height: 100%;
-          margin-left: 107rpx;
+          margin-top: 23rpx;
           color: #fff;
+          text-align: center;
           .cname {
-            width: 500rpx;
-            height: 50rpx;
-            line-height: 50rpx;
-            font-size: 50rpx;
+            height: 44rpx;
+            line-height: 44rpx;
+            font-size: 44rpx;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .ename {
-            height: 24rpx;
-            line-height: 24rpx;
-            margin-top: 19rpx;
+            height: 44rpx;
+            line-height: 44rpx;
+            margin-top: 13rpx;
             font-size: 24rpx;
           }
         }
@@ -608,7 +650,7 @@
         justify-content: space-between;
         flex-wrap: nowrap;
         padding: 0 30rpx;
-        margin-top: 40rpx;
+        margin-top: 74rpx;
         box-sizing: border-box;
         .desc-item {
           position: relative;
@@ -735,7 +777,7 @@
       right: 30rpx
     }
   }
-  .video-ads {
+  .banner-ads {
     margin: 20rpx 30rpx 0;
   }
 }

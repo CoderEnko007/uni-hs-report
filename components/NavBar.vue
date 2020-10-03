@@ -1,8 +1,19 @@
 <template>
-  <div class="nav-container" :style="{height: navHeight+barHeight*2+'rpx', 'background': background}">
-    <div class="nav-bar" :style="{height: navHeight+'rpx', paddingTop: barHeight+'px'}">
+  <div class="nav-container" :class="{'only-capsule-container':onlyCapsule}" :style="{height: navHeightpx+barHeight+'px', 'background': background}">
+    <div class="btn-group" v-if="onlyCapsule">
+      <div class="nav-capsule" :style="{'background-color': 'rgba(255,255,255,0.7)', top: capsuleTop+'px'}">
+        <div class="nav-back" @click="handleBack">
+          <img :src="backImg" mode='aspectFill'>
+        </div>
+        <div class="separator"></div>
+        <div class="nav-home" @click="handleHome">
+          <img :src="homeImg" mode='aspectFill'>
+        </div>
+      </div>
+    </div>
+    <div class="nav-bar" :style="{height: navHeightpx+'px', paddingTop: barHeight+'px'}" v-else>
     <!-- <div class="nav-bar" :style="{height: 88+'rpx', paddingTop: barHeight+'px'}"> -->
-      <div class="nav-title" :style="{top: barHeight+'px'}">
+      <div class="nav-title" :style="{top: barHeight+'px'}" v-if="!noTitle">
         <span class="title" v-if="navTitle">{{navTitle}}</span>
         <span class="title" v-else>{{defaultTitle}}</span>
       </div>
@@ -26,7 +37,7 @@
 import { mapGetters } from 'vuex'
 export default {
   name: 'NavBar',
-  props: ['showCapsule', 'navTitle', 'background'],
+  props: ['showCapsule', 'navTitle', 'background', 'onlyCapsule'],
   data() {
     return {
       defaultTitle: 'HS炉石情报站',
@@ -39,7 +50,13 @@ export default {
       'navHeight',
       'isIphoneX',
       'barHeight'
-    ])
+    ]),
+    navHeightpx() {
+      return uni.upx2px(this.navHeight)
+    },
+    capsuleTop() {
+      return uni.upx2px(15)+this.barHeight
+    }
   },
   methods: {
     handleBack() {
@@ -74,6 +91,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.only-capsule-container {
+  position: fixed;
+  z-index: 5;
+}
 .nav-bar {
   position: fixed !important;
   // min-height: 92rpx;
@@ -106,42 +127,43 @@ export default {
       display: inline;
     }
   }
-  .btn-group {
-    position: relative;
-    height: 100%;
-    width: 174rpx;
-    animation: fadeIn 0.5s;
-    .nav-capsule {
-      position: absolute;
-      top: 50%;
-      left: 15rpx;
-      transform: translateY(-50%);
-      // bottom: 18rpx;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      width: 100%;
-      height: 64rpx;
-      border: 1rpx solid #ECECEC;
-      border-radius: 32rpx;
-      padding:0 12rpx;
-      box-sizing:border-box;
-    }
-    .separator {
-      width: 2rpx;
-      height: 32rpx;
-      background-color: #e5e5e5;
-    }
-    .nav-back, .nav-home {
-      display: flex;
-      width:56rpx;
-      height:56rpx;
-      text-align: center;
-      img {
-        width: 32rpx;
-        height: 36rpx;
-        margin: auto;
-      }
+}
+.btn-group {
+  position: relative;
+  height: 100%;
+  width: 174rpx;
+  animation: fadeIn 0.5s;
+  .nav-capsule {
+    position: absolute;
+    top: 15rpx;
+    // top: 50%;
+    left: 15rpx;
+    // transform: translateY(-50%);
+    // bottom: 18rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    height: 60rpx;
+    border: 1rpx solid rgba(0,0,0,0.1);
+    border-radius: 32rpx;
+    padding:0 12rpx;
+    box-sizing:border-box;
+  }
+  .separator {
+    width: 1rpx;
+    height: 32rpx;
+    background-color: rgba(0,0,0,0.1);
+  }
+  .nav-back, .nav-home {
+    display: flex;
+    width:56rpx;
+    height:56rpx;
+    text-align: center;
+    img {
+      width: 32rpx;
+      height: 36rpx;
+      margin: auto;
     }
   }
 }

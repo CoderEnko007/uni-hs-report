@@ -39,7 +39,6 @@
 </template>
 <script>
 import {mapGetters} from 'vuex'
-import uniLoadMore from "@/components/uni-load-more/uni-load-more.vue"
 import loadMore from '@/components/load-more.vue'
 
 export default {

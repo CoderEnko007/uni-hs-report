@@ -6,10 +6,13 @@
 				"enablePullDownRefresh": true
 			}
 		}, {
+		  "path" : "pages/battlegrounds/index",
+		  "style": {
+		  	"enablePullDownRefresh": true
+		  }
+		}, {
 			"path": "pages/trending/index",
-			"style": {
-				"enablePullDownRefresh": true
-      }
+			"style": {}
 		}, {
 			"path": "pages/decks/index",
 			"style": {}
@@ -19,10 +22,10 @@
 				"enablePullDownRefresh": true
       }
 		}, {
-			"path": "pages/decks/archetypeDetail/index",
+			"path": "pages/decks/deckDetail/index",
 			"style": {}
 		}, {
-			"path": "pages/decks/deckDetail/index",
+			"path": "pages/decks/archetypeDetail/index",
 			"style": {}
 		}, {
 			"path": "pages/decks/compareDeck/index",
@@ -45,7 +48,7 @@
 		}, {
 			"path": "pages/mine/index",
 			"style": {
-			         "enablePullDownRefresh": true
+        "enablePullDownRefresh": true
 			}
 		}, {
 			"path": "pages/mine/about/index",
@@ -57,10 +60,10 @@
 			"path": "pages/index/articleDetail/index",
 			"style": {}
 		}, {
-		        "path" : "pages/mine/activation/index",
-		        "style" : {
-		                  "enablePullDownRefresh": true
-		        }
+      "path" : "pages/mine/activation/index",
+      "style" : {
+        "enablePullDownRefresh": true
+      }
 		}],
 	"globalStyle": {
 		"backgroundTextStyle": "light",
@@ -78,10 +81,10 @@
 			"iconPath": "static/icons-v2/tabicon-1b.png",
 			"selectedIconPath": "static/icons-v2/tabicon-1a.png"
 		}, {
-			"pagePath": "pages/trending/index",
-			"text": "热门套牌",
-			"iconPath": "static/icons-v2/tabicon-2b.png",
-			"selectedIconPath": "static/icons-v2/tabicon-2a.png"
+			"pagePath": "pages/battlegrounds/index",
+			"text": "战棋",
+			"iconPath": "static/icons-v2/btg2.png",
+			"selectedIconPath": "static/icons-v2/btg_active.png"
 		}, {
 			"pagePath": "pages/decks/index",
 			"text": "套牌",

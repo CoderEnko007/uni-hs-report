@@ -1,11 +1,15 @@
 <template>
   <div class="container" :style="{'padding-bottom': isIphoneX?120+'rpx':80+'rpx'}">
-    <NavBar :showCapsule="true" navTitle="套牌详情"></NavBar>
-    <div class="banner" :style="{'background-image': bannerImg?'url('+bannerImg+')':''}">
-      <div class="bubble" :style="{'display': showBubble?'block':'none'}">
+    <div class="status-bar" :style="{height:statusBarHeight, opacity:statusBarOpacity}"></div>
+    <nav-bar :onlyCapsule="true"></nav-bar>
+    <div class="banner">
+      <!-- <div class="bubble" :style="{'display': showBubble?'block':'none'}">
         <add-bubble></add-bubble>
+      </div> -->
+      <div class="bg-image">
+        <img :src="bannerImg" mode='aspectFill' @load="bannerImgLoaded">
       </div>
-      <div class="overview">
+      <div class="overview" v-show="bImgLoaded">
         <div class="deck-name">
           <div class="icon">
             <img :src="genFactionIcon" mode="aspectFit">
@@ -97,7 +101,7 @@
       <div class="ads" v-if="adsOpenFlag && adsType==='video'">
         <ad unit-id="adunit-658c5ed4c9982d96" ad-type="video" ad-theme="white"></ad>
       </div>
-      <div class="video-ads" v-if="adsOpenFlag && adsType!=='video'">
+      <div class="ads" v-if="adsOpenFlag && adsType!=='video'">
         <ad unit-id="adunit-d6bb528c4e28a808"></ad>
       </div>
       <div class="separator"></div>
@@ -126,7 +130,7 @@
       </div>
       <compareDeckModal ref="cDeckModal" :deckDetail='deckDetail'></compareDeckModal>
     </div>
-    <div class="loading" v-else>
+    <div class="loading" :style="{height: loadingHeight}" v-else>
       <SpinKit :mode="'sk-spinner-pulse'"></SpinKit>
     </div>
   </div>
@@ -221,12 +225,15 @@ export default {
       activeIndex: 0,
       currentTab: 0,
       pageDelayFlag: false,
-      videoAd: null
+      videoAd: null,
+      scrollTop: 0,
+      bImgLoaded: false
     }
   },
   computed: {
     ...mapGetters([
-      'winWidth',
+      'barHeight',
+      'winHeight',
       'collectedDecks',
       'decksName',
       'navHeight',
@@ -261,15 +268,28 @@ export default {
       }
     },
     formatCanvasWidth() {
-      let ratio = this.winWidth/750
-      return this.canvasWidth*ratio
+      return uni.upx2px(this.canvasWidth)
     },
     formatCanvasHeight() {
-      let ratio = this.winWidth/750
-      return this.canvasHeight*ratio
+      return uni.upx2px(this.canvasHeight)
+    },
+    statusBarHeight() {
+      return uni.upx2px(this.navHeight)+this.barHeight+'px'
+    },
+    statusBarOpacity() {
+      let navHeight = uni.upx2px(this.navHeight)+this.barHeight
+      let opacity = (this.scrollTop-uni.upx2px(300))/(uni.upx2px(200)-navHeight)
+      opacity = opacity<=1?opacity:1
+      return opacity
+    },
+    loadingHeight() {
+      return this.winHeight - uni.upx2px(500) +'px'
     }
   },
   methods: {
+    bannerImgLoaded() {
+      this.bImgLoaded = true
+    },
     sortFunction() {
       return function(a, b) {
         if(a.cost===b.cost) {
@@ -910,6 +930,9 @@ export default {
     this.cHeight=uni.upx2px(300);
     this.initVideoAds()
   },
+  onPageScroll(e) {
+    this.scrollTop = e.scrollTop
+  },
   onPullDownRefresh() {
     // 下拉刷新要把json字符串转换为对象，否则getDeckData时操作对象会报错
     this.costChartData = JSON.parse(this.costChartData)
@@ -934,23 +957,49 @@ export default {
 
 .container {
   width: 100%;
+  .status-bar {
+    position: fixed;
+    width: 100%;
+    z-index: 3;
+    opacity: 0;
+    background-color: white;
+  }
   .banner {
     position: relative;
     width: 100%;
-    height: 400rpx;
+    height: 500rpx;
     overflow: hidden;
     background-size: 100%;
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, .35));
+      z-index: 1;
+    }
     .bubble {
       position: absolute;
       right:10rpx;
       top:20rpx;
     }
+    .bg-image {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
     .overview {
       position: relative;
       width: 100%;
-      padding: 95rpx 0 34rpx;
+      margin: 195rpx 0 34rpx;
       box-sizing: border-box;
-      z-index: 1;
+      z-index: 2;
       .deck-name {
         position: relative;
         width: 100%;
@@ -967,6 +1016,8 @@ export default {
             height: 100%;
             top: 50%;
             transform: translateY(-50%);
+            border: 4rpx solid #a79179;
+            border-radius: 100%;
           }
         }
         .name {
@@ -1034,7 +1085,7 @@ export default {
         height: 54rpx;
         line-height: 54rpx;
         right: 30rpx;
-        top: 123rpx;
+        top: 15rpx;
         padding-left: 20rpx;
         color: #fff;
         border: 1rpx solid rgba(255,255,255,0.50);
@@ -1218,7 +1269,7 @@ export default {
     right: 40rpx;
     z-index: 999;
   }
-  .video-ads {
+  .banner-ads {
     margin: 20rpx 30rpx;
   }
   @keyframes tabBottomIn {

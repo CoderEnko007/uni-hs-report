@@ -43,15 +43,15 @@
       <!--<span class="iconfont playIcon">&#xe697;</span>-->
       <!--<span class="text" style="margin-left:5px;">点击播放激励视频给作者加鸡腿（15秒）</span>-->
     <!--</div>-->
-    <!-- <div class="code">
+    <div class="code">
       <h1 class="text">赞赏作者</h1>
-      <div class="capsule" @click="handleCopyBtn"><span>支付宝推广红包</span></div>
+      <!-- <div class="capsule" @click="handleCopyBtn"><span>支付宝推广红包</span></div> -->
       <div class="content" @click="handleClickCodeImg">
         <p>「炉石传说情报站」小程序由个人独立开发，源于兴趣，旨在免费为大家提供及时的卡组数据。</p>
-        <p>您的赞助将用于支付昂贵的服务器费用，感谢您的支持</p>
+        <p>您的赞助将用于支付昂贵的服务器费用并使小程序变得更好，感谢您的支持</p>
         <p style="font-weight: bold">点击此处打开赞赏码，长按扫描随意打赏</p>
       </div>
-    </div> -->
+    </div>
     <div class="feedback">
       <button open-type="feedback">问题反馈 | 意见建议</button>
     </div>

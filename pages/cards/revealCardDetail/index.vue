@@ -54,7 +54,7 @@ const heroes = {
   Shaman: {name: '萨满', image: '/static/heroIcons/shaman.png'},
   Warlock: {name: '术士', image: '/static/heroIcons/warlock.png'},
   Warrior: {name: '战士', image: '/static/heroIcons/warrior.png'},
-  Warrior: {name: '恶魔猎手', image: '/static/heroIcons/demonhunter.png'},
+  DemonHunter: {name: '恶魔猎手', image: '/static/heroIcons/demonhunter.png'},
   Neutral: {name: '中立', image: ''}
 }
 const defaultCardDetail = {
@@ -124,11 +124,23 @@ export default {
     async formatCardDetail(detail) {
       this.cardDetail = detail
       this.cardDetail.cardImg = this.cardDetail.img_card_link
-      if (heroes[this.cardDetail.cardClass]) {
-        this.cardDetail.type = heroes[this.cardDetail.cardClass].name+'-'+utils.type[this.cardDetail.type].name
+      let cardClass = ''
+      if (this.cardDetail.multiClass && this.cardDetail.multiClass.length) {
+        for (let index in this.cardDetail.multiClass) {
+          if (this.cardDetail.multiClass.hasOwnProperty(index)) {
+            this.cardDetail.multiClass[index] = heroes[this.cardDetail.multiClass[index]].name
+          }
+        }
+        cardClass = this.cardDetail.multiClass.join(', ')
+        this.cardDetail.type = cardClass+'-'+utils.type[this.cardDetail.type].name
       } else {
         this.cardDetail.type = utils.type[this.cardDetail.type].name
       }
+      // if (heroes[this.cardDetail.cardClass]) {
+      //   this.cardDetail.type = heroes[this.cardDetail.cardClass].name+'-'+utils.type[this.cardDetail.type].name
+      // } else {
+      //   this.cardDetail.type = utils.type[this.cardDetail.type].name
+      // }
       if (this.cardDetail.race) {
         this.cardDetail.type += '-'+utils.race[this.cardDetail.race].name
       }
@@ -249,6 +261,10 @@ export default {
     },
   },
   mounted() {
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    })
     this.imageLoaded = false
     this.cardId = this.$root.$mp.query.id
     this.cardHsId = this.$root.$mp.query.hsId
@@ -267,6 +283,12 @@ export default {
     return {
       title: this.cardDetail.name,
       path: `/pages/cards/revealCardDetail/index?id=${this.cardDetail.dbfId}`
+    }
+  },
+  onShareTimeline(res) {
+    return {
+      title: this.cardDetail.name,
+      query: `/pages/cards/revealCardDetail/index?id=${this.cardDetail.dbfId}`
     }
   }
 }

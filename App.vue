@@ -89,6 +89,11 @@ export default {
             this.$store.dispatch('getNotice').then(res => {
                 // console.log('setNotice', res)
             })
+        },
+        setHeroesID() {
+          this.$store.dispatch('getHeroesSkinList').then(res => {
+            // console.log(res)
+          })
         }
     },
     onLaunch: function() {
@@ -108,6 +113,7 @@ export default {
         this.Login()
         this.setNavHeight()
         this.setWinWidthHeight()
+        this.setHeroesID()
     },
     onShow: function(options) {
         wx.BaaS.reportTemplateMsgAnalytics(options)

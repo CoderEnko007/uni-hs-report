@@ -47,7 +47,7 @@
         <div class="notice" v-if="showAdNotice">
           <p>{{adNotice}}</p>
         </div>
-        <div class="video-ads" v-if="adsOpenFlag && adsType==='video'">
+        <div class="ads" v-if="adsOpenFlag && adsType==='video'">
           <ad unit-id="adunit-658c5ed4c9982d96" ad-type="video" ad-theme="white"></ad>
         </div>
         <div class="ads" v-if="adsOpenFlag && adsType==='banner'">

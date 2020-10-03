@@ -45,6 +45,9 @@
         </div>
       </div>
     </div>
+    <div class="ads" v-if="adsOpenFlag&&cardDetail.name">
+      <ad unit-id="adunit-3f4b7b57a1b47647" ad-type="video" ad-theme="white"></ad>
+    </div>
     <div class="deck-list" v-show="cardDetail.collectible">
       <div class="headline">
         <span class="title">相关套牌</span>
@@ -75,7 +78,7 @@
         <div v-if="pageDeck.length>0">
           <DecksBoard :list="pageDeck" @itemClick="handleDeckClick"></DecksBoard>
           <div style="margin: 10px 0;">
-            <uni-pagination show-icon="true" :total="filterdDeckCounts" :current="currentPage" :pageSize="countsPerPage" @change="handlePageChange">
+            <uni-pagination show-icon="false" :total="filterdDeckCounts" :current="currentPage" :pageSize="countsPerPage" @change="handlePageChange">
             </uni-pagination>
           </div>
         </div>
@@ -86,9 +89,6 @@
       <div class="loading" v-else>
         <SpinKit :mode="'sk-spinner-pulse'"></SpinKit>
       </div>
-    </div>
-    <div class="video-ads" style="margin: 10rpx 30rpx;" v-if="adsOpenFlag&&cardDetail.name">
-      <ad unit-id="adunit-3f4b7b57a1b47647" ad-type="video" ad-theme="white"></ad>
     </div>
     <div :style="{'height': isIphoneX?130+'rpx':90+'rpx'}"></div>
     <div class="footer">
@@ -371,11 +371,23 @@ export default {
           }
         }
       }
-      if (heroes[this.cardDetail.cardClass]) {
-        this.cardDetail.type = heroes[this.cardDetail.cardClass].name+'-'+utils.type[this.cardDetail.type].name
+      let cardClass = ''
+      if (this.cardDetail.multiClass && this.cardDetail.multiClass.length) {
+        for (let index in this.cardDetail.multiClass) {
+          if (this.cardDetail.multiClass.hasOwnProperty(index)) {
+            this.cardDetail.multiClass[index] = heroes[this.cardDetail.multiClass[index]].name
+          }
+        }
+        cardClass = this.cardDetail.multiClass.join(', ')
+        this.cardDetail.type = cardClass+'-'+utils.type[this.cardDetail.type].name
       } else {
-        this.cardDetail.type = utils.type[this.cardDetail.type].name
+        if (heroes[this.cardDetail.cardClass]) {
+          this.cardDetail.type = heroes[this.cardDetail.cardClass].name+'-'+utils.type[this.cardDetail.type].name
+        } else {
+          this.cardDetail.type = utils.type[this.cardDetail.type].name
+        }
       }
+      
       if (this.cardDetail.race) {
         this.cardDetail.type += '-'+utils.race[this.cardDetail.race].name
       }
@@ -456,9 +468,10 @@ export default {
       this.formatCardDetail(cardDetailRes[0])
     },
     previewCard() {
+      console.log(this.cardDetail.cardImg)
       if (this.cardDetail.cardImg) {
         wx.previewImage({
-          // urls: [gen512CardsImageURL(this.cardDetail.hsId)] // 需要预览的图片http链接列表
+          // urls: [genCardsImageURL(this.cardDetail.hsId)] // 需要预览的图片http链接列表
           urls: [this.cardDetail.cardImg]
         })
       }
@@ -847,7 +860,7 @@ export default {
     display: flex;
     align-items: center;
     box-sizing: border-box;
-    font-size: 20rpx;
+    font-size: 26rpx;
     height: 38rpx;
     line-height: 38rpx;
     border-radius: 20rpx;

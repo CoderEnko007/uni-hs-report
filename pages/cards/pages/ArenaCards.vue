@@ -129,7 +129,7 @@ export default {
     ]),
     scrollHeight() {
       const res = wx.getSystemInfoSync()
-      const navHeight = (this.navHeight+this.barHeight*2)/2
+      const navHeight = uni.upx2px(this.navHeight)+this.barHeight
       const ratio = res.windowWidth/750
       // return res.windowHeight-navHeight-89*ratio-383*ratio
       return res.windowHeight-navHeight-89*ratio-362*ratio

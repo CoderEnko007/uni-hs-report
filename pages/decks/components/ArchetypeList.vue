@@ -119,7 +119,7 @@
         })
       },
       scrollHeight() {
-        let navHeight = (this.navHeight+this.barHeight*2)/2
+        let navHeight = uni.upx2px(this.navHeight)+this.barHeight
         let ratio = this.winWidth/750
         return this.winHeight-navHeight-89*ratio-278*ratio+'px'
       }

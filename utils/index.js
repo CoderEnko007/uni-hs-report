@@ -135,7 +135,7 @@ export function ShadeColor(colorMAX,colorMIN,num){
 const cardsBaseURL = 'https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/'
 const cardsBaseURL512 = 'https://art.hearthstonejson.com/v1/render/latest/zhCN/512x/'
 const cardsTileURL = 'https://art.hearthstonejson.com/v1/tiles/'
-const fbiCardsTileURL = 'https://hs.fbigame.com/static/images/tiles/'
+const fbiCardsTileURL = 'https://static.fbigame.com/resource/tiles/'
 const iFanrCardsTileURL = 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/'
 const cardsOrigURL = 'https://art.hearthstonejson.com/v1/256x/'
 // const dustImage = 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1g2xiBmlyPDaVLks.png'
@@ -152,7 +152,7 @@ export function genOrigImageURL(hsId) {
 }
 export function genTileImageURL(hsId, source) {
   if (source === 'fbi') {
-    return fbiCardsTileURL+hsId+'.png'
+    return fbiCardsTileURL+hsId+'.jpg'
   } else {
     return cardsTileURL+hsId+'.png'
   }
@@ -314,17 +314,33 @@ function deepCopy(o) {
   }
 }
 
+export function toThousands(num) {
+  return (num || 0).toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
+}
+
+// const faction = {
+//   'Druid': { name: '德鲁伊', shortName: '德', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaFc20lKfIhjC.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3sefMPt98jtBI.png', image: '/static/heroIcons/druid.png', image1: '/static/heroIcons/druid-1.jpg', image2: '/static/heroIcons/druid-2.jpg'},
+//   'Hunter': { name: '猎人', shortName: '猎', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaFgjRrvyMTUs.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3sehq2jqVVx4M.png', image: '/static/heroIcons/hunter.png', image1: '/static/heroIcons/hunter-1.jpg', image2: '/static/heroIcons/hunter-2.jpg'},
+//   'Mage': { name: '法师', shortName: '法', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaNBmsQn1UY6Z.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3sepeTWxpekMe.png', image: '/static/heroIcons/mage.png', image1: '/static/heroIcons/mage-1.jpg', image2: '/static/heroIcons/mage-2.jpg'},
+//   'Paladin': { name: '圣骑士', shortName: '骑', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaFUHziUqK4kL.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3seA9v7pRwUSU.png', image: '/static/heroIcons/paladin.png', image1: '/static/heroIcons/paladin-1.jpg', image2: '/static/heroIcons/paladin-2.jpg'},
+//   'Priest': { name: '牧师', shortName: '牧', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaFIo6rAizi9c.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3se9jjLZDxUoe.png', image: '/static/heroIcons/priest.png', image1: '/static/heroIcons/priest-1.jpg', image2: '/static/heroIcons/priest-2.jpg'},
+//   'Rogue': { name: '潜行者', shortName: '贼', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaFaOXMWKfYI6.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3seEDmyUXQe8E.png', image: '/static/heroIcons/rogue.png', image1: '/static/heroIcons/rogue-1.jpg', image2: '/static/heroIcons/rogue-2.jpg'},
+//   'Shaman': { name: '萨满', shortName: '萨', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaFo845cbDc3f.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3seyO6YKO9GRz.png', image: '/static/heroIcons/shaman.png', image1: '/static/heroIcons/shaman-1.jpg', image2: '/static/heroIcons/shaman-2.jpg'},
+//   'Warlock': { name: '术士', shortName: '术', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaFLBpAfNQ9Z3.jpg',bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3sek57kmcpcvH.png', image: '/static/heroIcons/warlock.png', image1: '/static/heroIcons/warlock-1.jpg', image2: '/static/heroIcons/warlock-2.jpg'},
+//   'Warrior': { name: '战士', shortName: '战', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaFdMDI6ZB2X1.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3sefYCnvu9JML.png', image: '/static/heroIcons/warrior.png', image1: '/static/heroIcons/warrior-1.jpg', image2: '/static/heroIcons/warrior-2.jpg'},
+//   'DemonHunter': { name: '恶魔猎手', shortName: 'DH', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jHiDgi1fqv7m3UI.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jHjdvNii7DK1E6O.jpg', image: '/static/heroIcons/demonhunter.png', image1: '/static/heroIcons/dh-1.jpg', image2: '/static/heroIcons/dh-2.jpg'}
+// }
 const faction = {
-  'Druid': { name: '德鲁伊', shortName: '德', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaFc20lKfIhjC.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3sefMPt98jtBI.png', image: '/static/heroIcons/druid.png', image1: '/static/heroIcons/druid-1.jpg', image2: '/static/heroIcons/druid-2.jpg'},
-  'Hunter': { name: '猎人', shortName: '猎', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaFgjRrvyMTUs.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3sehq2jqVVx4M.png', image: '/static/heroIcons/hunter.png', image1: '/static/heroIcons/hunter-1.jpg', image2: '/static/heroIcons/hunter-2.jpg'},
-  'Mage': { name: '法师', shortName: '法', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaNBmsQn1UY6Z.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3sepeTWxpekMe.png', image: '/static/heroIcons/mage.png', image1: '/static/heroIcons/mage-1.jpg', image2: '/static/heroIcons/mage-2.jpg'},
-  'Paladin': { name: '圣骑士', shortName: '骑', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaFUHziUqK4kL.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3seA9v7pRwUSU.png', image: '/static/heroIcons/paladin.png', image1: '/static/heroIcons/paladin-1.jpg', image2: '/static/heroIcons/paladin-2.jpg'},
-  'Priest': { name: '牧师', shortName: '牧', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaFIo6rAizi9c.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3se9jjLZDxUoe.png', image: '/static/heroIcons/priest.png', image1: '/static/heroIcons/priest-1.jpg', image2: '/static/heroIcons/priest-2.jpg'},
-  'Rogue': { name: '潜行者', shortName: '贼', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaFaOXMWKfYI6.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3seEDmyUXQe8E.png', image: '/static/heroIcons/rogue.png', image1: '/static/heroIcons/rogue-1.jpg', image2: '/static/heroIcons/rogue-2.jpg'},
-  'Shaman': { name: '萨满', shortName: '萨', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaFo845cbDc3f.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3seyO6YKO9GRz.png', image: '/static/heroIcons/shaman.png', image1: '/static/heroIcons/shaman-1.jpg', image2: '/static/heroIcons/shaman-2.jpg'},
-  'Warlock': { name: '术士', shortName: '术', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaFLBpAfNQ9Z3.jpg',bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3sek57kmcpcvH.png', image: '/static/heroIcons/warlock.png', image1: '/static/heroIcons/warlock-1.jpg', image2: '/static/heroIcons/warlock-2.jpg'},
-  'Warrior': { name: '战士', shortName: '战', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gCFaFdMDI6ZB2X1.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1hX3sefYCnvu9JML.png', image: '/static/heroIcons/warrior.png', image1: '/static/heroIcons/warrior-1.jpg', image2: '/static/heroIcons/warrior-2.jpg'},
-  'DemonHunter': { name: '恶魔猎手', shortName: 'DH', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jHiDgi1fqv7m3UI.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jHjdvNii7DK1E6O.jpg', image: '/static/heroIcons/demonhunter.png', image1: '/static/heroIcons/dh-1.jpg', image2: '/static/heroIcons/dh-2.jpg'}
+  'Druid': { name: '德鲁伊', shortName: '德', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbf9STGxeT3Wy5.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbdCURM4MDXXal.jpg', image: '/static/heroIcons/druid.png', image1: '/static/heroIcons/druid-1.jpg', image2: '/static/heroIcons/druid-2.jpg'},
+  'Hunter': { name: '猎人', shortName: '猎', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbf9jvLoBl5N73.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbdCsecFZ9adKD.jpg', image: '/static/heroIcons/hunter.png', image1: '/static/heroIcons/hunter-1.jpg', image2: '/static/heroIcons/hunter-2.jpg'},
+  'Mage': { name: '法师', shortName: '法', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbfAtwmQwp9FwS.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbdCP0PJFMdsmu.jpg', image: '/static/heroIcons/mage.png', image1: '/static/heroIcons/mage-1.jpg', image2: '/static/heroIcons/mage-2.jpg'},
+  'Paladin': { name: '圣骑士', shortName: '骑', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbfALe26GDEHR9.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbdCDrmv6JlF7c.jpg', image: '/static/heroIcons/paladin.png', image1: '/static/heroIcons/paladin-1.jpg', image2: '/static/heroIcons/paladin-2.jpg'},
+  'Priest': { name: '牧师', shortName: '牧', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbfAMdc4qZUtva.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbdCzq8ZJ1Au99.jpg', image: '/static/heroIcons/priest.png', image1: '/static/heroIcons/priest-1.jpg', image2: '/static/heroIcons/priest-2.jpg'},
+  'Rogue': { name: '潜行者', shortName: '贼', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbfAMks6tsdFY7.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbdCMWYb5DeXP4.jpg', image: '/static/heroIcons/rogue.png', image1: '/static/heroIcons/rogue-1.jpg', image2: '/static/heroIcons/rogue-2.jpg'},
+  'Shaman': { name: '萨满', shortName: '萨', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbfAmJwEv1mgf0.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbdDtdGiOQJshX.jpg', image: '/static/heroIcons/shaman.png', image1: '/static/heroIcons/shaman-1.jpg', image2: '/static/heroIcons/shaman-2.jpg'},
+  'Warlock': { name: '术士', shortName: '术', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbfAv8vsg1QJg2.jpg',bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbdDtyGgnVllX0.jpg', image: '/static/heroIcons/warlock.png', image1: '/static/heroIcons/warlock-1.jpg', image2: '/static/heroIcons/warlock-2.jpg'},
+  'Warrior': { name: '战士', shortName: '战', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbfADd5BwIMNqU.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbdDGl6vGDNJdQ.jpg', image: '/static/heroIcons/warrior.png', image1: '/static/heroIcons/warrior-1.jpg', image2: '/static/heroIcons/warrior-2.jpg'},
+  'DemonHunter': { name: '恶魔猎手', shortName: 'DH', bgImage: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbf9hdDn6CNuRb.jpg', bgImage1: 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jfbdCJVfo7UDhHL.jpg', image: '/static/heroIcons/demonhunter.png', image1: '/static/heroIcons/dh-1.jpg', image2: '/static/heroIcons/dh-2.jpg'}
 }
 
 const mode = [
@@ -359,6 +375,7 @@ const race = {
   'MECHANICAL': {name: '机械'}
 }
 
+// 弃用，现在从服务器上获取heroesID
 const heroesID = {
   'Druid': [274, 50484, 57761],
   'Hunter': [31, 2826, 57759, 60335],
@@ -391,7 +408,8 @@ const battlegroundMinionType = [
   {id: 26, name: '全部'},
   {id: 20, name: '野兽'},
   {id: 24, name: '龙'},
-  {id: 14, name: '鱼人'}
+  {id: 14, name: '鱼人'},
+  {id: 23, name: '海盗'},
 ]
 
 const battlegroundKeywords = [
@@ -423,6 +441,7 @@ export default {
   deckModeImg,
   getCardPicture,
   deepCopy,
+  toThousands,
   faction,
   mode,
   rarity,

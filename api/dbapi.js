@@ -78,7 +78,11 @@ export function getCardsList(params, limit=20, page=0, offset=0, orderBy='-set_i
     }
     let factionQuery = new wx.BaaS.Query()
     if (params.faction && params.faction.id !== 'all') {
-      factionQuery.compare('cardClass', '=', params.faction.id)
+      let cardClassQuery = new wx.BaaS.Query()
+      cardClassQuery.compare('cardClass', '=', params.faction.id)
+      let multiClassQuery = new wx.BaaS.Query()
+      multiClassQuery.in('multiClass', [params.faction.id])
+      factionQuery = wx.BaaS.Query.or(cardClassQuery, multiClassQuery)
     }
     let modeQuery = new wx.BaaS.Query()
     if (params.mode && params.mode.id !== 'all') {
@@ -201,13 +205,13 @@ export function getBattlegroundTierList(params, limit=1000, page=0, orderBy='avg
   return new Promise((resolve, reject) => {
     let tableObj = new wx.BaaS.TableObject(tableID.battlegroundTierTableID)
     let timeFrameQuery = new wx.BaaS.Query()
-    if (params.hasOwnProperty('time_frame')) {
+    if (params && params.hasOwnProperty('time_frame')) {
       timeFrameQuery.compare('time_frame', '=', params.time_frame)
     } else {
       timeFrameQuery.compare('time_frame', '=', 'LAST_7_DAYS')
     }
     let mmrRangeQuery = new wx.BaaS.Query()
-    if (params.hasOwnProperty('mmr_range')) {
+    if (params && params.hasOwnProperty('mmr_range')) {
       mmrRangeQuery.compare('mmr_range', '=', params.mmr_range)
     } else {
       mmrRangeQuery.compare('mmr_range', '=', 'TOP_50_PERCENT')
@@ -221,7 +225,24 @@ export function getBattlegroundTierList(params, limit=1000, page=0, orderBy='avg
   })
 }
 
-// export function getBattlegroundHeroTierDetail()
+export function getBattlegroundHeroTierDetail(params) {
+  return new Promise((resolve, reject) => {
+    let tableObj = new wx.BaaS.TableObject(tableID.battlegroundTierTableID)
+    let query = new wx.BaaS.Query()
+    if (params.hero_id) {
+      query.compare('hero_id', '=', params.hero_id)
+    } else if (params.cname) {
+      query.compare('cname', '=', parmas.cname)
+    } else {
+      resolve()
+    }
+    tableObj.setQuery(query).find().then(res => {
+      resolve(res.data.objects)
+    }, err => {
+      reject(err)
+    })
+  })
+}
 
 export function getArenaCards(params, tableid=tableID.arenaCardsTableID, limit=20, page=0, orderBy='-times_played') {
   return new Promise((resolve, reject) => {
@@ -732,7 +753,8 @@ export function getRevealCardsList(params, limit=20, page=0, offset=0, orderBy='
     }
     let factionQuery = new wx.BaaS.Query()
     if (params.faction && params.faction.id !== 'all') {
-      factionQuery.compare('cardClass', '=', params.faction.id)
+      // factionQuery.compare('cardClass', '=', params.faction.id)
+      factionQuery.in('multiClass', [params.faction.id])
     }
     let typeQuery = new wx.BaaS.Query()
     if (params.type && params.type.id !== 'all') {
@@ -784,6 +806,18 @@ export function getRevealCardDetail(params) {
       resolve()
     }
     tableObj.setQuery(query).find().then(res => {
+      resolve(res.data.objects)
+    }, err => {
+      reject(err)
+    })
+  })
+}
+
+export function getHeroSkinID() {
+  return new Promise((resolve, reject) => {
+    let tableObj = new wx.BaaS.TableObject(tableID.heroSkinTableID)
+    let query = new wx.BaaS.Query()
+    tableObj.setQuery(query).limit(1000).find().then(res => {
       resolve(res.data.objects)
     }, err => {
       reject(err)

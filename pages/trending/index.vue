@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-    <NavBar></NavBar>
+    <div class="status-bar" :style="{height:statusBarHeight, opacity:statusBarOpacity}"></div>
+    <NavBar :onlyCapsule="true"></NavBar>
     <div class="banner">
       <div class="meta">
         <h1>热门套牌</h1>
@@ -14,7 +15,7 @@
     <!-- <div class="ads" v-if="adsOpenFlag">
       <ad unit-id="adunit-4c3a7a55067c0f6e"></ad>
     </div> -->
-    <div class="video-ads" style="margin: 10rpx 30rpx;" v-if="adsOpenFlag">
+    <div class="video-ads" style="margin: 10rpx 30rpx;" v-if="adsOpenFlag && deckList">
       <ad unit-id="adunit-584598492a083dc8" ad-type="video" ad-theme="white"></ad>
     </div>
   </div>
@@ -33,16 +34,18 @@ export default {
   },
   data() {
     return {
-      deckList: [],
+      deckList: null,
       report_date: '',
       interstitialAd: null,
+      scrollTop: 0,
     }
   },
   computed: {
     ...mapGetters([
       'adsOpenFlag',
       'decksName',
-      'navHeight'
+      'navHeight',
+      'barHeight'
     ]),
     updateDate() {
       if (this.report_date) {
@@ -50,6 +53,15 @@ export default {
         return formatDate.getMonth()+1 + '月' + formatDate.getDate() + '日更新'
       }
     },
+    statusBarHeight() {
+      return uni.upx2px(this.navHeight)+this.barHeight+'px'
+    },
+    statusBarOpacity() {
+      let navHeight = uni.upx2px(this.navHeight)+this.barHeight
+      let opacity = (this.scrollTop-uni.upx2px(300))/(uni.upx2px(200)-navHeight)
+      opacity = opacity<=1?opacity:1
+      return opacity
+    }
     // adsOpenFlag() {
     //   return utils.adsOpenFlag
     // },
@@ -104,6 +116,9 @@ export default {
       })
     }
   },
+  onPageScroll(e) {
+    this.scrollTop = e.scrollTop
+  },
   onPullDownRefresh() {
     this.genTrendingList()
   },
@@ -117,18 +132,25 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import '../../style/color';
+.status-bar {
+  position: fixed;
+  width: 100%;
+  z-index: 2;
+  opacity: 0;
+  background-color: white;
+}
 .banner {
   position: relative;
   width: 100%;
-  height: 325rpx;
+  height: 500rpx;
   overflow: hidden;
-  background: url("https://cloud-minapp-18282.cloud.ifanrusercontent.com/1gBxG4I1yASfPkMn.jpg") no-repeat 0 0;
+  background: url("https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jbgGJ2LFovO5C11.jpg") no-repeat 0 0;
   background-size: 100%;
   .meta {
     position: relative;
     width: 100%;
     height: 100%;
-    padding-top: 64rpx;
+    padding-top: 180rpx;
     padding-left: 30rpx;
     color: #fff;
     box-sizing:border-box;

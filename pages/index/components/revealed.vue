@@ -143,7 +143,6 @@ export default {
           array.push({id: key, name: utils.faction[key].name})
         }
       }
-      array.push({id: 'DemonHunter', name: '恶魔猎手'})
       array.push({id: 'Neutral', name: '中立'})
       array.unshift({id: 'all', name: '全部职业'})
       this.filterTabBar[0].items = array

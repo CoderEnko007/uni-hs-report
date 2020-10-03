@@ -1,4 +1,4 @@
-import {getDeckName, getSeriesData, getArchetypeList, getNotice} from "../../api/dbapi";
+import {getDeckName, getSeriesData, getArchetypeList, getNotice, getHeroSkinID} from "../../api/dbapi";
 import {getDeckList, getUserCollectionDecks, setUserCollection, cancelUserCollection} from "../../api/dbapi";
 
 const cards = {
@@ -7,6 +7,7 @@ const cards = {
     decksName: [],
     collectedDecks: [],
     archetypeList: [],
+    heroesID: [],
     activeTab: 0,
     noticeContent: {
       display: false,
@@ -60,10 +61,34 @@ const cards = {
     },
     SHOW_NOTICE_BAR: (state, display) => {
       state.noticeContent.display = display
-    }
+    },
+    SET_HEROESID_TABLE: (state, obj) => {
+      state.heroesID = obj
+    },
   },
 
   actions: {
+    getHeroesSkinList({commit, state}) {
+      return new Promise((resolve, reject) => {
+        getHeroSkinID().then(res => {
+          let heroesID = {'Druid': [], 'Hunter': [], 'Mage': [], 'Paladin': [], 'Priest': [], 
+                          'Rogue': [], 'Shaman': [], 'Warlock': [], 'Warrior': [], 'DemonHunter': []}
+          for (let key in heroesID) {
+            if (heroesID.hasOwnProperty(key)) {
+              heroesID[key] = res.filter(v => {
+                return v.faction.toLowerCase() === key.toLowerCase()
+              }).map(v1 => {
+                return v1.dbfId
+              })
+            }
+          }
+          commit('SET_HEROESID_TABLE', heroesID)
+          resolve(heroesID)
+        }, err => {
+          reject(err)
+        })
+      })
+    },
     getSeriesData({commit, state}) {
       return new Promise((resolve, reject) => {
         getSeriesData().then(res => {

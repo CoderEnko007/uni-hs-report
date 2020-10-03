@@ -81,9 +81,39 @@
         </div>
       </div>
     </div>
-    <!-- <div class="video-ads" style="margin: 30rpx 30rpx;">
-      <ad unit-id="adunit-3f4b7b57a1b47647" ad-type="video" ad-theme="white"></ad>
-    </div> -->
+    <div class="hero-tier-detail" v-if="heroTierDetail">
+      <div class="ads" v-if="adsOpenFlag&&adsType=='video'">
+        <ad unit-id="adunit-3f4b7b57a1b47647" ad-type="video" ad-theme="white"></ad>
+      </div>
+      <div class="ads" style="margin: 15upx 0 0 0;" v-if="adsOpenFlag&&adsType!=='video'">
+        <ad unit-id="adunit-038fb5d0b45f4699"></ad>
+      </div>
+      <div class="headline m-30"><span class="title">排名分布</span></div>
+      <div class="meta">
+        <div class="meta-panel">
+          <p class="name">开局出现次数</p>
+          <p class="content">{{times_offered}}</p>
+        </div>
+        <div class="meta-panel">
+          <p class="name">选取次数</p>
+          <p class="content">{{times_chosen}}</p>
+        </div>
+        <div class="meta-panel">
+          <p class="name">选取率</p>
+          <p class="content">{{pick_rate}}</p>
+        </div>
+        <div class="meta-panel">
+          <p class="name">热度</p>
+          <p class="content">{{popularity}}</p>
+        </div>
+        <div class="meta-panel">
+          <p class="name">平均排名</p>
+          <p class="content">{{avg_final_placement}}</p>
+        </div>
+      </div>
+      <canvas canvas-id="canvasColumn" id="canvasColumn" class="charts" v-if="!chartImg"></canvas>
+      <img class="charts" :src="chartImg" mode="aspectFit" v-else>
+    </div>
     <div :style="{'height': isIphoneX?134+'rpx':90+'rpx'}"></div>
     <div class="footer">
       <div class="btn-group" :style="{'height':isIphoneX?134+'rpx':90+'rpx'}">
@@ -97,10 +127,15 @@
 <script>
 import utils from '@/utils'
 import { mapGetters } from 'vuex'
-import {getBattlegroundCards, getBattlegroundCardDetail} from '@/api/dbapi'
+import {getBattlegroundCards, getBattlegroundCardDetail, getBattlegroundHeroTierDetail} from '@/api/dbapi'
 import FooterMenu from '@/components/FooterMenu'
 import NavBar from '@/components/NavBar'
 import SpinKit from '@/components/SpinKit'
+import uCharts from '@/components/u-charts/u-charts.js';
+
+let _this;
+let barChart=null;
+
 const defaultCardDetail = {
   name: '',
   hero: null,
@@ -128,7 +163,13 @@ export default {
       upgradeCard: null,
       cardFormatted: false,
       current: 0,
-      swiperItemCounts: 1
+      swiperItemCounts: 1,
+      heroTierDetail: null,
+      pixelRatio:1,
+      cWidth: 0,
+      cHeight: 0,
+      chartImg: null,
+      interstitialAd: null,
     }
   },
   computed: {
@@ -137,6 +178,9 @@ export default {
       'entourageParams',
       'cardsPageParams',
       'isIphoneX',
+      'adsOpenFlag',
+      'ifanrSettings',
+      'cardsInsertAdsFlag',
     ]),
     cardType() {
       return this.cardDetail.hero?'英雄':'随从'
@@ -161,7 +205,6 @@ export default {
       return this.cardFormatted&&this.imageLoaded>=1
     },
     description() {
-      console.log(this.cardDetail, this.upgradeCard, this.current)
       if(!this.cardDetail.hero && (this.upgradeCard&&this.upgradeCard.gold_image)) {
         if (this.current!==0) {
           return this.upgradeCard.text
@@ -172,6 +215,48 @@ export default {
         return this.cardDetail.text
       } else {
         return null
+      }
+    },
+    times_offered() {
+      if (this.heroTierDetail) {
+        return utils.toThousands((this.heroTierDetail.times_offered))
+      } else {
+        return 'N/A'
+      }
+    },
+    times_chosen() {
+      if (this.heroTierDetail) {
+        return utils.toThousands((this.heroTierDetail.times_chosen))
+      } else {
+        return 'N/A'
+      }
+    },
+    pick_rate() {
+      if (this.heroTierDetail) {
+        return parseFloat(this.heroTierDetail.pick_rate).toFixed(2)+'%'
+      } else {
+        return 'N/A'
+      }
+    },
+    popularity() {
+      if (this.heroTierDetail) {
+        return parseFloat(this.heroTierDetail.popularity).toFixed(2)+'%'
+      } else {
+        return 'N/A'
+      }
+    },
+    avg_final_placement() {
+      if (this.heroTierDetail) {
+        return parseFloat(this.heroTierDetail.avg_final_placement).toFixed(2)
+      } else {
+        return 'N/A'
+      }
+    },
+    adsType() {
+      if (this.ifanrSettings && this.ifanrSettings.bgs_ads_type) {
+        return this.ifanrSettings.bgs_ads_type
+      } else {
+        return 'video'
       }
     }
   },
@@ -184,6 +269,25 @@ export default {
       if (this.cardDetail.hero) {
         let power = await getBattlegroundCardDetail({hsId: parseInt(this.cardDetail.entourageID[0])})
         this.heroPower = power.length?power[0]:null
+        let tierDetail = await getBattlegroundHeroTierDetail({hero_id: parseInt(this.cardId)})
+        this.heroTierDetail = tierDetail.length?tierDetail[0]:null
+        if (this.heroTierDetail) {
+          let formatChartData = {
+            categories: ['1', '2', '3', '4', '5', '6', '7', '8'],
+            series: [{'name': '排名百分比', data: [], color: '#78577a', format:(val)=>{return val+'%'}}]
+          }
+          // #78577a
+          console.log(formatChartData.series[0].data, formatChartData.color)
+          // formatChartData.series[0].data = this.heroTierDetail.final_placement_distribution.map((item, index) => {
+          //   console.log('11', item, index)
+          //   return {
+          //     vaule: item,
+          //     color: index<4?"#c58dc9":"#78577a"
+          //   }
+          // })
+          formatChartData.series[0].data = this.heroTierDetail.final_placement_distribution
+          this.showColumn("canvasColumn", formatChartData)
+        }
       } else {
         this.heroPower = null
       }
@@ -297,11 +401,86 @@ export default {
         })
       }
     },
+    showColumn(canvasId,chartData){
+      console.log('aa', chartData, this.cWidth, this.cHeight)
+    	barChart=new uCharts({
+    		$this:_this,
+    		canvasId: canvasId,
+    		type: 'column',
+    		legend:false,
+    		fontSize:11,
+    		background:'#FFFFFF',
+    		pixelRatio:_this.pixelRatio,
+    		animation: true,
+    		categories: chartData.categories,
+    		series: chartData.series,
+        yAxis: {
+          // max: 10,
+          disabled:true
+        },
+    		width: _this.cWidth*_this.pixelRatio,
+    		height: _this.cHeight*_this.pixelRatio,
+        extra: {
+        	column: {
+        		type:'group',
+        		width: _this.cWidth*_this.pixelRatio*0.45/chartData.categories.length
+        	}
+        }
+    	});
+      barChart.addEventListener('renderComplete', () => {
+        setTimeout(() => {
+          wx.canvasToTempFilePath({
+            width: _this.cWidth*_this.pixelRatio,
+            height: _this.cHeight*_this.pixelRatio,
+            canvasId: 'canvasColumn',
+            success(res) {
+              _this.chartImg = res.tempFilePath
+            },
+            fail(err) {
+              console.log(err)
+            }
+          })
+        }, 1000)
+      });
+    },
+    touchColumn(e){
+      barChart.showToolTip(e, {
+        format: function (item, category) {
+          if(typeof item.data === 'object'){
+            // return category + ' ' + item.name + ':' + item.data.value 
+            return '第'+category+'名:'+item.data.value
+          }else{
+            // return category + ' ' + item.name + ':' + item.data 
+            return '第'+category+'名:'+item.data
+          }
+        }
+      });
+    },
   },
-  mounted() {
+  onLoad() {
+    if (this.adsOpenFlag && wx.createInterstitialAd) {
+      this.interstitialAd = wx.createInterstitialAd({
+        adUnitId: 'adunit-f0ee7b7386b219dd'
+      })
+      this.interstitialAd.onLoad(() => {})
+      this.interstitialAd.onError((err) => {})
+      this.interstitialAd.onClose(() => {
+          this.$store.dispatch('resetCardsInsertAdsFlag')
+      })
+    }
+    _this = this;
+    this.cWidth=uni.upx2px(750);
+    this.cHeight=uni.upx2px(300);
     this.imageLoaded = 0
     this.cardId = this.$root.$mp.query.id
     this.initCardDetail()
+  },
+  mounted() {
+    if (this.cardsInsertAdsFlag && this.interstitialAd) {
+      this.interstitialAd.show().catch((err) => {
+        console.error(err)
+      })
+    }
   },
   onPullDownRefresh() {
     this.initCardDetail()
@@ -613,6 +792,44 @@ export default {
           // transform:scale(1.3);
         }
       }
+    }
+  }
+  .hero-tier-detail {
+    width: 750rpx;
+    overflow: hidden;
+    .meta {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      background-color: #f8f8f8;
+      border-radius: 12rpx;
+      margin: 0 30rpx 18rpx;
+      .meta-panel {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 220rpx;
+        height: 135rpx;
+        font-size: 26rpx;
+        p {
+          text-align: center;
+        }
+        .content {
+          margin-top: 10rpx;
+          font-size: 34rpx;
+          font-weight: bold;
+          color: #50616d;
+        }
+      }
+    }
+    .chart-text {
+      height:54rpx;
+      line-height:54rpx;
+      font-size:28rpx;
+    }
+    .charts {
+      width: 750rpx;
+      height: 300rpx;
     }
   }
 }

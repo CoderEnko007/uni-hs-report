@@ -2,6 +2,7 @@ const getters = {
   openID: state => state.user.openID,
   userInfo: state => state.user.userInfo,
   series: state => state.cards.series,
+  heroesID: state => state.cards.heroesID,
   decksName: state => state.cards.decksName,
   collectedDecks: state => state.cards.collectedDecks,
   archetypeList: state => state.cards.archetypeList,

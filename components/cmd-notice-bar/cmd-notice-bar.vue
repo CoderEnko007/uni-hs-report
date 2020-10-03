@@ -15,14 +15,8 @@
 </template>
 
 <script>
-	import cmdIcon from '../cmd-icon/cmd-icon.vue'
 	export default {
 		name: 'cmd-notice-bar',
-
-		components: {
-			cmdIcon
-		},
-
 		props: {
 			/**
 			 * 显示文本

@@ -54,6 +54,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'heroesID',
       'compareDeck1',
       'compareDeck2'
     ]),
@@ -130,9 +131,9 @@ export default {
             return
           }
           let faction = null
-          for (let key in utils.heroesID) {
-            if (utils.heroesID.hasOwnProperty(key)) {
-              if (utils.heroesID[key].indexOf(decoded.heroes[0])>=0) {
+          for (let key in this.heroesID) {
+            if (this.heroesID.hasOwnProperty(key)) {
+              if (this.heroesID[key].indexOf(decoded.heroes[0])>=0) {
                 faction = key
               }
             }
@@ -187,9 +188,9 @@ export default {
             return
           }
           let faction = null
-          for (let key in utils.heroesID) {
-            if (utils.heroesID.hasOwnProperty(key)) {
-              if (utils.heroesID[key].indexOf(decoded.heroes[0])>=0) {
+          for (let key in this.heroesID) {
+            if (this.heroesID.hasOwnProperty(key)) {
+              if (this.heroesID[key].indexOf(decoded.heroes[0])>=0) {
                 faction = key
               }
             }

@@ -27,12 +27,8 @@
 </template>
 
 <script>
-	import uniIcon from '../uni-icon/uni-icon.vue'
 	export default {
 		name: "uni-pagination",
-		components: {
-			uniIcon
-		},
 		props: {
 			prevText: {
 				type: String,

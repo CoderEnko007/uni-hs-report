@@ -41,14 +41,19 @@
             <div class="extra-btn">
               <div class="data-vision" @click="handleHSVisionClick">
                 <img class="btn-img" src="/static/icons-v2/trending.png" mode="aspectFit">
-                <span class="text">职业强度趋势</span>
-                <span class="iconfont">&#xe600;</span>
+                <span class="text">强度趋势</span>
+                <!-- <span class="iconfont">&#xe600;</span> -->
               </div>
-              <!-- <div class="data-vision" @click="handleRevealClick">
-                <img class="btn-img" src="/static/icons-v2/set-outland.png" style="width:42rpx" mode="aspectFit">
+              <div class="data-vision" @click="handleTrendingClick">
+                <img src="/static/icons-v2/trending1.png" class="btn-img" mode="aspectFit">
+                <span class="text">热门卡组</span>
+                <!-- <span class="iconfont">&#xe600;</span> -->
+              </div>
+              <div class="data-vision" @click="handleRevealClick">
+                <img class="btn-img" src="/static/icons-v2/set-school.png" style="width:42rpx" mode="aspectFit">
                 <span class="text">新卡发布</span>
-                <span class="iconfont">&#xe600;</span>
-              </div> -->
+                <!-- <span class="iconfont">&#xe600;</span> -->
+              </div>
             </div>
           </div>
           <div class="ads" style="margin: 15upx 0 0 0;" v-if="adsOpenFlag&&adsType!=='video'">
@@ -189,7 +194,7 @@
       ]),
       contentHeight() {
         let ratio = this.winWidth/750
-        let navHeight = (this.navHeight+this.barHeight*2)/2
+        let navHeight = uni.upx2px(this.navHeight)+this.barHeight
         let adsHeight = this.adHeight
         if (!this.adsOpenFlag) {
           adsHeight = 40
@@ -197,7 +202,7 @@
         if (this.activeIndex == 0) {
           return 335*ratio + (96+390+90+20)*ratio + adsHeight + 96*ratio + 80*ratio*4 + 120*ratio*this.tierListNum + 60*ratio - this.collapseHeight + 'px'
         } else {
-          return this.winHeight - navHeight - 82*ratio + "px"
+          return this.winHeight - navHeight - uni.upx2px(82) + "px"
         }
       },
       modePickerList() {
@@ -458,6 +463,11 @@
             // 打开成功
             console.log(res)
           }
+        })
+      },
+      handleTrendingClick() {
+        uni.navigateTo({
+          url: `/pages/trending/index`
         })
       },
       handleRevealClick() {
@@ -755,6 +765,10 @@
       },
     },
     onLoad() {
+      wx.showShareMenu({
+        withShareTicket: true,
+        menus: ['shareAppMessage', 'shareTimeline']
+      })
       this.getIfanrSettings()
       this.genBanners()
       this.genRankData()
@@ -777,6 +791,12 @@
       this.$refs.articlePage.genDataList(true)
     },
     onShareAppMessage(res) {
+      return {
+        title: '炉石传说情报站',
+        path: '/pages/index/index'
+      }
+    },
+    onShareTimeline(res) {
       return {
         title: '炉石传说情报站',
         path: '/pages/index/index'
@@ -932,13 +952,13 @@
      position: absolute;
      top: 50%;
      transform: translateY(-50%);
-     margin-left: 20rpx;
+     margin-left: 10rpx;
      width: 52rpx;
      height: 52rpx;
    }
    .text {
      font-size: 32rpx;
-     margin-left: 88rpx;
+     margin-left: 68rpx;
    }
    .iconfont {
      position: absolute;
