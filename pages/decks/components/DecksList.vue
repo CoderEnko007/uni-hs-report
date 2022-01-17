@@ -14,9 +14,9 @@
             v-for="(item, index) in deckMode"
             :key="index"
             @click="modeBtnClick(item)">
-            <img class="btn-img" :src="decksFilter.mode===item.mode?item.active_icon:item.icon" mode="aspectFit">
+            <!-- <img class="btn-img" :src="decksFilter.mode===item.mode?item.active_icon:item.icon" mode="aspectFit"> -->
             <div class="c-button" :class="decksFilter.mode===item.mode?'btn-active':''">{{item.text}}</div>
-            <div class="separator" v-if="index !== 1">|</div>
+            <div class="separator" v-if="index !== 2">|</div>
           </div>
         </div>
       </div>
@@ -225,6 +225,10 @@
             return v.wild_ld
           } else if (this.decksFilter.mode === 'Wild' && this.decksFilter.last_30_days === true) {
             return v.wild_l30
+          } else if (this.decksFilter.mode === 'Classic' && this.decksFilter.last_30_days === false) {
+            return v.cls_ld
+          } else if (this.decksFilter.mode === 'Classic' && this.decksFilter.last_30_days === true) {
+            return v.cls_l30
           }
         })
         this.deckPickerList = filterDecksName.map(v => {
@@ -333,7 +337,6 @@
 
       .headline {
         margin: 0 30rpx;
-
         .btn-group {
           position: absolute;
           height: 100%;
@@ -363,7 +366,7 @@
             .c-button {
               height: 100%;
               line-height: 96rpx;
-              margin-left: 40rpx;
+              // margin-left: 40rpx;
               font-size: 28rpx;
               font-weight: normal;
               color: #999;

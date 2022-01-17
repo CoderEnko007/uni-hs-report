@@ -1,17 +1,17 @@
 <template>
   <div class="container">
     <nav-bar></nav-bar>
-    <div class="panel-tab">
+    <!-- <div class="panel-tab">
       <block v-for="(item,index) in tabbar" :key="item.id">
         <div :id="index" :class="{'tab-item': true, 'tab-item-active': activeIndex==index}" @click="handleTabBarClick">
           {{item.text}}
         </div>
       </block>
-    </div>
+    </div> -->
     <div class="tab-container">
-      <swiper class="content" :easing-function="easeInOutCubic" :duration="100" :style="'height:'+contentHeight" @change="swiperChange"
+<!--      <swiper class="content" :easing-function="easeInOutCubic" :duration="100" :style="'height:'+contentHeight" @change="swiperChange"
        :current="currentTab">
-        <swiper-item>
+        <swiper-item> -->
           <div class="swiper-block">
             <div class="notice-bar" v-show="noticeContent.display">
               <cmd-notice-bar scrollable :text="noticeText.text" mode="close" @click="handleNoticeClick"></cmd-notice-bar>
@@ -27,18 +27,25 @@
                   <span class="iconfont" :style="{'vertical-align': 'middle'}">&#xe668;</span>
                 </picker>
               </div> -->
-              <div class="btn-group">
+              <!-- <div class="btn-group">
                 <div class="btn-block" v-for="(item, index) in rankMode" :key="item.name" @click="modeBtnClick(rankMode[index])">
                   <img class="btn-img" :src="selectedGameType===item.mode?item.active_icon:item.icon" mode="aspectFit">
                   <div class="c-button" :class="selectedGameType===item.mode?'btn-active':''">{{item.text}}</div>
-                  <div class="separator" v-if="index !== 2">|</div>
+                  <div class="separator" v-if="index !== 4">|</div>
                 </div>
-              </div>
+              </div> -->
+			  <div class="game-type-picker">
+				<img class="btn-img" :src="rankMode[gameTypePicker.selectedItem].active_icon" mode="aspectFit">
+				<picker class="mode-picker" mode="selector" :value="gameTypePicker.selectedItem" :range="gameTypePickerList" @change="handleGameTypeChange">
+				  <span class='selector-item'>{{gameTypePicker.list[gameTypePicker.selectedItem].text}}</span>
+				  <span class="iconfont" :style="{'vertical-align': 'middle'}">&#xe668;</span>
+				</picker>
+			  </div>
             </div>
             <div class="content">
               <RankBoard :list="rankData[selectedGameType]" :mode="modeFilter.list[modeFilter.selectedItem].value"></RankBoard>
             </div>
-            <div class="extra-btn">
+            <div class="extra-btn" v-if="showBtn">
               <div class="data-vision" @click="handleHSVisionClick">
                 <img class="btn-img" src="/static/icons-v2/trending.png" mode="aspectFit">
                 <span class="text">强度趋势</span>
@@ -49,8 +56,8 @@
                 <span class="text">热门卡组</span>
                 <!-- <span class="iconfont">&#xe600;</span> -->
               </div>
-              <div class="data-vision" @click="handleRevealClick">
-                <img class="btn-img" src="/static/icons-v2/set-school.png" style="width:42rpx" mode="aspectFit">
+              <div class="data-vision" @click="handleRevealClick" v-if="newCardBtnIcon">
+                <img class="btn-img" :src="newCardBtnIcon" style="width:42rpx" mode="aspectFit">
                 <span class="text">新卡发布</span>
                 <!-- <span class="iconfont">&#xe600;</span> -->
               </div>
@@ -85,12 +92,13 @@
               </div>
             </div>
           </div>
-        </swiper-item>
+       <!-- </swiper-item>
         <swiper-item>
           <articlePage ref="articlePage"></articlePage>
         </swiper-item>
-      </swiper>
-    </div>
+      </swiper> -->
+    </div> 
+    <copyRight></copyRight>
     <x-modal :text='noticeText.text' :no-cancel='true' :no-title='true' confirm-text='朕知道了' :hidden.sync='hideModal'></x-modal>
     <div style="position: fixed; top: 9999999999999px; overflow: hidden">
       <canvas :style="{width: canvasWidth+'px', height: canvasHeight+'px'}" canvas-id="dailyReport"></canvas>
@@ -110,6 +118,7 @@
   import RankBoard from '@/components/RankBoard'
   import TierList from '@/components/TierList'
   import articlePage from './components/articlePage'
+  import copyRight from '@/components/copyRight'
 
   export default {
     components: {
@@ -120,6 +129,7 @@
       RankBoard,
       TierList,
       articlePage,
+      copyRight,
     },
     data() {
       return {
@@ -144,7 +154,9 @@
         rankData: {
           'standard': [],
           'wild': [],
-          'arena': []
+          'arena': [],
+		  'classic': [],
+		  'duels': []
         },
         modeFilter: {
           selectedItem: 0,
@@ -172,6 +184,16 @@
             {text: '传说Top1000', rank_range: 'TOP_1000_LEGEND'}
           ]
         },
+		gameTypePicker: {
+			selectedItem: 0,
+			list: [
+				{text: '标准模式', value: 'standard'},
+				{text: '狂野模式', value: 'wild'},
+				{text: '经典模式', value: 'classic'},
+				{text: '竞技场', value: 'arena'},
+				{text: '对决模式', value: 'duels'},
+			]
+		},
         tempSelectedItem: 0,
         // canvas参数
         canvasWidth: 375,
@@ -179,7 +201,9 @@
         adHeight: 160,
         collapseHeight: 0,
         videoAd: null,
-        adsType: 'video'
+        adsType: 'video',
+        showBtn: false,
+        newCardBtnIcon: null
       }
     },
     computed: {
@@ -190,7 +214,7 @@
         'navHeight',
         'noticeContent',
         'decksName',
-        'barHeight'
+        'barHeight',
       ]),
       contentHeight() {
         let ratio = this.winWidth/750
@@ -215,11 +239,19 @@
           return item.text
         })
       },
+	  gameTypePickerList() {
+		return this.gameTypePicker.list.map(item => {
+			return item.text
+		})  
+	  },
     },
     methods: {
       async getIfanrSettings() {
         let res = await getSetting()
         this.adsType = res.objects[0].main_ads_type
+        this.newCardBtnIcon = res.objects[0].new_package_icon ? res.objects[0].new_package_icon : null
+		// this.newCardBtnIcon = 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1lKcWqGQxdLP5RJL.png'
+        this.showBtn = true
       },
       async initVideoAds() {
         if (wx.createRewardedVideoAd) {
@@ -309,7 +341,9 @@
         this.rankData = {
           'standard': [],
           'wild': [],
-          'arena': []
+          'classic': [],
+          'arena': [],
+          'duels': []
         }
       },
       sortRankData(data) {
@@ -327,7 +361,9 @@
               val.win_rate = parseFloat(val.win_rate).toFixed(1)
               val.popularity = parseFloat(val.popularity).toFixed(1)
             })
-            this.rankData[index].push({})
+			if (this.rankData[index].length % 10) {
+				this.rankData[index].push({})
+			}
           }
         }
       },
@@ -455,6 +491,11 @@
           this.genArchetypeList()
         }
       },
+	  handleGameTypeChange(e) {
+		  let selected_index = e.mp.detail.value
+		  this.gameTypePicker.selectedItem = selected_index
+		  this.selectedGameType = this.gameTypePicker.list[selected_index].value
+	  },
       handleHSVisionClick() {
         wx.navigateToMiniProgram({
           appId: 'wx010ca9734f850748',
@@ -848,7 +889,7 @@
     }
   }
   .tab-container {
-    margin-top: 85rpx;
+    // margin-top: 85rpx;
     width: 100%;
     z-index: 1;
     .swiper-block {
@@ -862,7 +903,35 @@
   .rank-panel {
     padding: 0 30rpx;
     .headline {
+	  position: relative;
       height: 96rpx;
+	  .game-type-picker {
+		  position: absolute;
+		  height: 100%;
+		  width: 160rpx;
+		  right: 0;
+		  display: inline-block;
+		  font-size: 24rpx;
+		  color: #433e88;
+		  .btn-img {
+			  position: absolute;
+			  top: 50%;
+			  width: 32rpx;
+			  height: 32rpx;
+			  transform: translateY(-50%);
+		  }
+		  .mode-picker {
+			  float: right;
+			  width: 120rpx;
+			  .selector-item {
+				  text-align: justify;
+				  text-align-last: justify;
+				  display: inline-block;
+				  width: 96rpx;
+				  white-space: nowrap;
+			  }
+		  }
+	  }
       .mode-filter {
         display: inline-block;
         height: 24rpx;

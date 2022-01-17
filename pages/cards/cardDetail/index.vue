@@ -12,6 +12,8 @@
       <p v-show="cardDetail.ename" class="normal" @click="handleCopyBtn(cardDetail.ename)"><span class="f3">英文名</span>：{{cardDetail.ename}}</p>
       <p v-show="cardDetail.series" class="normal"><span class="f4">所属系列</span>：{{cardDetail.series}}</p>
       <p v-show="cardDetail.type" class="normal"><span class="f2">类型</span>：{{cardDetail.type}}</p>
+	  <p v-show="cardDetail.howToEarn" class="normal"><span class="f4">获取方式</span>：{{cardDetail.howToEarn}}</p>
+	  <p v-show="cardDetail.howToEarnGolden" class="normal"><span>获取方式(金卡)</span>：{{cardDetail.howToEarnGolden}}</p>
       <p v-show="cardDetail.flavor" class="flavor" @click="handleCopyBtn(cardDetail.flavor)">{{cardDetail.flavor}}</p>
       <p v-show="cardDetail.eflavor" class="flavor" @click="handleCopyBtn(cardDetail.eflavor)">{{cardDetail.eflavor}}</p>
     </div>
@@ -45,9 +47,12 @@
         </div>
       </div>
     </div>
-    <div class="ads" v-if="adsOpenFlag&&cardDetail.name">
+    <div class="ads" v-if="adsOpenFlag && cardDetail.name && adsType==='video'">
       <ad unit-id="adunit-3f4b7b57a1b47647" ad-type="video" ad-theme="white"></ad>
     </div>
+	<div class="ads" v-if="adsOpenFlag && cardDetail.name && adsType!=='video'">
+	  <ad unit-id="adunit-5507cac6947d0ea4"></ad>
+	</div>
     <div class="deck-list" v-show="cardDetail.collectible">
       <div class="headline">
         <span class="title">相关套牌</span>
@@ -83,7 +88,7 @@
           </div>
         </div>
         <div class="no-deck" v-else>
-          <p>该模式下当前职业没有包含该卡牌的套牌</p>
+          <p>未找到相应套牌</p>
         </div>
       </div>
       <div class="loading" v-else>
@@ -213,8 +218,17 @@ export default {
       'isIphoneX',
       'decksName',
       'cardsInsertAdsFlag',
-      'adsOpenFlag'
+      'adsOpenFlag',
+	  'ifanrSettings'
     ]),
+	adsType() {
+		console.log( this.ifanrSettings.card_ads_type)
+	  if (this.ifanrSettings && this.ifanrSettings.card_ads_type) {
+	    return this.ifanrSettings.card_ads_type
+	  } else {
+	    return 'video'
+	  }
+	},
     getEnAudio() {
       if (this.cardDetail.audios) {
         return this.cardDetail.audios.filter(item => {
@@ -860,7 +874,7 @@ export default {
     display: flex;
     align-items: center;
     box-sizing: border-box;
-    font-size: 26rpx;
+    font-size: 24rpx;
     height: 38rpx;
     line-height: 38rpx;
     border-radius: 20rpx;

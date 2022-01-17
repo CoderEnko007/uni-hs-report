@@ -85,6 +85,7 @@ export function getCardsList(params, limit=20, page=0, offset=0, orderBy='-set_i
       factionQuery = wx.BaaS.Query.or(cardClassQuery, multiClassQuery)
     }
     let modeQuery = new wx.BaaS.Query()
+	console.log('aaa', params.mode)
     if (params.mode && params.mode.id !== 'all') {
       let temp = []
       if (params.mode.id === utils.mode[1].id) {
@@ -95,7 +96,18 @@ export function getCardsList(params, limit=20, page=0, offset=0, orderBy='-set_i
           }
         }
         modeQuery.in('set_id', temp)
-      } else if (params.mode.id === utils.mode[2].id) {
+      } else if (params.mode.id === utils.mode[3].id) {
+        let temp = []
+        if (params.mode.id === utils.mode[3].id) {
+          // 标准模式
+          for (let item of store.state.cards.series) {
+            if (item.mode === utils.mode[3].id) {
+              temp.push(item.id)
+            }
+          }
+          modeQuery.in('set_id', temp)
+		}
+	  } else if (params.mode.id === utils.mode[2].id) {
         // 狂野模式
         // let wildSetQuery = new wx.BaaS.Query()
         // for (let item of store.state.cards.series) {
@@ -363,7 +375,9 @@ export function getDeckList(params, limit=20, page=0, orderBy='-game_count') {
     let tableObj = new wx.BaaS.TableObject(tableID.standDecksTableID)
     if (params.mode && params.mode === 'Wild') {
       tableObj = new wx.BaaS.TableObject(tableID.wildDecksTableID)
-    }
+    } else if (params.mode && params.mode === 'Classic') {
+	  tableObj = new wx.BaaS.TableObject(tableID.clsDecksTableID)
+	}
     let timeRangeQuery = new wx.BaaS.Query()
     if (params && params.last_30_days!==undefined) {
       // last_30_days为true是返回全部卡组，不做过滤
@@ -418,7 +432,9 @@ export function getDeckDetail(params, trending_flag=false, collected=false ) {
     } else {
       if (params.mode !== undefined && params.mode === 'Wild') {
         id = tableID.wildDecksTableID
-      } else {
+      } else if (params.mode !== undefined && params.mode === 'Classic') {
+		  id = tableID.clsDecksTableID
+	  } else {
         id = tableID.standDecksTableID
       }
     }
@@ -818,6 +834,18 @@ export function getHeroSkinID() {
     let tableObj = new wx.BaaS.TableObject(tableID.heroSkinTableID)
     let query = new wx.BaaS.Query()
     tableObj.setQuery(query).limit(1000).find().then(res => {
+      resolve(res.data.objects)
+    }, err => {
+      reject(err)
+    })
+  })
+}
+
+export function getBattlegroundMinnionTypeList() {
+  return new Promise((resolve, reject) => {
+    let tableObj = new wx.BaaS.TableObject(tableID.battlegroundMinnionType)
+    let query = new wx.BaaS.Query()
+    tableObj.setQuery(query).orderBy(['order', 'updated_at']).limit(1000).find().then(res => {
       resolve(res.data.objects)
     }, err => {
       reject(err)

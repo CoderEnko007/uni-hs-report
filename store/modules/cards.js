@@ -120,6 +120,8 @@ const cards = {
               'std_l30':item.std_l30,
               'wild_ld':item.wild_ld,
               'wild_l30':item.wild_l30,
+              'cls_ld':item.cls_ld,
+              'cls_l30':item.cls_l30,
             })
           }
           commit('SET_DECKSNAME', decksName)

@@ -346,6 +346,7 @@ const faction = {
 const mode = [
   {id: 'Standard', name: '标准模式'},
   {id: 'Wild', name: '狂野模式'},
+  {id: 'Classic', name: '经典模式'},
 ]
 
 const rarity = {
@@ -372,7 +373,8 @@ const race = {
   'TOTEM': {name: '图腾'},
   'MURLOC': {name: '鱼人'},
   'ELEMENTAL': {name: '元素'},
-  'MECHANICAL': {name: '机械'}
+  'MECHANICAL': {name: '机械'},
+  'QUILBOAR': {name: '野猪人'},
 }
 
 // 弃用，现在从服务器上获取heroesID
@@ -390,14 +392,17 @@ const heroesID = {
 }
 
 const gameMode = [
-  {mode: 'standard', icon: '/static/icons-v2/standard_phoenix.png', active_icon: '/static/icons-v2/standard_phoenix_active.png', text: '标准'},
-  {mode: 'wild', icon: '/static/icons-v2/wild.png', active_icon: '/static/icons-v2/wild_active.png', text: '狂野'},
-  {mode: 'arena', icon: '/static/icons-v2/arena.png', active_icon: '/static/icons-v2/arena_active.png', text: '竞技场'}
+  {mode: 'standard', icon: '/static/icons-v2/standard_gryphon.png', active_icon: '/static/icons-v2/standard_gryphon_active.png', text: '标准模式'},
+  {mode: 'wild', icon: '/static/icons-v2/wild.png', active_icon: '/static/icons-v2/wild_active.png', text: '狂野模式'},
+  {mode: 'classic', icon: '/static/icons-v2/classic.png', active_icon: '/static/icons-v2/classic_active.png', text: '经典模式'},
+  {mode: 'arena', icon: '/static/icons-v2/arena.png', active_icon: '/static/icons-v2/arena_active.png', text: '竞技场'},
+  {mode: 'duels', icon: '/static/icons-v2/duels.png', active_icon: '/static/icons-v2/duels_active.png', text: '对决模式'},
 ]
 
 const rankMode = [
-  {mode: 'Standard', icon: '/static/icons-v2/standard_phoenix.png', active_icon: '/static/icons-v2/standard_phoenix_active.png', text: '标准'},
+  {mode: 'Standard', icon: '/static/icons-v2/standard_gryphon.png', active_icon: '/static/icons-v2/standard_gryphon_active.png', text: '标准'},
   {mode: 'Wild', icon: '/static/icons-v2/wild.png', active_icon: '/static/icons-v2/wild_active.png', text: '狂野'},
+  {mode: 'Classic', icon: '/static/icons-v2/classic.png', active_icon: '/static/icons-v2/classic_active.png', text: '经典'},
 ]
 
 const factionColors = ['#ff7d0a', '#abd473', '#69ccf0', '#f58cba', '#ccc', '#fff569', '#0070de', '#9482c9', '#c79c6e', '#16debc']
@@ -410,6 +415,7 @@ const battlegroundMinionType = [
   {id: 24, name: '龙'},
   {id: 14, name: '鱼人'},
   {id: 23, name: '海盗'},
+  {id: 18, name: '元素'}
 ]
 
 const battlegroundKeywords = [

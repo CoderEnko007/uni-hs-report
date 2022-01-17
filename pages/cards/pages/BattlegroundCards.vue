@@ -54,7 +54,7 @@
   import SearchBar from '@/components/SearchBar'
   import FilterMenu from '@/components/FilterMenu'
   import CardList from '@/components/CardList'
-  import {getBattlegroundCards} from '@/api/dbapi'
+  import {getBattlegroundCards, getBattlegroundMinnionTypeList} from '@/api/dbapi'
   
   const defaultFilter = {
     search: null,
@@ -101,7 +101,7 @@
       }
     },
     methods: {
-      genFilterMenuItems() {
+      async genFilterMenuItems() {
         this.filterTabBar[0].items = [
           {id: 'all', name: '全部类型'},
           {id: 1, name: '英雄', icon: '/static/battlegroundIcons/bg-hero.png'},
@@ -109,7 +109,12 @@
         ]
         
         let array = []
-        array = utils.battlegroundMinionType
+        array = await getBattlegroundMinnionTypeList()
+        // console.log('aaa', array)
+        // array = utils.battlegroundMinionType
+        array = array.map(v => {
+          return {id: v.type_id, name: v.type_name}
+        })
         array.unshift({id: 'all', name: '任意种类'})
         this.filterTabBar[1].items = array
         

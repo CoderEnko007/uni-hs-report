@@ -38,10 +38,10 @@
           </swiper-item>
           <!-- 随从的三连卡牌 -->
           <swiper-item v-if="!cardDetail.hero && upgradeCard.gold_image" class="item">
-            <div class="upgrade-head">
+            <!-- <div class="upgrade-head">
               <img src="/static/battlegroundIcons/upgrade-icon.png" mode="aspectFit">
               <span class='title' style="font-weight: bold;">三连卡牌</span>
-            </div>
+            </div> -->
             <img class="upgrade-img" :src="upgradeCard.gold_image" mode="aspectFit" @load="upgradeImageLoad" @click="previewImage(upgradeCard.gold_image)" v-if="upgradeCard.gold_image">
           </swiper-item>
         </swiper>
@@ -111,8 +111,13 @@
           <p class="content">{{avg_final_placement}}</p>
         </div>
       </div>
-      <canvas canvas-id="canvasColumn" id="canvasColumn" class="charts" v-if="!chartImg"></canvas>
-      <img class="charts" :src="chartImg" mode="aspectFit" v-else>
+      <div style="position: fixed; top: 9999999999999px; overflow: hidden" v-if="!chartImg">
+        <canvas canvas-id="canvasColumn" id="canvasColumn" class="charts" ></canvas>
+      </div>
+      <img class="charts" :src="chartImg" mode="aspectFit" v-if="chartImg">
+      <div class="chart-loading" v-else>
+        <SpinKit :mode="'sk-double-bounce'"></SpinKit>
+      </div>
     </div>
     <div :style="{'height': isIphoneX?134+'rpx':90+'rpx'}"></div>
     <div class="footer">
@@ -158,6 +163,7 @@ export default {
       cardId: null,
       cardDetail: Object.assign({}, defaultCardDetail),
       imageLoaded: 0,
+      chartLoaded: 0,
       entourageList: null,
       heroPower: null,
       upgradeCard: null,
@@ -261,11 +267,14 @@ export default {
     }
   },
   methods: {
-    async formatCardDetail(detail) {
+    async formatCardDetail(detail, init) {
+      this.chartImg = null
       this.current = 0
       this.imageLoaded = 0
       this.cardFormatted = false
       this.cardDetail = detail
+      this.cardId = detail.hsId
+      this.heroTierDetail = null
       if (this.cardDetail.hero) {
         let power = await getBattlegroundCardDetail({hsId: parseInt(this.cardDetail.entourageID[0])})
         this.heroPower = power.length?power[0]:null
@@ -277,7 +286,6 @@ export default {
             series: [{'name': '排名百分比', data: [], color: '#78577a', format:(val)=>{return val+'%'}}]
           }
           // #78577a
-          console.log(formatChartData.series[0].data, formatChartData.color)
           // formatChartData.series[0].data = this.heroTierDetail.final_placement_distribution.map((item, index) => {
           //   console.log('11', item, index)
           //   return {
@@ -286,7 +294,16 @@ export default {
           //   }
           // })
           formatChartData.series[0].data = this.heroTierDetail.final_placement_distribution
-          this.showColumn("canvasColumn", formatChartData)
+          if (init) {
+            this.showColumn("canvasColumn", formatChartData)
+          } else {
+            if (barChart) {
+              barChart.updateData(formatChartData)
+            } else {
+              this.showColumn("canvasColumn", formatChartData)
+            }
+            
+          }
         }
       } else {
         this.heroPower = null
@@ -331,7 +348,7 @@ export default {
     },
     async initCardDetail() {
       let res = await getBattlegroundCardDetail({hsId: parseInt(this.cardId)})
-      this.formatCardDetail(res[0])
+      this.formatCardDetail(res[0], true)
     },
     imageLoad(e) {
       this.imageLoaded += 1
@@ -385,7 +402,7 @@ export default {
               offset: this.cardsPageParams.offset-1,
               counts: this.cardsPageParams.counts
             })
-            this.formatCardDetail(res.objects[0])
+            this.formatCardDetail(res.objects[0], false)
         })
       }
     },
@@ -397,12 +414,11 @@ export default {
               offset: this.cardsPageParams.offset+1,
               counts: this.cardsPageParams.counts
             })
-            this.formatCardDetail(res.objects[0])
+            this.formatCardDetail(res.objects[0], false)
         })
       }
     },
     showColumn(canvasId,chartData){
-      console.log('aa', chartData, this.cWidth, this.cHeight)
     	barChart=new uCharts({
     		$this:_this,
     		canvasId: canvasId,
@@ -521,7 +537,7 @@ export default {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        height: 75%;
+        height: 83%;
       }
       .upgrade-head {
         display: flex;
@@ -828,6 +844,11 @@ export default {
       font-size:28rpx;
     }
     .charts {
+      width: 750rpx;
+      height: 300rpx;
+    }
+    .chart-loading {
+      position: relative;
       width: 750rpx;
       height: 300rpx;
     }

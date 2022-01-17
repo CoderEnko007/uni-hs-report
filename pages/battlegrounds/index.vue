@@ -68,6 +68,7 @@
       </div>
     </div>
   </div>
+  <copyRight></copyRight>
 </div>
 </template>
 
@@ -76,9 +77,11 @@ import { mapGetters } from 'vuex'
 import NavBar from '@/components/NavBar'
 import { getBattlegroundTierList } from '@/api/dbapi.js'
 import { gradientColor, toThousands } from '@/utils/index.js'
+import copyRight from '@/components/copyRight'
 export default {
   components: {
-    NavBar
+    NavBar,
+    copyRight,
   },
   data() {
     return {
@@ -210,7 +213,7 @@ export default {
     width: 100%;
     height: 425rpx;
     overflow: hidden;
-    background: url("https://cloud-minapp-18282.cloud.ifanrusercontent.com/1jitUf0dZbmFYw43.jpg") no-repeat 0 -10rpx;
+    background: url("https://cloud-minapp-18282.cloud.ifanrusercontent.com/1kV9x2IudeAPW3EV.jpg") no-repeat 0 -60rpx;
     background-size: 100%;
     &:after {
       content: '';

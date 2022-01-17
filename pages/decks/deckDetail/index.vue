@@ -604,7 +604,9 @@ export default {
       let mode = ''
       if (deckMode.toLowerCase() === 'wild') {
         mode = '狂野'
-      } else {
+      } else if (deckMode.toLowerCase() === 'classic') {
+		  mode = '经典'
+	  }else {
         mode = '标准'
       }
       ctx.fillText(mode, this.canvasWidth-32, 42)

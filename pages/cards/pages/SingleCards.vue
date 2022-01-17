@@ -342,6 +342,7 @@
       padding:0 30rpx;
       box-sizing:border-box;
       li {
+		overflow: hidden;
         width: 20%;
         height: 60rpx;
         text-align: center;
