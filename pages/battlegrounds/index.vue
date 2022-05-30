@@ -213,7 +213,7 @@ export default {
     width: 100%;
     height: 425rpx;
     overflow: hidden;
-    background: url("https://cloud-minapp-18282.cloud.ifanrusercontent.com/1kV9x2IudeAPW3EV.jpg") no-repeat 0 -60rpx;
+    background: url("https://cloud-minapp-18282.cloud.ifanrusercontent.com/1neuFcg6gDcknbk0.crdownload") no-repeat 0 -60rpx;
     background-size: 100%;
     &:after {
       content: '';

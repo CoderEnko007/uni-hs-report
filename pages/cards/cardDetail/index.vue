@@ -761,7 +761,8 @@ export default {
       }
     }
     .normal {
-      height: 50rpx;
+      // height: 50rpx;
+      margin-bottom: 10rpx;
       font-size: 28rpx;
     }
     .flavor {

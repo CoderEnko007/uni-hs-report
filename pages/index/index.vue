@@ -825,11 +825,11 @@
       this.genRankData()
       this.genArchetypeList()
       this.genNotice()
-      this.$refs.articlePage.genDataList(true)
+      // this.$refs.articlePage.genDataList(true)
       this.$store.dispatch('getDecksName')
     },
     onShow() {
-      this.$refs.articlePage.genDataList(true)
+      // this.$refs.articlePage.genDataList(true)
     },
     onShareAppMessage(res) {
       return {

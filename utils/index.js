@@ -162,7 +162,7 @@ export function iFanrTileImageURL(tile) {
 }
 export function deckModeImg(mode) {
   if (mode.toLowerCase() === 'standard') {
-    return '/static/icons-v2/standard_phoenix_1.png'
+    return '/static/icons-v2/standard_snake_1.png'
   } else if (mode.toLowerCase() === 'wild') {
     return '/static/icons-v2/wild_1.png'
   } else {
@@ -366,6 +366,7 @@ const type = {
 }
 
 const race = {
+  'ALL': {name: '全部'},
   'DRAGON': {name: '龙'},
   'DEMON': {name: '恶魔'},
   'PIRATE': {name: '海盗'},
@@ -375,6 +376,8 @@ const race = {
   'ELEMENTAL': {name: '元素'},
   'MECHANICAL': {name: '机械'},
   'QUILBOAR': {name: '野猪人'},
+  'NAGA': {name: '娜迦'}
+  
 }
 
 // 弃用，现在从服务器上获取heroesID
@@ -392,7 +395,7 @@ const heroesID = {
 }
 
 const gameMode = [
-  {mode: 'standard', icon: '/static/icons-v2/standard_gryphon.png', active_icon: '/static/icons-v2/standard_gryphon_active.png', text: '标准模式'},
+  {mode: 'standard', icon: '/static/icons-v2/standard_snake.png', active_icon: '/static/icons-v2/standard_snake_active.png', text: '标准模式'},
   {mode: 'wild', icon: '/static/icons-v2/wild.png', active_icon: '/static/icons-v2/wild_active.png', text: '狂野模式'},
   {mode: 'classic', icon: '/static/icons-v2/classic.png', active_icon: '/static/icons-v2/classic_active.png', text: '经典模式'},
   {mode: 'arena', icon: '/static/icons-v2/arena.png', active_icon: '/static/icons-v2/arena_active.png', text: '竞技场'},
@@ -400,7 +403,7 @@ const gameMode = [
 ]
 
 const rankMode = [
-  {mode: 'Standard', icon: '/static/icons-v2/standard_gryphon.png', active_icon: '/static/icons-v2/standard_gryphon_active.png', text: '标准'},
+  {mode: 'Standard', icon: '/static/icons-v2/standard_snake.png', active_icon: '/static/icons-v2/standard_snake_active.png', text: '标准'},
   {mode: 'Wild', icon: '/static/icons-v2/wild.png', active_icon: '/static/icons-v2/wild_active.png', text: '狂野'},
   {mode: 'Classic', icon: '/static/icons-v2/classic.png', active_icon: '/static/icons-v2/classic_active.png', text: '经典'},
 ]

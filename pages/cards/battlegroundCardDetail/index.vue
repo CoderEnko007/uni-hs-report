@@ -81,6 +81,14 @@
         </div>
       </div>
     </div>
+    <div class="entourage-block" v-if="cardDetail.hero">
+        <div class="headline" style="padding: 0 30rpx;"><span class="title">战旗伙伴</span></div>
+        <div class="card-list" style="justify-content: flex-start; padding: 0 20rpx 20rpx;">
+          <div class="card" @click="previewImage(companionCard.image)">
+            <img :src="companionCard.image" mode="aspectFit">
+          </div>
+        </div>
+    </div>
     <div class="hero-tier-detail" v-if="heroTierDetail">
       <div class="ads" v-if="adsOpenFlag&&adsType=='video'">
         <ad unit-id="adunit-3f4b7b57a1b47647" ad-type="video" ad-theme="white"></ad>
@@ -165,6 +173,7 @@ export default {
       imageLoaded: 0,
       chartLoaded: 0,
       entourageList: null,
+      companionCard: null,
       heroPower: null,
       upgradeCard: null,
       cardFormatted: false,
@@ -275,6 +284,8 @@ export default {
       this.cardDetail = detail
       this.cardId = detail.hsId
       this.heroTierDetail = null
+      this.companionCard = null
+      console.log('aaaaaa', this.cardDetail)
       if (this.cardDetail.hero) {
         let power = await getBattlegroundCardDetail({hsId: parseInt(this.cardDetail.entourageID[0])})
         this.heroPower = power.length?power[0]:null
@@ -320,7 +331,7 @@ export default {
             })
           }
         }
-        if (this.cardDetail.hero&&list.length>1 || !this.cardDetail.hero) {
+        if (!this.cardDetail.hero) {
           let temp = this.cardDetail.hero?4:3
           let emptyNum = list.length % temp
           if(emptyNum) {
@@ -333,12 +344,22 @@ export default {
       } else {
         this.entourageList = null
       }
+      console.log('bbbbbbbbb', this.entourageList)
+      
+      if (this.cardDetail.companionId>0 && this.cardDetail.hero) {
+          let card = await getBattlegroundCardDetail({hsId: parseInt(this.cardDetail.companionId)})
+          this.companionCard = card.length>0?card[0]:null
+      } else {
+          this.companionCard = null
+      }
+      
       if (this.cardDetail.upgradeID) {
         let card = await getBattlegroundCardDetail({hsId: parseInt(this.cardDetail.upgradeID)})
         this.upgradeCard = card.length?card[0]:null
       } else {
         this.upgradeCard = null
       }
+      
       if (this.cardDetail.hero) {
         this.swiperItemCounts = this.entourageList?this.entourageList.length+1:1
       } else if (this.upgradeCard&&this.upgradeCard.gold_image) {
