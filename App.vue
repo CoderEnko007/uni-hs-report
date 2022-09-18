@@ -284,4 +284,25 @@ export default {
         }
     }
 }
+.fuckup_panel {
+  position: absolute;
+  left: 50%;
+  width: 86%;
+  margin-left: -43%;
+  margin-top: 120rpx;
+  font-size: 14px;
+  p {
+    text-align: left;
+    line-height: 2;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 30rpx;
+    font-size: 20px;
+    font-weight: bold;
+  }
+}
+.fuckup_title {
+  color: red;
+}
 </style>

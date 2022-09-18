@@ -8,100 +8,120 @@
         </div>
       </block>
     </div> -->
-    <div class="tab-container">
-<!--      <swiper class="content" :easing-function="easeInOutCubic" :duration="100" :style="'height:'+contentHeight" @change="swiperChange"
-       :current="currentTab">
-        <swiper-item> -->
-          <div class="swiper-block">
-            <div class="notice-bar" v-show="noticeContent.display">
-              <cmd-notice-bar scrollable :text="noticeText.text" mode="close" @click="handleNoticeClick"></cmd-notice-bar>
-            </div>
-            <SwiperBanner :banners="banners" :date="report_date" @swiperClick="handleBannerClick" v-if="banners"></SwiperBanner>
+    <div class="tab-container" v-if="ifanrSettings.fuck_up_flag==0 || (ifanrSettings.fuck_up_flag==1 && user_fuck_up_flag==true)">
+     <!-- <swiper class="content" :easing-function="easeInOutCubic" :duration="100" :style="'height:'+contentHeight" @change="swiperChange"
+       :current="currentTab"> -->
+       <!-- <swiper-item> -->
+      <div class="swiper-block">
+        <div class="notice-bar" v-show="noticeContent.display">
+          <cmd-notice-bar scrollable :text="noticeText.text" mode="close" @click="handleNoticeClick"></cmd-notice-bar>
+        </div>
+        <SwiperBanner :banners="banners" :date="report_date" @swiperClick="handleBannerClick" v-if="banners"></SwiperBanner>
+      </div>
+      <div class="rank-panel">
+        <div class="headline">
+          <span class="title">职业排名</span>
+          <!-- 
+          <div class="head-picker">
+            <picker mode="selector" :value="modeFilter.selectedItem" :range="modePickerList" @change="handleModeChange">
+              <span class='selector-item'>{{modeFilter.list[modeFilter.selectedItem].text}}</span>
+              <span class="iconfont" :style="{'vertical-align': 'middle'}">&#xe668;</span>
+            </picker>
           </div>
-          <div class="rank-panel">
-            <div class="headline">
-              <span class="title">职业排名</span>
-              <!-- <div class="head-picker">
-                <picker mode="selector" :value="modeFilter.selectedItem" :range="modePickerList" @change="handleModeChange">
-                  <span class='selector-item'>{{modeFilter.list[modeFilter.selectedItem].text}}</span>
-                  <span class="iconfont" :style="{'vertical-align': 'middle'}">&#xe668;</span>
-                </picker>
-              </div> -->
-              <!-- <div class="btn-group">
+          -->
+          <!-- 
+          <div class="btn-group">
                 <div class="btn-block" v-for="(item, index) in rankMode" :key="item.name" @click="modeBtnClick(rankMode[index])">
                   <img class="btn-img" :src="selectedGameType===item.mode?item.active_icon:item.icon" mode="aspectFit">
                   <div class="c-button" :class="selectedGameType===item.mode?'btn-active':''">{{item.text}}</div>
                   <div class="separator" v-if="index !== 4">|</div>
                 </div>
-              </div> -->
-			  <div class="game-type-picker">
-				<img class="btn-img" :src="rankMode[gameTypePicker.selectedItem].active_icon" mode="aspectFit">
-				<picker class="mode-picker" mode="selector" :value="gameTypePicker.selectedItem" :range="gameTypePickerList" @change="handleGameTypeChange">
-				  <span class='selector-item'>{{gameTypePicker.list[gameTypePicker.selectedItem].text}}</span>
-				  <span class="iconfont" :style="{'vertical-align': 'middle'}">&#xe668;</span>
-				</picker>
-			  </div>
-            </div>
-            <div class="content">
-              <RankBoard :list="rankData[selectedGameType]" :mode="modeFilter.list[modeFilter.selectedItem].value"></RankBoard>
-            </div>
-            <div class="extra-btn" v-if="showBtn">
-              <div class="data-vision" @click="handleHSVisionClick">
-                <img class="btn-img" src="/static/icons-v2/trending.png" mode="aspectFit">
-                <span class="text">强度趋势</span>
-                <!-- <span class="iconfont">&#xe600;</span> -->
               </div>
-              <div class="data-vision" @click="handleTrendingClick">
-                <img src="/static/icons-v2/trending1.png" class="btn-img" mode="aspectFit">
-                <span class="text">热门卡组</span>
-                <!-- <span class="iconfont">&#xe600;</span> -->
-              </div>
-              <div class="data-vision" @click="handleRevealClick" v-if="newCardBtnIcon">
-                <img class="btn-img" :src="newCardBtnIcon" style="width:42rpx" mode="aspectFit">
-                <span class="text">新卡发布</span>
-                <!-- <span class="iconfont">&#xe600;</span> -->
-              </div>
-            </div>
+           -->
+          <div class="game-type-picker">
+          <img class="btn-img" :src="rankMode[gameTypePicker.selectedItem].active_icon" mode="aspectFit">
+          <picker class="mode-picker" mode="selector" :value="gameTypePicker.selectedItem" :range="gameTypePickerList" @change="handleGameTypeChange">
+            <span class='selector-item'>{{gameTypePicker.list[gameTypePicker.selectedItem].text}}</span>
+            <span class="iconfont" :style="{'vertical-align': 'middle'}">&#xe668;</span>
+          </picker>
+        </div>
+      </div>
+      <div class="content">
+      <RankBoard :list="rankData[selectedGameType]" :mode="modeFilter.list[modeFilter.selectedItem].value"></RankBoard>
+      </div>
+      <div class="extra-btn" v-if="showBtn">
+        <div class="data-vision" @click="handleHSVisionClick">
+          <img class="btn-img" src="/static/icons-v2/trending.png" mode="aspectFit">
+          <span class="text">强度趋势</span>
+          <!-- <span class="iconfont">&#xe600;</span> -->
+        </div>
+        <div class="data-vision" @click="handleTrendingClick">
+          <img src="/static/icons-v2/trending1.png" class="btn-img" mode="aspectFit">
+          <span class="text">热门卡组</span>
+          <!-- <span class="iconfont">&#xe600;</span> -->
+        </div>
+        <div class="data-vision" @click="handleRevealClick" v-if="newCardBtnIcon">
+          <img class="btn-img" :src="newCardBtnIcon" style="width:42rpx" mode="aspectFit">
+          <span class="text">新卡发布</span>
+          <!-- <span class="iconfont">&#xe600;</span> -->
+        </div>
+      </div>
+    </div>
+      <div class="ads" style="margin: 15upx 0 0 0;" v-if="adsOpenFlag&&adsType!=='video'">
+        <ad unit-id="adunit-900bbac5f4c50939" @error="handleAdError" @load="handleBannerAdLoaded"></ad>
+      </div>
+      <div class="video-ads" style="margin: 20rpx 30rpx 0;" v-if="adsOpenFlag&&adsType==='video'">
+        <ad unit-id="adunit-03a8570563bafc46" ad-type="video" ad-theme="white" @error="handleAdError" @load="handleVideoAdLoaded"></ad>
+      </div>
+      <div class="tier-panel">
+        <div class="headline">
+          <span class="title">梯队排行</span>
+          <div class="head-picker">
+            <picker mode="selector" :value="rangePicker.selectedItem" :range="rangePickerList" @change="handleRankRangeChange">
+              <span class='selector-item'>标准模式 {{rangePicker.list[rangePicker.selectedItem].text}}</span>
+              <span class="iconfont" :style="{'vertical-align': 'middle'}">&#xe668;</span>
+            </picker>
           </div>
-          <div class="ads" style="margin: 15upx 0 0 0;" v-if="adsOpenFlag&&adsType!=='video'">
-            <ad unit-id="adunit-900bbac5f4c50939" @error="handleAdError" @load="handleBannerAdLoaded"></ad>
+          <div class="head-btn" @click="handleExport">
+            <span class="icon iconfont">&#xe69c;&nbsp;</span>
+            <span>导出日报</span>
           </div>
-          <div class="video-ads" style="margin: 20rpx 30rpx 0;" v-if="adsOpenFlag&&adsType==='video'">
-            <ad unit-id="adunit-03a8570563bafc46" ad-type="video" ad-theme="white" @error="handleAdError" @load="handleVideoAdLoaded"></ad>
+        </div>
+        <div class="tier-content">
+          <div class="tier-block" v-for="(tier, index) in tierList" :key="tier.name">
+            <TierList :tierData="tier" @itemClick="handleTierClick" @onCollapse="handleCollapse"></TierList>
+           <!-- <div class="video-ads" style="margin: 10rpx 30rpx;" v-if="index===0 && adsType==='video'">
+              <ad unit-id="adunit-03a8570563bafc46" ad-type="video" ad-theme="white" @load="handleVideoAdLoaded"></ad>
+            </div> -->
           </div>
-          <div class="tier-panel">
-            <div class="headline">
-              <span class="title">梯队排行</span>
-              <div class="head-picker">
-                <picker mode="selector" :value="rangePicker.selectedItem" :range="rangePickerList" @change="handleRankRangeChange">
-                  <span class='selector-item'>标准模式 {{rangePicker.list[rangePicker.selectedItem].text}}</span>
-                  <span class="iconfont" :style="{'vertical-align': 'middle'}">&#xe668;</span>
-                </picker>
-              </div>
-              <div class="head-btn" @click="handleExport">
-                <span class="icon iconfont">&#xe69c;&nbsp;</span>
-                <span>导出日报</span>
-              </div>
-            </div>
-            <div class="tier-content">
-              <div class="tier-block" v-for="(tier, index) in tierList" :key="tier.name">
-                <TierList :tierData="tier" @itemClick="handleTierClick" @onCollapse="handleCollapse"></TierList>
-               <!-- <div class="video-ads" style="margin: 10rpx 30rpx;" v-if="index===0 && adsType==='video'">
-                  <ad unit-id="adunit-03a8570563bafc46" ad-type="video" ad-theme="white" @load="handleVideoAdLoaded"></ad>
-                </div> -->
-              </div>
-            </div>
-          </div>
-       <!-- </swiper-item>
-        <swiper-item>
-          <articlePage ref="articlePage"></articlePage>
-        </swiper-item>
-      </swiper> -->
+        </div>
+      </div>
+      <copyRight></copyRight>
     </div> 
-    <copyRight></copyRight>
+    <div style="{position: relative; width: 100%}" v-else-if="ifanrSettings.fuck_up_flag==1 && user_fuck_up_flag==false">
+      <div class="notice-bar">
+        <cmd-notice-bar scrollable :text="noticeText.text" mode="close" @click="handleNoticeClick"></cmd-notice-bar>
+      </div>
+      <div class="fuckup_panel">
+        <h1 class="fuckup_title">紧急通知</h1>
+        <FuckupBtn></FuckupBtn>
+        <copyRight></copyRight>
+      </div>
+    </div>
+    <div class="fuckup_panel" v-else="ifanrSettings.fuck_up_flag==2 && user_fuck_up_flag==false">
+      <h1 class="fuckup_title">紧急通知</h1>
+      <p>由于微信服务类目要求变更，暂时无法提供相应数据展示，目前正在办理相应的主体变更手续，希望小程序能尽快恢复正常，对您带来的不便敬请谅解。</p>
+      <copyRight></copyRight>
+    </div>
+    
+        <!-- </swiper-item> -->
+         <!-- <swiper-item>
+            <articlePage ref="articlePage"></articlePage>
+          </swiper-item>
+        </swiper> -->
     <x-modal :text='noticeText.text' :no-cancel='true' :no-title='true' confirm-text='朕知道了' :hidden.sync='hideModal'></x-modal>
     <div style="position: fixed; top: 9999999999999px; overflow: hidden">
-      <canvas :style="{width: canvasWidth+'px', height: canvasHeight+'px'}" canvas-id="dailyReport"></canvas>
+        <canvas :style="{width: canvasWidth+'px', height: canvasHeight+'px'}" canvas-id="dailyReport"></canvas>
     </div>
   </div>
 </template>
@@ -119,6 +139,7 @@
   import TierList from '@/components/TierList'
   import articlePage from './components/articlePage'
   import copyRight from '@/components/copyRight'
+  import FuckupBtn from '@/components/FuckupBtn'
 
   export default {
     components: {
@@ -130,6 +151,7 @@
       TierList,
       articlePage,
       copyRight,
+      FuckupBtn
     },
     data() {
       return {
@@ -155,8 +177,8 @@
           'standard': [],
           'wild': [],
           'arena': [],
-		  'classic': [],
-		  'duels': []
+          'classic': [],
+          'duels': []
         },
         modeFilter: {
           selectedItem: 0,
@@ -184,16 +206,16 @@
             {text: '传说Top1000', rank_range: 'TOP_1000_LEGEND'}
           ]
         },
-		gameTypePicker: {
-			selectedItem: 0,
-			list: [
-				{text: '标准模式', value: 'standard'},
-				{text: '狂野模式', value: 'wild'},
-				{text: '经典模式', value: 'classic'},
-				{text: '竞技场', value: 'arena'},
-				{text: '对决模式', value: 'duels'},
-			]
-		},
+        gameTypePicker: {
+          selectedItem: 0,
+          list: [
+            {text: '标准模式', value: 'standard'},
+            {text: '狂野模式', value: 'wild'},
+            {text: '经典模式', value: 'classic'},
+            {text: '竞技场', value: 'arena'},
+            {text: '对决模式', value: 'duels'},
+          ]
+        },
         tempSelectedItem: 0,
         // canvas参数
         canvasWidth: 375,
@@ -203,7 +225,7 @@
         videoAd: null,
         adsType: 'video',
         showBtn: false,
-        newCardBtnIcon: null
+        newCardBtnIcon: null,
       }
     },
     computed: {
@@ -215,6 +237,8 @@
         'noticeContent',
         'decksName',
         'barHeight',
+        'ifanrSettings',
+        'user_fuck_up_flag'
       ]),
       contentHeight() {
         let ratio = this.winWidth/750
@@ -239,11 +263,11 @@
           return item.text
         })
       },
-	  gameTypePickerList() {
-		return this.gameTypePicker.list.map(item => {
-			return item.text
-		})  
-	  },
+      gameTypePickerList() {
+        return this.gameTypePicker.list.map(item => {
+          return item.text
+        })  
+      },
     },
     methods: {
       async getIfanrSettings() {
@@ -361,9 +385,9 @@
               val.win_rate = parseFloat(val.win_rate).toFixed(1)
               val.popularity = parseFloat(val.popularity).toFixed(1)
             })
-			if (this.rankData[index].length % 10) {
-				this.rankData[index].push({})
-			}
+            if (this.rankData[index].length % 10) {
+              this.rankData[index].push({})
+            }
           }
         }
       },
@@ -491,11 +515,11 @@
           this.genArchetypeList()
         }
       },
-	  handleGameTypeChange(e) {
-		  let selected_index = e.mp.detail.value
-		  this.gameTypePicker.selectedItem = selected_index
-		  this.selectedGameType = this.gameTypePicker.list[selected_index].value
-	  },
+      handleGameTypeChange(e) {
+        let selected_index = e.mp.detail.value
+        this.gameTypePicker.selectedItem = selected_index
+        this.selectedGameType = this.gameTypePicker.list[selected_index].value
+      },
       handleHSVisionClick() {
         wx.navigateToMiniProgram({
           appId: 'wx010ca9734f850748',
@@ -546,6 +570,10 @@
           this.collapseHeight -= obj.num*60
         }
       },
+      // handleFuckup() {
+      //   this.$store.commit('setFuckupFlag', true)
+      //   console.log('bbbb', this.ifanrSettings.fuck_up_flag,  this.user_fuck_up_flag)
+      // },
 
       // canvas 绘图
       saveImageToPhotos () {

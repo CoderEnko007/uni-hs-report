@@ -83,7 +83,7 @@ export function getCardPicture(_this, id, golden, fbigameFlag, version, key) {
   // const version = 'v9'
   // const key = "Fbigame"
   const now = new Date()
-  const baseURL = "https://res.fbigame.com"
+  const baseURL = "https://images.fbigames.com"
   let time = [now.getFullYear(), now.getMonth()+1, now.getDate()].join('-')
   let formatTime = new Date(time).getTime()/1000 + 365 * 24 * 60 * 60;
   let filename = ''
@@ -135,7 +135,7 @@ export function ShadeColor(colorMAX,colorMIN,num){
 const cardsBaseURL = 'https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/'
 const cardsBaseURL512 = 'https://art.hearthstonejson.com/v1/render/latest/zhCN/512x/'
 const cardsTileURL = 'https://art.hearthstonejson.com/v1/tiles/'
-const fbiCardsTileURL = 'https://static.fbigame.com/resource/tiles/'
+const fbiCardsTileURL = 'https://static.fbigames.com/resource/tiles/'
 const iFanrCardsTileURL = 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/'
 const cardsOrigURL = 'https://art.hearthstonejson.com/v1/256x/'
 // const dustImage = 'https://cloud-minapp-18282.cloud.ifanrusercontent.com/1g2xiBmlyPDaVLks.png'

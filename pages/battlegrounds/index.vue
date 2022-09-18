@@ -1,75 +1,90 @@
 <template>
-<div class="container">
-  <!-- <NavBar navTitle="酒馆战棋"></NavBar> -->
-  <div class="status-bar" :style="{height:barHeight+'px',opacity:statusBarOpacity}"></div>
-  <div class="banner">
-    <div class="bgs-overview">
-      <div class="title">酒馆战棋英雄强度排行</div>
-      <div class="meta">
-        <div class="bgs-data-panel">
-          <p class="label">分&nbsp;&nbsp;段</p>
-          <!-- <p class="content">{{mmr_range.desc}}</p> -->
-          <p class="content">{{bgsMMRRangeMetaDesc}}</p>
-        </div>
-        <div class="bgs-data-panel">
-          <p class="label">时间范围</p>
-          <p class="content">{{time_frame.desc}}</p>
-        </div>
-        <div class="bgs-data-panel">
-          <p class="label">对局数</p>
-          <p class="content" v-if="total_games">{{total_games}}</p>
-          <p class="content" v-else>N/A</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="tier-list">
-    <div class="tier-header">
-      <div class="hero-name">英&nbsp;&nbsp;雄</div>
-      <div class="tier-meta" v-for="(item, index) in tierHeaderMeta" :key="index" @click="handleOrderClick(item)">
-        <span>{{item.name}}</span>
-        <img v-if="orderBy && orderBy === item.id" :src="upOrder" mode="aspectFit">
-        <img v-else-if="orderBy === '-'+item.id" :src="downOrder" mode="aspectFit">
-        <img v-else :src="normalOrder" mode="aspectFit">
-      </div>
-    </div>
-    <div class="tier-block" v-for="(item, index) in tierList" :key="index" @click="handlePanelClick(item)">
-      <div class="tier-title" v-if="orderBy==='avg_final_placement' && (index === 0 || tierList[index-1].tier !== item.tier)">
-        <img :src="tierIcon[item.tier].icon">
-        <span class="title">{{tierIcon[item.tier].name}}</span>
-        <!-- <p v-if="showListFlag" class="icon iconfont" @click="handleHeaderClick">&#xe602;</p>
-        <p v-else class="icon iconfont" @click="handleHeaderClick">&#xe624;</p> -->
-      </div>
-      <div class="tier-panel">
-        <div class="icon">
-          <img :src="item.image" mode="aspectFit">
-        </div>
-        <div class="desc">
-          <div class="name">
-            <p class="cname">{{item.cname}}</p>
-            <p class="ename">{{item.ename}}</p>
-          </div>
-          <div class="avg">
-            <p class="content" :style="{color: item.color}">{{fix2float(item.avg_final_placement)}}</p>
-            <div class="table-cell-bar">
-              <div class="table-cell-bar__fill" :style="{width:(1-(item.avg_final_placement-1)/8)*120+'rpx', 'background-color': item.color}"></div>
-            </div>
-          </div>
-          <div class="pr">
-            <p class="content">{{fix2float(item.pick_rate)}}%</p>
-            <div class="table-cell-bar">
-              <div class="table-cell-bar__fill" :style="{width:item.pick_rate/100*120+'rpx'}"></div>
+  <view>
+    <div class="container">
+      <!-- <NavBar navTitle="酒馆战棋"></NavBar> -->
+      <div class="status-bar" :style="{height:barHeight+'px',opacity:statusBarOpacity}"></div>
+      <div v-if="ifanrSettings.fuck_up_flag==0 || (ifanrSettings.fuck_up_flag==1 && user_fuck_up_flag==true)">
+        <div class="banner">
+          <div class="bgs-overview">
+            <div class="title">酒馆战棋英雄强度排行</div>
+            <div class="meta">
+              <div class="bgs-data-panel">
+                <p class="label">分&nbsp;&nbsp;段</p>
+                <!-- <p class="content">{{mmr_range.desc}}</p> -->
+                <p class="content">{{bgsMMRRangeMetaDesc}}</p>
+              </div>
+              <div class="bgs-data-panel">
+                <p class="label">时间范围</p>
+                <p class="content">{{time_frame.desc}}</p>
+              </div>
+              <div class="bgs-data-panel">
+                <p class="label">对局数</p>
+                <p class="content" v-if="total_games">{{total_games}}</p>
+                <p class="content" v-else>N/A</p>
+              </div>
             </div>
           </div>
         </div>
-        <div class="arrow">
-          <span class="iconfont">&#xe600;</span>
+        <div class="tier-list">
+        <div class="tier-header">
+          <div class="hero-name">英&nbsp;&nbsp;雄</div>
+          <div class="tier-meta" v-for="(item, index) in tierHeaderMeta" :key="index" @click="handleOrderClick(item)">
+            <span>{{item.name}}</span>
+            <img v-if="orderBy && orderBy === item.id" :src="upOrder" mode="aspectFit">
+            <img v-else-if="orderBy === '-'+item.id" :src="downOrder" mode="aspectFit">
+            <img v-else :src="normalOrder" mode="aspectFit">
+          </div>
         </div>
+        <div class="tier-block" v-for="(item, index) in tierList" :key="index" @click="handlePanelClick(item)">
+          <div class="tier-title" v-if="orderBy==='avg_final_placement' && (index === 0 || tierList[index-1].tier !== item.tier)">
+            <img :src="tierIcon[item.tier].icon">
+            <span class="title">{{tierIcon[item.tier].name}}</span>
+            <!-- <p v-if="showListFlag" class="icon iconfont" @click="handleHeaderClick">&#xe602;</p>
+            <p v-else class="icon iconfont" @click="handleHeaderClick">&#xe624;</p> -->
+          </div>
+          <div class="tier-panel">
+            <div class="icon">
+              <img :src="item.image" mode="aspectFit">
+            </div>
+            <div class="desc">
+              <div class="name">
+                <p class="cname">{{item.cname}}</p>
+                <p class="ename">{{item.ename}}</p>
+              </div>
+              <div class="avg">
+                <p class="content" :style="{color: item.color}">{{fix2float(item.avg_final_placement)}}</p>
+                <div class="table-cell-bar">
+                  <div class="table-cell-bar__fill" :style="{width:(1-(item.avg_final_placement-1)/8)*120+'rpx', 'background-color': item.color}"></div>
+                </div>
+              </div>
+              <div class="pr">
+                <p class="content">{{fix2float(item.pick_rate)}}%</p>
+                <div class="table-cell-bar">
+                  <div class="table-cell-bar__fill" :style="{width:item.pick_rate/100*120+'rpx'}"></div>
+                </div>
+              </div>
+            </div>
+            <div class="arrow">
+              <span class="iconfont">&#xe600;</span>
+            </div>
+          </div>
+        </div>
+        <copyRight></copyRight>
+      </div>
+      </div>
+      <div class="fuckup_panel" v-else-if="ifanrSettings.fuck_up_flag==1 && user_fuck_up_flag==false" style="margin-top: 200rpx;">
+        <h1 class="fuckup_title">紧急通知</h1>
+        <FuckupBtn></FuckupBtn>
+        <copyRight></copyRight>
+      </div>
+      <div class="fuckup_panel" v-else="ifanrSettings.fuck_up_flag==2 && user_fuck_up_flag==false">
+        <h1 class="fuckup_title">紧急通知</h1>
+        <p>由于微信服务类目要求变更，暂时无法提供相应数据展示，目前正在办理相应的主体变更手续，希望小程序能尽快恢复正常，对您带来的不便敬请谅解。</p>
+        <copyRight></copyRight>
       </div>
     </div>
-  </div>
-  <copyRight></copyRight>
-</div>
+    
+  </view>
 </template>
 
 <script>
@@ -78,10 +93,13 @@ import NavBar from '@/components/NavBar'
 import { getBattlegroundTierList } from '@/api/dbapi.js'
 import { gradientColor, toThousands } from '@/utils/index.js'
 import copyRight from '@/components/copyRight'
+import FuckupBtn from '@/components/FuckupBtn'
+
 export default {
   components: {
     NavBar,
     copyRight,
+    FuckupBtn
   },
   data() {
     return {
@@ -110,7 +128,8 @@ export default {
   computed: {
     ...mapGetters([
       'ifanrSettings',
-      'barHeight'
+      'barHeight',
+      'user_fuck_up_flag'
     ]),
     fix2float() {
       return function(x) {

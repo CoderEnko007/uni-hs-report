@@ -601,11 +601,13 @@ export default {
       this.currentPage = e.current
     },
     handleRankRangeChange(e) {
+      this.currentPage = 1
       this.rangePicker.selectedItem = e.mp.detail.value
       this.deckListMode = this.rangePicker.list[this.rangePicker.selectedItem].mode
       this.initDeckList(this.deckListMode)
     },
     handleIconsClick(item) {
+      this.currentPage = 1
       if (this.selectedFaction === item.id) {
         this.selectedFaction = ''
       } else {

@@ -22,9 +22,13 @@ const settings = {
     adNotice: null,
     current_set: null,
     showRemoveAdsBtn: false,
-    ifanrSettings: null
+    ifanrSettings: null,
+    user_fuck_up_flag: false //false为不展示，true为展示
   },
   mutations: {
+    setFuckupFlag: (state, val) => {
+      state.user_fuck_up_flag = val
+    },
     setAdsOpenFlag: (state, val) => {
       state.adsOpenFlag = val
     },
