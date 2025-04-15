@@ -4,13 +4,15 @@
     <NavBar :onlyCapsule="true"></NavBar>
     <div class="banner">
       <div class="meta">
-        <h1>热门套牌</h1>
+        <h1>热门卡组</h1>
         <p class="date">{{updateDate}}</p>
-        <p class="desc">最近48小时内热度持续上升的精选套牌</p>
+        <p class="desc">最近48小时内热度持续上升的精选卡组</p>
       </div>
     </div>
     <div class="deck-list">
       <DeckList :list="deckList" @itemClick="handleDeckClick"></DeckList>
+      <load-more v-if="loading" :loading='true' />
+      <load-more v-else :nomore='true' />
     </div>
     <!-- <div class="ads" v-if="adsOpenFlag">
       <ad unit-id="adunit-4c3a7a55067c0f6e"></ad>
@@ -26,11 +28,13 @@ import utils from '@/utils'
 import {getTrendingList} from "@/api/dbapi";
 import DeckList from '@/components/DeckList';
 import NavBar from '@/components/NavBar'
+import loadMore from '@/components/load-more.vue'
 
 export default {
   components: {
     DeckList,
     NavBar,
+    loadMore
   },
   data() {
     return {
@@ -38,6 +42,7 @@ export default {
       report_date: '',
       interstitialAd: null,
       scrollTop: 0,
+      loading: true,
     }
   },
   computed: {
@@ -79,18 +84,22 @@ export default {
           item.cname = item.deck_name
         }
         item.win_rate = item.win_rate.toFixed(1)
+        item.game_count = utils.toThousands(item.game_count)
       }
     },
     genTrendingList() {
       uni.showNavigationBarLoading();
+      this.loading = true
       getTrendingList().then(res => {
         this.deckList = res.list
         this.formatDeckList()
         this.report_date = res.date
+        this.loading = false
         uni.stopPullDownRefresh();
         uni.hideNavigationBarLoading()
       }).catch(err => {
         console.log(err)
+        this.loading = false
         uni.stopPullDownRefresh();
         uni.hideNavigationBarLoading()
       })

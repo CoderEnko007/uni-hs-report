@@ -12,7 +12,7 @@
     </div>
     <div class="tier-block" :style="{'margin-top': showListFlag?'0':'-'+listHeight*2+'rpx'}">
       <div class="tier-item"
-           v-for="(item, index) in genTierList" :key="item.id"
+           v-for="item in genTierList" :key="item.id"
            @click="handleItemClick(item)">
         <div class="icon">
           <img :src="item.image" mode="aspectFit">
@@ -65,6 +65,7 @@ export default {
             val.list[index].image = utils.faction[val.list[index].faction].image
             val.list[index].bgImage = utils.faction[val.list[index].faction].bgImage
           }
+          val.list[index].game_count = utils.toThousands(val.list[index].game_count)
         }
       }
       return this.tierData.list

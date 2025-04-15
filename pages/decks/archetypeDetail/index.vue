@@ -1,6 +1,8 @@
 <template>
   <div class="container" :style="{'padding-bottom': isIphoneX?120+'rpx':80+'rpx'}">
-    <div class="status-bar" :style="{height:statusBarHeight, opacity:statusBarOpacity}"></div>
+    <div class="status-bar" :style="{height:statusBarHeight, opacity:statusBarOpacity}">
+      <p class="cname">{{genArchetypeName}}</p>
+    </div>
     <nav-bar :onlyCapsule="true"></nav-bar>
     <div class="banner">
       <div class="bg-image">
@@ -259,7 +261,7 @@
           { id: 'popularity', name: '对局占比' },
           { id: 'winrate', name: '胜率' },
         ],
-        factions: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior', 'DemonHunter'],
+        factions: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior', 'DemonHunter', 'DeathKnight'],
         matchupDetail: {
           'Druid': [],
           'Hunter': [],
@@ -271,6 +273,7 @@
           'Warlock': [],
           'Warrior': [],
           'DemonHunter': [],
+          'DeathKnight': []
         },
         popDeck: Object.assign({}, defaultPopDeck),
         bestDeck: Object.assign({}, defaultBestDeck),
@@ -314,11 +317,7 @@
       statusBarOpacity() {
         let navHeight = uni.upx2px(this.navHeight)+this.barHeight
         let opacity = (this.scrollTop-uni.upx2px(550))/(uni.upx2px(200)-navHeight)
-        if (opacity>0) {
-          opacity = opacity<=1?opacity:1
-        } else {
-          opacity = 0
-        }
+        opacity = Math.min(Math.max(opacity, 0), 1) 
         return opacity
       }
     },
@@ -335,7 +334,8 @@
           data: []
         }
         this.matchupDetail = { 
-          'Druid': [], 'Hunter': [], 'Mage': [], 'Paladin': [], 'Priest': [], 'Rogue': [], 'Shaman': [], 'Warlock': [], 'Warrior': [], 'DemonHunter': []
+          'Druid': [], 'Hunter': [], 'Mage': [], 'Paladin': [], 'Priest': [], 'Rogue': [],
+          'Shaman': [], 'Warlock': [], 'Warrior': [], 'DemonHunter': [], 'DeathKnight': []
         }
         this.popDeck = Object.assign({}, defaultPopDeck)
         this.bestDeck = Object.assign({}, defaultBestDeck)
@@ -381,6 +381,7 @@
           })
         } else {
           this.archetypeDetail = res
+          this.archetypeDetail.real_games = utils.toThousands(res.real_games)
           this.updateDate = this.archetypeDetail.update_time
           this.bannerImg = utils.faction[this.archetypeDetail.faction].bgImage.replace('256x', '512x')
           let matchupData = JSON.parse(this.archetypeDetail.matchup)
@@ -396,7 +397,7 @@
             this.popDeck.cname = this.getDeckCName(this.archetypeDetail.archetype)
             this.popDeck.deck_id = popDeckData[0]
             this.popDeck.win_rate = popDeckData[1]
-            this.popDeck.game_count = popDeckData[2]
+            this.popDeck.game_count = utils.toThousands(popDeckData[2])
             this.popDeck.show = true
           }
           let BestDeckData = JSON.parse(this.archetypeDetail.best_deck)
@@ -404,7 +405,7 @@
             this.bestDeck.cname = this.getDeckCName(this.archetypeDetail.archetype)
             this.bestDeck.deck_id = BestDeckData[0]
             this.bestDeck.win_rate = BestDeckData[1]
-            this.bestDeck.game_count = BestDeckData[2]
+            this.bestDeck.game_count = utils.toThousands(BestDeckData[2])
             this.bestDeck.show = true
           }
 
@@ -413,7 +414,7 @@
             this.bestMatchup.ename = bestMatchupData[0]
             this.bestMatchup.cname = this.getDeckCName(bestMatchupData[0])
             this.bestMatchup.win_rate = parseFloat(bestMatchupData[1]).toFixed(2)
-            this.bestMatchup.game_count = bestMatchupData[2]
+            this.bestMatchup.game_count = utils.toThousands(bestMatchupData[2])
             if (bestMatchupData.length === 4) {
               var bestMatchupFaction = bestMatchupData[3]
             } else {
@@ -421,6 +422,9 @@
               bestMatchupFaction = bestMatchupData[0] === 'Handlock' ? 'Warlock' : bestMatchupFaction[bestMatchupFaction.length - 1]
               if (bestMatchupFaction.indexOf('Demon Hunter')>0) {
                 bestMatchupFaction = 'DemonHunter'
+              }
+              if (bestMatchupFaction.indexOf('Death Knight')>0) {
+                bestMatchupFaction = 'DeathKnight'
               }
             }
             this.bestMatchup.image = utils.faction[bestMatchupFaction].image
@@ -433,7 +437,7 @@
             this.worstMatchup.ename = worstMatchupData[0]
             this.worstMatchup.cname = this.getDeckCName(worstMatchupData[0])
             this.worstMatchup.win_rate = parseFloat(worstMatchupData[1]).toFixed(2)
-            this.worstMatchup.game_count = worstMatchupData[2]
+            this.worstMatchup.game_count = utils.toThousands(worstMatchupData[2])
             if (worstMatchupData.length === 4) {
               var worstMatchupFaction = worstMatchupData[3]
             } else {
@@ -441,6 +445,9 @@
               worstMatchupFaction = worstMatchupData[0] === 'Handlock' ? 'Warlock' : worstMatchupFaction[worstMatchupFaction.length - 1]
               if (worstMatchupFaction.indexOf('DemonHunter')>0) {
                 worstMatchupFaction = 'DemonHunter'
+              }
+              if (worstMatchupFaction.indexOf('Death Knight')>0) {
+                worstMatchupFaction = 'DeathKnight'
               }
             }
             this.worstMatchup.image = utils.faction[worstMatchupFaction].image
@@ -467,8 +474,18 @@
           url: `/pages/cards/cardDetail/index?id=${item.dbfId}`
         })
       },
+      compareFunction(key) {
+        return function(obj1, obj2) {
+          let formatKey = key.replace('-', '')
+          if (key.indexOf('-') !== -1) {
+            return obj2[formatKey] - obj1[formatKey]
+          } else {
+            return obj1[formatKey] - obj2[formatKey]
+          }
+        }
+      },
       genTableData(tableData) {
-        let array = []
+        let table_array = []
         for (let data of tableData) {
           let name = this.decksName.filter(item => {
             return item.ename === data[0] && item.faction === this.selectedFaction.id
@@ -480,9 +497,9 @@
             winrate: parseFloat(data[1].replace('%', '')).toFixed(1),
             popularity: parseFloat(data[2].replace('%', ''))
           }
-          array.push(formatData)
+          table_array.push(formatData)
         }
-        this.selectedFaction.data = array
+        this.selectedFaction.data = table_array.sort(this.compareFunction('-games'))
       },
       handleIconsClick(item) {
         this.selectedFaction = {
@@ -579,6 +596,20 @@
     z-index: 3;
     opacity: 0;
     background-color: white;
+    .cname {
+      position: absolute; 
+      width: 40%;
+      top: 62%;
+      left: 50%; 
+      transform: translate(-50%, -50%); 
+      color: #333;
+      text-align: center;
+      font-size: 36rpx;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
   .banner {
     position: relative;

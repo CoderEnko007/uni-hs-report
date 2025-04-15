@@ -46,7 +46,7 @@ export default {
 <style lang="scss" scoped>
 .rank-board {
 	position: relative;
-  height: 390rpx;
+  height: 440rpx;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;

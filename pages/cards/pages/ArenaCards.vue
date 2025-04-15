@@ -168,6 +168,7 @@ export default {
           val.deck_pop = parseFloat(val.deck_pop).toFixed(1)
           val.deck_winrate = parseFloat(val.deck_winrate).toFixed(1)
           val.played_winrate = parseFloat(val.played_winrate).toFixed(1)
+          val.times_played = utils.toThousands(val.times_played)
           return val
         })
         if (this.cardsList.length >= res.meta.total_count) {

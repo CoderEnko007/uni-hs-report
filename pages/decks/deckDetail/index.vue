@@ -1,11 +1,10 @@
 <template>
   <div class="container" :style="{'padding-bottom': isIphoneX?120+'rpx':80+'rpx'}">
-    <div class="status-bar" :style="{height:statusBarHeight, opacity:statusBarOpacity}"></div>
+    <div class="status-bar" :style="{height:statusBarHeight, opacity:statusBarOpacity}">
+      <p class="cname">{{deckDetail.cname}}</p>
+    </div>
     <nav-bar :onlyCapsule="true"></nav-bar>
     <div class="banner">
-      <!-- <div class="bubble" :style="{'display': showBubble?'block':'none'}">
-        <add-bubble></add-bubble>
-      </div> -->
       <div class="bg-image">
         <img :src="bannerImg" mode='aspectFill' @load="bannerImgLoaded">
       </div>
@@ -70,15 +69,23 @@
         <div class="m-30">
           <DeckCards :cards="deckDetail.card_list" @cardClick="handleCardClick"></DeckCards>
         </div>
+        <div class="m-30 sideboard">
+          <div class="sideboards-list" v-for="(item, index) in sideboards_list" :key="index">
+            <div class='sideboard-title'>
+              <span>{{item.title}}</span>
+            </div>
+            <DeckCards :cards="item.data" @cardClick="handleCardClick"></DeckCards>
+          </div>
+        </div>
         <div class="rarity-panel m-30">
-          <div class="capsule" v-for="(item, index) in rarityChartData" :key="index" v-if="item.value>0">
+          <div class="capsule" v-for="(item, index) in rarityChartData" :key="index" v-show="item.value>0">
             <div class="icons" :style="{'background-color': item.color}"></div>
             <span class="name">{{item.cname}}</span>
             <span class="value">{{item.value}}</span>
           </div>
         </div>
         <div class="type-panel m-30">
-          <div class="capsule" v-for="(item, index) in typeChartData" :key="index" v-if="item.value>0">
+          <div class="capsule" v-for="(item, index) in typeChartData" :key="index" v-show="item.value>0">
             <span class="name">{{item.cname}}</span>
             <span class="value">{{item.value}}</span>
           </div>
@@ -111,17 +118,22 @@
           <WinRateBoard :list="winrateChartData"></WinRateBoard>
         </div>
         <div class="no-data" v-else>
-          缺少对战数据
+          缺少有效对战数据
         </div>
       </div>
-      <div class="separator"></div>
-      <div class="data-chart">
-        <div class="headline m-30"><span class="title">费用分布</span></div>
-        <!-- <BarChart :chartData="costChartData" canvasId="costBar"></BarChart> -->
-        <canvas canvas-id="canvasColumn" id="canvasColumn" class="charts" v-if="!costChartImg"></canvas>
-        <img class="charts" :src="costChartImg" mode="aspectFit" v-else>
+      <!-- <div class="separator"></div> -->
+      <div class="matchup">
+        <div class="headline m-30"><span class="title">对抗情况</span></div>
+        <div class="panel m-30">
+          <HeroesPanel :dataList="factionIcons" :selected="selectedFaction.id" @itemClick="handleIconsClick"></HeroesPanel>
+        </div>
+        <div class="panel-block">
+          <DeckTable :selectedFaction="selectedFaction" :tableTitle="tableTitle" :tableData="selectedFaction.data"
+            :tableName="'对阵'+selectedFaction.name" @itemClick="handleDeckItemClick"></DeckTable>
+        </div>
       </div>
-      <div class="safe-panel" :style="{'height': isIphoneX?100+'rpx':60+'rpx'}"></div>
+      <load-more :nomore='true' />
+      <!-- <div class="safe-panel" :style="{'height': isIphoneX?100+'rpx':60+'rpx'}"></div> -->
       <div style="position: fixed; top: 9999999999999px; overflow: hidden">
         <canvas :style="{width: canvasWidth+'px', height: canvasHeight+'px', 'margin-left': '30rpx'}" canvas-id="deck-pic"></canvas>
       </div>
@@ -137,19 +149,20 @@
 </template>
 <script>
 import utils from '@/utils'
-import { mapGetters, mapMutations, mapState } from 'vuex'
-import {getDeckDetail, setUserCollection, cancelUserCollection, getArchetypeDetail, getDeckCardList, addCustomerSetting, getCustomerSetting, updateCustomerSetting} from "@/api/dbapi";
-import {getComponentByTag, iFanrTileImageURL, genTileImageURL, getImageInfoAsync} from "@/utils";
+import { mapGetters } from 'vuex'
+import {getDeckDetail, getArchetypeDetail, addCustomerSetting, getCustomerSetting, updateCustomerSetting} from "@/api/dbapi";
+import {iFanrTileImageURL, genTileImageURL, getImageInfoAsync} from "@/utils";
 import DeckCards from '@/components/DeckCards'
 import FooterMenu from '@/components/FooterMenu'
 import NavBar from '@/components/NavBar'
 import WinRateBoard from '@/components/WinRateBoard'
-import AddBubble from '@/components/AddBubble'
 import floatBtnGroup from '@/components/floatBtnGroup'
 import compareDeckModal from '@/components/compareDeckModal'
-import uCharts from '@/components/u-charts/u-charts.js';
 import SpinKit from '@/components/SpinKit'
 import mulliganList from '../components/mulliganList'
+import HeroesPanel from '@/components/HeroesPanel'
+import DeckTable from '@/components/DeckTable'
+import loadMore from '@/components/load-more'
 
 let _this;
 let barChart=null;
@@ -165,6 +178,7 @@ const defaultDetail = {
   duration: null,
   turns: null,
   card_list: '',
+  sideboards: '',
   clazzCount: '',
   rarityCount: '',
   statistic: '',
@@ -177,11 +191,13 @@ export default {
     DeckCards,
     FooterMenu,
     WinRateBoard,
-    AddBubble,
+    DeckTable,
+    HeroesPanel,
     floatBtnGroup,
     compareDeckModal,
     SpinKit,
     mulliganList,
+    loadMore,
   },
   data() {
     return {
@@ -193,17 +209,8 @@ export default {
       deckMode: 'Standard',
       bannerImg: null,
       deckDetail: Object.assign({}, defaultDetail),
+      sideboards_list: [],
       dustImage: utils.image.dustImage,
-      costChartData: {
-        xAxis: ['0', '1', '2', '3', '4', '5', '6', '7+'],
-        yAxis: [],
-        min: 0,
-        max: 15
-      },
-      costUChartData: {
-        categories: ['0', '1', '2', '3', '4', '5', '6', '7+'],
-        series: [{data: [], color: "#433E88"}]
-      },
       typeChartData: [],
       rarityChartData: [],
       rarityColor: [],
@@ -217,7 +224,6 @@ export default {
       cWidth:'',
       cHeight:'',
       pixelRatio:1,
-      costChartImg: null,
       tabbar: [
         {id: 'overview', text: '套牌组成'},
         {id: 'mulligan', text: '调度建议'},
@@ -227,7 +233,29 @@ export default {
       pageDelayFlag: false,
       videoAd: null,
       scrollTop: 0,
-      bImgLoaded: false
+      bImgLoaded: false,
+      updateDate: null,
+      factionIcons: [],
+      selectedFaction: { id: 'Druid', name: '德鲁伊', data: [] },
+      tableTitle: [
+        { id: 'games', name: '对局数' },
+        { id: 'popularity', name: '对局占比' },
+        { id: 'winrate', name: '胜率' },
+      ],
+      factions: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior', 'DemonHunter', 'DeathKnight'],
+      matchupDetail: {
+        'Druid': [],
+        'Hunter': [],
+        'Mage': [],
+        'Paladin': [],
+        'Priest': [],
+        'Rogue': [],
+        'Shaman': [],
+        'Warlock': [],
+        'Warrior': [],
+        'DemonHunter': [],
+        'DeathKnight': []
+      },
     }
   },
   computed: {
@@ -258,7 +286,7 @@ export default {
       }
     },
     gameCount() {
-      return this.deckDetail.real_game_count?this.deckDetail.real_game_count:this.deckDetail.game_count
+      return utils.toThousands(this.deckDetail.real_game_count?this.deckDetail.real_game_count:this.deckDetail.game_count)
     },
     adsType() {
       if (this.ifanrSettings && this.ifanrSettings.deck_ads_type) {
@@ -267,19 +295,13 @@ export default {
         return 'video'
       }
     },
-    formatCanvasWidth() {
-      return uni.upx2px(this.canvasWidth)
-    },
-    formatCanvasHeight() {
-      return uni.upx2px(this.canvasHeight)
-    },
     statusBarHeight() {
       return uni.upx2px(this.navHeight)+this.barHeight+'px'
     },
     statusBarOpacity() {
       let navHeight = uni.upx2px(this.navHeight)+this.barHeight
       let opacity = (this.scrollTop-uni.upx2px(300))/(uni.upx2px(200)-navHeight)
-      opacity = opacity<=1?opacity:1
+      opacity = Math.min(Math.max(opacity, 0), 1) 
       return opacity
     },
     loadingHeight() {
@@ -306,16 +328,21 @@ export default {
     resetPageData() {
       this.deckDetail = Object.assign({}, defaultDetail)
       this.bannerImg = null
-      this.costChartData = {
-        xAxis: ['0', '1', '2', '3', '4', '5', '6', '7+'],
-        yAxis: []
-      }
       this.typeChartData = []
       this.rarityChartData = []
       this.winrateChartData = []
       this.selectWinRate = {name: '', value: ''}
       this.deckCollected = false
       this.showArchetype = false
+      this.selectedFaction = {
+        id: 'Druid',
+        name: '德鲁伊',
+        data: []
+      }
+      this.matchupDetail = {
+        'Druid': [], 'Hunter': [], 'Mage': [], 'Paladin': [], 'Priest': [], 'Rogue': [],
+        'Shaman': [], 'Warlock': [], 'Warrior': [], 'DemonHunter': [], 'DeathKnight': []
+      }
     },
     async genDeckData() {
       // wx.showLoading({
@@ -353,24 +380,20 @@ export default {
         }
         this.getArchetype()
         this.bannerImg = utils.faction[this.deckDetail['faction']].bgImage1
-        this.costChartData.yAxis = JSON.parse(this.deckDetail.statistic)
-        let costMax = Math.max.apply(null, this.costChartData.yAxis)
-        this.costChartData.max = 5-costMax%10>0?costMax+5-costMax%10:costMax+10-costMax%10
-        this.costChartData = JSON.stringify(this.costChartData)
-        
-        this.costUChartData.series[0].data = JSON.parse(this.deckDetail.statistic)
-        this.showColumn("canvasColumn", this.costUChartData)
 
         // 卡牌类型数据
         this.typeChartData = []
         let clazz = JSON.parse(this.deckDetail.clazzCount)
         for (let index in clazz) {
-          if (clazz.hasOwnProperty(index)) {
-            this.typeChartData.push({
-              name: index.toLowerCase(),
-              cname: utils.type[index.toUpperCase()].name,
-              value: clazz[index]
-            })
+          if (clazz.hasOwnProperty(index) && utils.type.hasOwnProperty(index)) {
+            if (clazz[index] > 0) {
+              this.typeChartData.push({
+                name: index.toLowerCase(),
+                cname: utils.type[index.toUpperCase()].name,
+                value: clazz[index]
+              })
+            }
+            
           }
         }
         // 卡牌稀有度数据
@@ -399,9 +422,104 @@ export default {
           item.win_rate = parseFloat(item.win_rate).toFixed(1)
           return item
         })
+        var temp = this.winrateChartData.length %3
+        if (temp != 0) {
+          for (var i=0; i<3-temp; i++) {
+            this.winrateChartData.push({})
+          }
+        }
+        //sideboards展示
+        if (this.deckDetail.hasOwnProperty('sideboards')) {
+          let sideboards_arr = JSON.parse(this.deckDetail.sideboards)
+          for (let sideboard_item of sideboards_arr) {
+            let sideboard_title = ''
+            let sideboard_data = []
+            if (this.sideboards_list.length === 0) {
+              sideboard_title = sideboard_item.sideboard_title
+              sideboard_data.push(sideboard_item)
+              this.sideboards_list.push({title: sideboard_title, data: sideboard_data})
+            } else {
+              let sideboard_title_exit = false
+              for (let temp of this.sideboards_list) {
+                if (temp.title == sideboard_item.sideboard_title) {
+                  // 添加进相应的sideboard list中
+                  temp.data.push(sideboard_item)
+                  sideboard_title_exit = true
+                } 
+              }
+              if (!sideboard_title_exit) {
+                // 创建新的sideboard list
+                sideboard_title = sideboard_item.sideboard_title
+                sideboard_data.push(sideboard_item)
+                this.sideboards_list.push({title: sideboard_title, data: sideboard_data})
+              }
+            }
+          }
+        }
+ 
+        let matchupData = this.deckDetail.matchup ? JSON.parse(this.deckDetail.matchup) : {}
+        for (let index in matchupData) {
+          if (matchupData.hasOwnProperty(index) && this.factions[index]) {
+            this.matchupDetail[this.factions[index]] = matchupData[index] || []
+          }
+        }
+        this.genTableData(this.matchupDetail[this.selectedFaction.id])
+        
         wx.hideNavigationBarLoading()
         wx.stopPullDownRefresh();
       }
+    },
+    genFactionIcons() {
+      this.factionIcons = []
+      for (let key in utils.faction) {
+        if (utils.faction.hasOwnProperty(key)) {
+          this.factionIcons.push({
+            id: key,
+            name: utils.faction[key].name,
+            image: utils.faction[key].image
+          })
+        }
+      }
+    },
+    compareFunction(key) {
+      return function(obj1, obj2) {
+        let formatKey = key.replace('-', '')
+        if (key.indexOf('-') !== -1) {
+          return obj2[formatKey] - obj1[formatKey]
+        } else {
+          return obj1[formatKey] - obj2[formatKey]
+        }
+      }
+    },
+    genTableData(tableData) {
+      let table_array = []
+      for (let data of tableData) {
+        let name = this.decksName.filter(item => {
+          return item.ename === data[0] && item.faction === this.selectedFaction.id
+        })[0]
+        let formatData = {
+          deckName: name ? name.cname : data[0],
+          ename: data[0],
+          games: parseInt(data[3].replace(',', '')),
+          winrate: parseFloat(data[1].replace('%', '')).toFixed(1),
+          popularity: parseFloat(data[2].replace('%', ''))
+        }
+        table_array.push(formatData)
+      }
+      this.selectedFaction.data = table_array.sort(this.compareFunction('-games'))
+    },
+    handleIconsClick(item) {
+      this.selectedFaction = {
+        id: item.id,
+        name: item.name,
+        data: []
+      }
+      this.genTableData(this.matchupDetail[item.id])
+    },
+    handleDeckItemClick(item) {
+      wx.navigateTo({
+        url: `/pages/decks/archetypeDetail/index?name=${item.ename}`
+      })
     },
     getArchetype() {
       if (this.deckDetail.deck_name) {
@@ -411,6 +529,8 @@ export default {
           } else {
             this.showArchetype = false
           }
+        }).catch(err => {
+          console.log('getArchetype error:', err)
         })
       }
     },
@@ -422,7 +542,7 @@ export default {
     copyDeckCode() {
       let data = this.deckDetail.deck_code
       if (this.deckDetail.cname) {
-        data = `### HS情报站：${this.deckDetail.cname}\n${this.deckDetail.deck_code}`
+        data = `### ${this.deckDetail.cname}\n${this.deckDetail.deck_code}`
       } 
       wx.setClipboardData({
         data: data,
@@ -604,9 +724,9 @@ export default {
       let mode = ''
       if (deckMode.toLowerCase() === 'wild') {
         mode = '狂野'
-      } else if (deckMode.toLowerCase() === 'classic') {
-		  mode = '经典'
-	  }else {
+      } else if (deckMode.toLowerCase() === 'twist') {
+        mode = '幻变'
+      }else {
         mode = '标准'
       }
       ctx.fillText(mode, this.canvasWidth-32, 42)
@@ -697,7 +817,7 @@ export default {
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.setFillStyle('#fff')
-      ctx.fillText('微信小程序：HS炉石情报站', this.canvasWidth/2, cardListHeight+headHeight+bRectHeight/2+2)
+      ctx.fillText('微信小程序：HS石炉之家', this.canvasWidth/2, cardListHeight+headHeight+bRectHeight/2+2)
       ctx.restore()
 
       let _this = this
@@ -801,9 +921,10 @@ export default {
       });
     },
     tabBarClick(e) {
-      if (this.adsOpenFlag && e.currentTarget.id == 1) {
+      // if (this.adsOpenFlag && e.currentTarget.id == 1) {
+      if (0) {
         try {
-          let value = wx.getStorageSync('ads_video_date_1')
+          let value = wx.getStorageSync('ads_video_date')
           let now = new Date()
           let today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000
           if (today === value) {
@@ -853,7 +974,7 @@ export default {
             // }
             let now = new Date()
             try {
-              wx.setStorageSync('ads_video_date_1', new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000)
+              wx.setStorageSync('ads_video_date', new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()/1000)
             } catch (e) {
               console.log(e)
               this.activeIndex = 1;
@@ -917,7 +1038,10 @@ export default {
     }
     this.trending = !!this.$root.$mp.query.trending
     this.collected = !!this.$root.$mp.query.collected
-    await this.genDeckData()
+    await Promise.all([
+      this.genFactionIcons(),
+      this.genDeckData()
+    ])
     setTimeout(() => {
       this.pageDelayFlag = true
       this.$store.commit('setShowBubbleFlag', true)
@@ -937,7 +1061,6 @@ export default {
   },
   onPullDownRefresh() {
     // 下拉刷新要把json字符串转换为对象，否则getDeckData时操作对象会报错
-    this.costChartData = JSON.parse(this.costChartData)
     this.genDeckData()
   },
   onShareAppMessage(res) {
@@ -965,6 +1088,20 @@ export default {
     z-index: 3;
     opacity: 0;
     background-color: white;
+    .cname {
+      position: absolute; 
+      width: 40%;
+      top: 62%;
+      left: 50%; 
+      transform: translate(-50%, -50%); 
+      color: #333;
+      text-align: center;
+      font-size: 36rpx;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
   .banner {
     position: relative;
@@ -1133,6 +1270,30 @@ export default {
         font-weight: bold;
       }
     }
+    .sideboard {
+      margin-top: 30rpx;
+    }
+    .sideboards-list {
+      position: relative;
+      margin-top: 45rpx;
+      .sideboard-title {
+        // height: 30rpx;
+        font-weight: bold;
+        // line-height: 30rpx;
+        font-size: 26rpx;
+        color: #666;
+        border-bottom: 5rpx solid #23272a;
+        margin-bottom: 12rpx;
+        span {
+          vertical-align: text-bottom;
+          border-radius: 10rpx 10rpx 0rpx 0rpx;
+          padding: 6rpx 16rpx 0rpx;
+          // padding-top: 10rpx;
+          color: #fff;
+          background: #23272a;
+        }
+      }
+    }
     .rarity-panel {
       display: flex;
       margin-top: 30rpx;
@@ -1189,7 +1350,7 @@ export default {
       }
     }
   }
-  .mulligan-list, .winrate-block {
+  .mulligan-list, .winrate-block, .matchup {
     .no-data {
       width: 100%;
       line-height: 200rpx;

@@ -32,6 +32,7 @@ const getters = {
   showRemoveAdsBtn: state => state.settings.showRemoveAdsBtn,
   ifanrSettings: state => state.settings.ifanrSettings,
   user_fuck_up_flag: state => state.settings.user_fuck_up_flag,
+  show_card_desc: state => state.settings.show_card_desc,
   compareDeck1: state => state.compare.compareDeck1,
   compareDeck2: state => state.compare.compareDeck2
 }

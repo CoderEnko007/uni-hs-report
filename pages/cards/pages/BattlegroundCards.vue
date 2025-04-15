@@ -54,21 +54,21 @@
   import SearchBar from '@/components/SearchBar'
   import FilterMenu from '@/components/FilterMenu'
   import CardList from '@/components/CardList'
-  import {getBattlegroundCards, getBattlegroundMinnionTypeList} from '@/api/dbapi'
+  import {getBattlegroundCards, getBattlegroundMinnionTypeList, getBattlegroundCardTypeList} from '@/api/dbapi'
   
   const defaultFilter = {
     search: null,
-    hero: null,
+    card_type: null,
     tier: null,
-    type: null,
+    minion_type: null,
     attack: null,
     health: null,
     keywords: null,
     orderBy: null
   }
   const defaultFilterList = [
-    {name: 'hero', text: '卡牌类型', items: [], selected: '卡牌类型'},
-    {name: 'type', text: '随从种类', items: [], selected: '随从种类'},
+    {name: 'card_type', text: '卡牌类型', items: [], selected: '卡牌类型'},
+    {name: 'minion_type', text: '随从种类', items: [], selected: '随从种类'},
     {name: 'attack', text: '攻击力', items: [], selected: '攻击力'},
     {name: 'health', text: '生命值', items: [], selected: '生命值'},
     {name: 'keywords', text: '关键词', items: [], selected: '关键词'},
@@ -102,13 +102,19 @@
     },
     methods: {
       async genFilterMenuItems() {
-        this.filterTabBar[0].items = [
-          {id: 'all', name: '全部类型'},
-          {id: 1, name: '英雄', icon: '/static/battlegroundIcons/bg-hero.png'},
-          {id: 0, name: '随从', icon: '/static/battlegroundIcons/bg-card.png'}
-        ]
-        
+        // this.filterTabBar[0].items = [
+        //   {id: 'all', name: '全部类型'},
+        //   {id: 1, name: '英雄', icon: '/static/battlegroundIcons/bg-hero.png'},
+        //   {id: 0, name: '随从', icon: '/static/battlegroundIcons/bg-card.png'},
+        // ]
         let array = []
+        array = await getBattlegroundCardTypeList()
+        array = array.map(v => {
+          return {id: v.type_id, name: v.type_name}
+        })
+        array.unshift({id: 'all', name: '全部'})
+        this.filterTabBar[0].items = array
+        
         array = await getBattlegroundMinnionTypeList()
         // console.log('aaa', array)
         // array = utils.battlegroundMinionType
@@ -217,8 +223,8 @@
       handleFilterMenuClick(filter) {
         this.selectedFilterTabItem = null
         switch(filter.name) {
-          case 'hero': this.filter.hero = filter.item; this.filterTabBar[0].selected=filter.item.name; break
-          case 'type': this.filter.type = filter.item; this.filterTabBar[1].selected=filter.item.name; break
+          case 'card_type': this.filter.card_type = filter.item; this.filterTabBar[0].selected=filter.item.name; break
+          case 'minion_type': this.filter.minion_type = filter.item; this.filterTabBar[1].selected=filter.item.name; break
           case 'attack': this.filter.attack = filter.item; this.filterTabBar[2].selected=filter.item.name; break
           case 'health': this.filter.health = filter.item; this.filterTabBar[3].selected=filter.item.name; break
           case 'keywords': this.filter.keywords = filter.item; this.filterTabBar[4].selected=filter.item.name; break

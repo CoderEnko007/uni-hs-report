@@ -3,7 +3,7 @@
   <!--<button open-type="share" class="share"><img src="/static/icons-v2/share.png"></button>-->
   <!--<button open-type="contact" class="contact"><img src="/static/img/wechat.png"></button>-->
   <div class="badge__count" v-show="badgeCount>0">{{badgeCount}}</div>
-  <button @click="handleCompareClick" v-if="showCompare"><span>对比</span></button>
+  <button class="clickBtn" @click="handleCompareClick" v-if="showCompare"><span>对比</span></button>
   <!-- <button open-type="share" class="share" v-if="showShare"><img src="/static/icons-v2/share.png"></button> -->
   <button open-type="share" class="share" v-if="showShare"><span class="icon iconfont">&#xe63b;</span></button>
 </div>
@@ -22,10 +22,10 @@ export default {
 <style lang="scss" scoped>
 @import '../style/color';
 .group {
-  button::after {
+  .clickBtn::after {
     border: none;
   }
-  button {
+  .clickBtn {
     width: 90rpx;
     height: 90rpx;
     line-height: 90rpx;
@@ -40,7 +40,7 @@ export default {
     /*box-shadow:0 4px 24px #eee;*/
     box-shadow: 0 6rpx 12rpx rgba(0, 0, 0, 0.16), 0 6rpx 12rpx rgba(0, 0, 0, 0.23);
     // border:1rpx solid #eee;
-    image {
+    .imageBtn {
       position: absolute;
       top: 50%;
       left: 50%;

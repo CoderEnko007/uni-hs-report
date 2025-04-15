@@ -1,7 +1,7 @@
 <template>
   <view>
     <button class="fuckup_btn" @click="handleFuckup">
-      <p>由于微信服务类目要求变更，暂时无法提供相应数据展示，目前正在办理相应的主体变更手续，希望小程序能尽快恢复正常，对您带来的不便敬请谅解。</p>
+      <p>小程序维护中，请稍后再来吧，对您带来的不便敬请谅解，感谢支持。</p>
     </button>
   </view>
 </template>
@@ -25,7 +25,6 @@
       handleFuckup(e) {
         this.$emit('fuckupClick')
         this.$store.commit('setFuckupFlag', true)
-        console.log('ccc', this.user_fuck_up_flag)
       }
     }
   }

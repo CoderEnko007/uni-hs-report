@@ -10,10 +10,8 @@ export default {
             if (wx.canIUse('getUpdateManager')) {
                 const updateManager = wx.getUpdateManager()
                 updateManager.onCheckForUpdate(res => {
-                    console.log('onCheckForUpdate====', res)
                     // 请求完新版本信息的回调
                     if (res.hasUpdate) {
-                        console.log('res.hasUpdate====')
                         updateManager.onUpdateReady(function() {
                             wx.showModal({
                                 title: '更新提示',
@@ -125,8 +123,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import url("/components/gaoyia-parse/parse.css");
-@import "style/zanui.wxss";
+@import "/style/zanui.wxss";
 @import "style/color";
 /*每个页面公共css */
 .container {

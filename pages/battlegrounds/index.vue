@@ -3,7 +3,7 @@
     <div class="container">
       <!-- <NavBar navTitle="酒馆战棋"></NavBar> -->
       <div class="status-bar" :style="{height:barHeight+'px',opacity:statusBarOpacity}"></div>
-      <div v-if="ifanrSettings.fuck_up_flag==0 || (ifanrSettings.fuck_up_flag==1 && user_fuck_up_flag==true)">
+      <div v-if="ifanrSettings.notice_flag==0 || (ifanrSettings.notice_flag==1 && user_fuck_up_flag==true)">
         <div class="banner">
           <div class="bgs-overview">
             <div class="title">酒馆战棋英雄强度排行</div>
@@ -72,14 +72,14 @@
         <copyRight></copyRight>
       </div>
       </div>
-      <div class="fuckup_panel" v-else-if="ifanrSettings.fuck_up_flag==1 && user_fuck_up_flag==false" style="margin-top: 200rpx;">
+      <div class="fuckup_panel" v-else-if="ifanrSettings.notice_flag==1 && user_fuck_up_flag==false" style="margin-top: 200rpx;">
         <h1 class="fuckup_title">紧急通知</h1>
         <FuckupBtn></FuckupBtn>
         <copyRight></copyRight>
       </div>
-      <div class="fuckup_panel" v-else="ifanrSettings.fuck_up_flag==2 && user_fuck_up_flag==false">
+      <div class="fuckup_panel" v-else="ifanrSettings.notice_flag==2 && user_fuck_up_flag==false">
         <h1 class="fuckup_title">紧急通知</h1>
-        <p>由于微信服务类目要求变更，暂时无法提供相应数据展示，目前正在办理相应的主体变更手续，希望小程序能尽快恢复正常，对您带来的不便敬请谅解。</p>
+        <p>小程序维护中，请稍后再来吧，对您带来的不便敬请谅解，感谢支持。</p>
         <copyRight></copyRight>
       </div>
     </div>

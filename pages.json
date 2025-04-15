@@ -36,12 +36,12 @@
 		}, {
 			"path": "pages/cards/cardDetail/index",
 			"style": {}
-		}, {
-		        "path": "pages/index/revealPage/index",
-			"style": {}
-		}, {
-			"path": "pages/cards/revealCardDetail/index",
-			"style": {}
+		// }, {
+		//   "path": "pages/index/revealPage/index",
+		// 	"style": {}
+		// }, {
+		// 	"path": "pages/cards/revealCardDetail/index",
+		// 	"style": {}
 		}, {
 			"path": "pages/cards/battlegroundCardDetail/index",
 			"style": {}
@@ -55,9 +55,6 @@
 			"style": {}
 		}, {
 			"path": "pages/mine/collection/index",
-			"style": {}
-		}, {
-			"path": "pages/index/articleDetail/index",
 			"style": {}
 		}, {
       "path" : "pages/mine/activation/index",
@@ -80,11 +77,11 @@
 			"text": "首页",
 			"iconPath": "static/icons-v2/tabicon-1b.png",
 			"selectedIconPath": "static/icons-v2/tabicon-1a.png"
-		}, {
-			"pagePath": "pages/battlegrounds/index",
-			"text": "战棋",
-			"iconPath": "static/icons-v2/btg2.png",
-			"selectedIconPath": "static/icons-v2/btg_active.png"
+		// }, {
+		// 	"pagePath": "pages/battlegrounds/index",
+		// 	"text": "战棋",
+		// 	"iconPath": "static/icons-v2/btg2.png",
+		// 	"selectedIconPath": "static/icons-v2/btg_active.png"
 		}, {
 			"pagePath": "pages/decks/index",
 			"text": "套牌",

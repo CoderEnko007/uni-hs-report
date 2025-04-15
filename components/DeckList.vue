@@ -102,12 +102,12 @@ export default {
               position: absolute;
               width: 23rpx;
               height: 32rpx;
-              top: 50%;
+              top: 44%;
               transform: translateY(-50%);
             }
             p {
               height: 100%;
-              line-height: 30rpx;
+              line-height: 36rpx;
               display: inline-block;
               margin-left: 33rpx;
             }

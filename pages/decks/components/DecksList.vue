@@ -2,7 +2,7 @@
   <div class="decks-container">
     <div class="panel-filter">
       <div class="headline">
-        <span class="title">职业套牌</span>
+        <span class="title">职业卡组</span>
         <div class="head-picker">
           <picker mode="selector" :value="tabList.selectedItem" :range="timePickerList" @change="handleHeadTabClick">
             <span class='selector-item'>{{tabList.list[tabList.selectedItem].text}}</span>
@@ -16,7 +16,7 @@
             @click="modeBtnClick(item)">
             <!-- <img class="btn-img" :src="decksFilter.mode===item.mode?item.active_icon:item.icon" mode="aspectFit"> -->
             <div class="c-button" :class="decksFilter.mode===item.mode?'btn-active':''">{{item.text}}</div>
-            <div class="separator" v-if="index !== 2">|</div>
+            <div class="separator" v-if="index !== 1">|</div>
           </div>
         </div>
       </div>
@@ -225,9 +225,9 @@
             return v.wild_ld
           } else if (this.decksFilter.mode === 'Wild' && this.decksFilter.last_30_days === true) {
             return v.wild_l30
-          } else if (this.decksFilter.mode === 'Classic' && this.decksFilter.last_30_days === false) {
+          } else if (this.decksFilter.mode === 'Twist' && this.decksFilter.last_30_days === false) {
             return v.cls_ld
-          } else if (this.decksFilter.mode === 'Classic' && this.decksFilter.last_30_days === true) {
+          } else if (this.decksFilter.mode === 'Twist' && this.decksFilter.last_30_days === true) {
             return v.cls_l30
           }
         })
@@ -294,6 +294,8 @@
           this.deckList.map(item => {
             item.win_rate = parseFloat(item.win_rate).toFixed(1)
             item.real_win_rate = parseFloat(item.real_win_rate).toFixed(1)
+            item.game_count = utils.toThousands(item.game_count)
+            item.real_game_count = utils.toThousands(item.real_game_count)
             return item
           })
           if (this.deckList.length >= res.meta.total_count) {

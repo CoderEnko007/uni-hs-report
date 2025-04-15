@@ -1,5 +1,6 @@
 <template>
 <div class="container" v-show='show'>
+  <scroll-view scroll-y="true" class="scroll-Y">
   <ul class="menu-list">
     <li :class="{'menu-item': true, 'menu-item-action': selectedItem===item.id, 'menu-item-empty': !item.name}"
         :style="{'width': colNum===3?'28%':'45%'}"
@@ -15,6 +16,7 @@
       </div>
     </li>
   </ul>
+  </scroll-view>
 </div>
 </template>
 <script>
@@ -47,9 +49,10 @@ export default {
     justify-content: space-around;
     flex-wrap: wrap;
     width: 100%;
-    padding: 10rpx 2rpx 5rpx;
+    padding: 10rpx 2rpx 10rpx;
     font-size: 24rpx;
     background-color: $palette-bg-gray;
+    border-radius: 0 0 15rpx 15rpx;
     .menu-item {
       // width: 45%;
       height: 44rpx;
@@ -87,6 +90,10 @@ export default {
       white-space: nowrap;
       text-overflow: ellipsis;
     }
+  }
+  .scroll-Y {
+    height: 800rpx;
+    width: 100%;
   }
 }
 </style>

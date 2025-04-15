@@ -158,6 +158,8 @@ export default {
         this.deckList.map(item => {
           item.win_rate = parseFloat(item.win_rate).toFixed(1)
           item.real_win_rate = parseFloat(item.real_win_rate).toFixed(1)
+          item.game_count = utils.toThousands(item.game_count)
+          item.real_game_count = utils.toThousands(item.real_game_count)
           return item
         })
         if (this.deckList.length >= res.meta.total_count) {

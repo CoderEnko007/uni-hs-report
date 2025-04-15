@@ -12,10 +12,18 @@
       <p v-show="cardDetail.ename" class="normal" @click="handleCopyBtn(cardDetail.ename)"><span class="f3">英文名</span>：{{cardDetail.ename}}</p>
       <p v-show="cardDetail.series" class="normal"><span class="f4">所属系列</span>：{{cardDetail.series}}</p>
       <p v-show="cardDetail.type" class="normal"><span class="f2">类型</span>：{{cardDetail.type}}</p>
-	  <p v-show="cardDetail.howToEarn" class="normal"><span class="f4">获取方式</span>：{{cardDetail.howToEarn}}</p>
-	  <p v-show="cardDetail.howToEarnGolden" class="normal"><span>获取方式(金卡)</span>：{{cardDetail.howToEarnGolden}}</p>
-      <p v-show="cardDetail.flavor" class="flavor" @click="handleCopyBtn(cardDetail.flavor)">{{cardDetail.flavor}}</p>
-      <p v-show="cardDetail.eflavor" class="flavor" @click="handleCopyBtn(cardDetail.eflavor)">{{cardDetail.eflavor}}</p>
+      <p v-if="cardDetail.howToEarn" class="normal how-to-earn">
+        <span class="label">获取方式：</span>
+        <span class="content" v-html='cardDetail.howToEarn'></span>
+      </p>
+      <p v-if="cardDetail.howToEarnGolden" class="normal how-to-earn">
+        <span class="label">获取方式(金卡)：</span>
+        <span class="content" v-html='cardDetail.howToEarnGolden'></span>
+      </p>
+      <div v-show="show_card_desc">
+        <p v-show="cardDetail.flavor" class="flavor" @click="handleCopyBtn(cardDetail.flavor)">{{cardDetail.flavor}}</p>
+        <p v-show="cardDetail.eflavor" class="flavor" @click="handleCopyBtn(cardDetail.eflavor)">{{cardDetail.eflavor}}</p>
+      </div>
     </div>
     <div class="audio-list">
       <div v-show="showEnAudio">
@@ -99,9 +107,9 @@
     <div class="footer">
       <preNextBtnGroup @previousClick="handlePrevious" @nextClick="handleNext" :prevBtnEnable="prevBtnEnable" :nextBtnEnable="nextBtnEnable"></preNextBtnGroup>
     </div>
-    <div class="float-btn" v-show="imageLoaded" :style="{'top': isIphoneX?navHeight+barHeight+70+'rpx':navHeight+barHeight+50+'rpx'}">
+    <!-- <div class="float-btn" v-show="imageLoaded" :style="{'top': isIphoneX?navHeight+barHeight+70+'rpx':navHeight+barHeight+50+'rpx'}">
       <floatBtnGroup showShare="true"></floatBtnGroup>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -130,6 +138,7 @@ const heroes = {
   Warlock: {name: '术士', image: '/static/heroIcons/warlock.png'},
   Warrior: {name: '战士', image: '/static/heroIcons/warrior.png'},
   DemonHunter: {name: '恶魔猎手', image: '/static/heroIcons/demonhunter.png'},
+  DeathKnight: {name: '死亡骑士', image: '/static/heroIcons/deathknight.png'},
   Neutral: {name: '中立', image: ''}
 }
 const defaultCardDetail = {
@@ -180,6 +189,10 @@ export default {
           {
             text: '狂野模式',
             mode: 'Wild'
+          },
+          {
+            text: '幻变模式',
+            mode: 'Twist'
           }
         ]
       },
@@ -219,16 +232,17 @@ export default {
       'decksName',
       'cardsInsertAdsFlag',
       'adsOpenFlag',
-	  'ifanrSettings'
+      'ifanrSettings',
+      'show_card_desc'
     ]),
-	adsType() {
-		console.log( this.ifanrSettings.card_ads_type)
-	  if (this.ifanrSettings && this.ifanrSettings.card_ads_type) {
-	    return this.ifanrSettings.card_ads_type
-	  } else {
-	    return 'video'
-	  }
-	},
+    adsType() {
+      console.log( this.ifanrSettings.card_ads_type)
+      if (this.ifanrSettings && this.ifanrSettings.card_ads_type) {
+        return this.ifanrSettings.card_ads_type
+      } else {
+        return 'video'
+      }
+    },
     getEnAudio() {
       if (this.cardDetail.audios) {
         return this.cardDetail.audios.filter(item => {
@@ -269,7 +283,7 @@ export default {
         // this.entourageList = formatData
         return formatData
       } else {
-        return null
+        return []
       }
     },
     prevBtnEnable() {
@@ -365,8 +379,12 @@ export default {
       this.cardDetail.bgImg = genOrigImageURL(this.cardDetail.hsId)
       // this.cardDetail.cardImg = gen512CardsImageURL(this.cardDetail.hsId)
       // this.cardDetail.cardImg = this.cardDetail.img_card_link
-      if (this.cardDetail.use_backup_img === true) {
-        this.cardDetail.cardImg = this.cardDetail.img_card_link
+      if (this.cardDetail.use_backup_img === true || this.card_resource === 'cn') {
+        if (this.cardDetail.img_card_link!=null && this.cardDetail.img_card_link.length>0){
+          this.cardDetail.cardImg = this.cardDetail.img_card_link
+        } else {
+          this.cardDetail.cardImg = utils.genCardsImageURL(this.cardDetail.hsId)
+        }
       } else if (this.card_resource === 'fbi') {
         this.cardDetail.cardImg = this.genCardImage(this.cardDetail.hsId)
       } else if (this.card_resource === 'hsreplay') {
@@ -382,6 +400,8 @@ export default {
             this.cardDetail.series += '（标准）'
           } else if (item.mode === 'Wild') {
             this.cardDetail.series += '（狂野）'
+          } else if (item.mode === 'Twist') {
+            this.cardDetail.series += '（幻变）'
           }
         }
       }
@@ -642,6 +662,7 @@ export default {
    }
   },
   mounted() {
+    // console.log('mounted', this.ifanrSettings)
     this.genFactionIcons()
     this.imageLoaded = false
     this.cardId = this.$root.$mp.query.id
@@ -783,6 +804,23 @@ export default {
     .f4 {
       text-align: center;
       width: 4em;
+    }
+    .how-to-earn {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;  /* 添加这行 */
+        width: 100%;             /* 添加这行 */
+    }
+    
+    .how-to-earn .label {
+        flex: 0 0 auto;         /* 修改这行 */
+        white-space: nowrap;    /* 添加这行 */
+    }
+    
+    .how-to-earn .content {
+        flex: 1;               /* 修改这行 */
+        margin-left: 0;        /* 修改这行 */
+        min-width: 0;         /* 添加这行 */
     }
   }
   .audio-list {

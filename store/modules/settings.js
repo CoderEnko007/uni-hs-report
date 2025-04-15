@@ -23,7 +23,8 @@ const settings = {
     current_set: null,
     showRemoveAdsBtn: false,
     ifanrSettings: null,
-    user_fuck_up_flag: false //false为不展示，true为展示
+    user_fuck_up_flag: false ,//false为不展示，true为展示
+    show_card_desc: false
   },
   mutations: {
     setFuckupFlag: (state, val) => {
@@ -85,6 +86,9 @@ const settings = {
     },
     SET_CURRENT_SET: (state, val) => {
       state.current_set = val
+    },
+    SET_SOHW_CARD_RESC: (state, val) => {
+      state.show_card_desc = val
     },
     SET_SHOW_REMOVE_ADS_FLAG: (state, val) => {
       state.showRemoveAdsBtn = val
@@ -166,6 +170,7 @@ const settings = {
             commit('SET_AD_NOTICE', res.objects[0].ad_notice)
             commit('SET_CURRENT_SET', res.objects[0].current_set)
             commit('SET_SHOW_REMOVE_ADS_FLAG', res.objects[0].showRemoveAdsBtn)
+            commit('SET_SOHW_CARD_RESC', res.objects[0].show_card_desc)
             commit('SET_IFANR_SETTINGS', res.objects[0])
           }
           resolve(res.objects)

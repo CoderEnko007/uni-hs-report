@@ -85,7 +85,6 @@ export function getCardsList(params, limit=20, page=0, offset=0, orderBy='-set_i
       factionQuery = wx.BaaS.Query.or(cardClassQuery, multiClassQuery)
     }
     let modeQuery = new wx.BaaS.Query()
-	console.log('aaa', params.mode)
     if (params.mode && params.mode.id !== 'all') {
       let temp = []
       if (params.mode.id === utils.mode[1].id) {
@@ -163,12 +162,12 @@ export function getBattlegroundCards(params, limit=20, page=0, offset=0, orderBy
       tierQuery.compare('tier', '=', params.tier)
     }
     let heroQuery = new wx.BaaS.Query()
-    if (params.hero && params.hero.id !== 'all') {
-      heroQuery.compare('hero', '=', params.hero.id)
+    if (params.card_type && params.card_type.id !== 'all') {
+      heroQuery.compare('cardType', '=', params.card_type.id)
     }
     let typeQuery = new wx.BaaS.Query()
-    if (params.type && params.type.id !== 'all') {
-      typeQuery.compare('minionType', '=', params.type.id)
+    if (params.minion_type && params.minion_type.id !== 'all') {
+      typeQuery.compare('minionType', '=', params.minion_type.id)
     }
     let attackQuery = new wx.BaaS.Query()
     if (params.attack && params.attack.id !== 'all') {
@@ -375,7 +374,7 @@ export function getDeckList(params, limit=20, page=0, orderBy='-game_count') {
     let tableObj = new wx.BaaS.TableObject(tableID.standDecksTableID)
     if (params.mode && params.mode === 'Wild') {
       tableObj = new wx.BaaS.TableObject(tableID.wildDecksTableID)
-    } else if (params.mode && params.mode === 'Classic') {
+    } else if (params.mode && params.mode === 'Twist') {
 	  tableObj = new wx.BaaS.TableObject(tableID.clsDecksTableID)
 	}
     let timeRangeQuery = new wx.BaaS.Query()
@@ -432,7 +431,7 @@ export function getDeckDetail(params, trending_flag=false, collected=false ) {
     } else {
       if (params.mode !== undefined && params.mode === 'Wild') {
         id = tableID.wildDecksTableID
-      } else if (params.mode !== undefined && params.mode === 'Classic') {
+      } else if (params.mode !== undefined && params.mode === 'Twist') {
 		  id = tableID.clsDecksTableID
 	  } else {
         id = tableID.standDecksTableID
@@ -844,6 +843,18 @@ export function getHeroSkinID() {
 export function getBattlegroundMinnionTypeList() {
   return new Promise((resolve, reject) => {
     let tableObj = new wx.BaaS.TableObject(tableID.battlegroundMinnionType)
+    let query = new wx.BaaS.Query()
+    tableObj.setQuery(query).orderBy(['order', 'updated_at']).limit(1000).find().then(res => {
+      resolve(res.data.objects)
+    }, err => {
+      reject(err)
+    })
+  })
+}
+
+export function getBattlegroundCardTypeList() {
+  return new Promise((resolve, reject) => {
+    let tableObj = new wx.BaaS.TableObject(tableID.battlegroundCardType)
     let query = new wx.BaaS.Query()
     tableObj.setQuery(query).orderBy(['order', 'updated_at']).limit(1000).find().then(res => {
       resolve(res.data.objects)

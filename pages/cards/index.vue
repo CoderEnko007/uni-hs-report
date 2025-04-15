@@ -1,35 +1,25 @@
 <template>
   <div class="card-container">
     <nav-bar></nav-bar>
-    <div v-if="ifanrSettings.fuck_up_flag==0 || (ifanrSettings.fuck_up_flag==1 && user_fuck_up_flag==true)">
-      <div class="panel-tab">
-        <block v-for="(item,index) in tabbar" :key="index">
-          <div :id="index" :class="{'tab-item': true, 'tab-item-active': activeIndex==index}" @click="tabBarClick">
-            {{item.text}}
-          </div>
-        </block>
-      </div>
-      <div class="tab-container">
-        <swiper class="content" :duration="30" :style="'height:'+contentHeight" @change="swiperChange" :current="currentTab">
-          <swiper-item>
-            <single-cards></single-cards> 
-          </swiper-item>
-          <swiper-item>
-            <battleground-cards></battleground-cards>
-          </swiper-item>
-          <swiper-item>
-            <arena-cards></arena-cards>
-          </swiper-item>
-        </swiper>
-      </div>
+    <div class="panel-tab">
+      <block v-for="(item,index) in tabbar" :key="index">
+        <div :id="index" :class="{'tab-item': true, 'tab-item-active': activeIndex==index}" @click="tabBarClick">
+          {{item.text}}
+        </div>
+      </block>
     </div>
-    <div class="fuckup_panel" v-else-if="ifanrSettings.fuck_up_flag==1 && user_fuck_up_flag==false">
-      <h1 class="fuckup_title">紧急通知</h1>
-      <FuckupBtn></FuckupBtn>
-    </div>
-    <div class="fuckup_panel" v-else="ifanrSettings.fuck_up_flag==2 && user_fuck_up_flag==false">
-      <h1 class="fuckup_title">紧急通知</h1>
-      <p>由于微信服务类目要求变更，暂时无法提供相应数据展示，目前正在办理相应的主体变更手续，希望小程序能尽快恢复正常，对您带来的不便敬请谅解。</p>
+    <div class="tab-container">
+      <swiper class="content" :duration="30" :style="'height:'+contentHeight" @change="swiperChange" :current="currentTab">
+        <swiper-item>
+          <single-cards></single-cards> 
+        </swiper-item>
+       <!-- <swiper-item>
+          <battleground-cards></battleground-cards>
+        </swiper-item> -->
+        <swiper-item>
+          <arena-cards></arena-cards>
+        </swiper-item>
+      </swiper>
     </div>
   </div>
 </template>
@@ -54,7 +44,7 @@
       return {
         tabbar: [
           {id: 'single_card', text: '单卡查询'},
-          {id: 'battleground_card', text: '酒馆战棋'},
+          // {id: 'battleground_card', text: '酒馆战棋'},
           {id: 'arena_card', text: '竞技场数据'},
         ],
         activeIndex: 0,

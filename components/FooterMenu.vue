@@ -1,27 +1,27 @@
 <template>
   <div class="footer-menu" :style="{'height':isIphoneX?124+'rpx':90+'rpx'}">
-    <button open-type="share" class="share">
+    <button open-type="share" class="btn share">
       <span class="icon iconfont">&#xe63b;</span>
       <span>分享给好友</span>
     </button>
     <div class="separator" v-if="showExportBtn"></div>
-    <button v-if="showExportBtn" @click="handleExportBtn">
+    <button class="btn" v-if="showExportBtn" @click="handleExportBtn">
       <span class="icon iconfont">&#xe69c;</span>
       <span>导出套牌</span>
     </button>
     <div class="separator" v-if="showCollectBtn"></div>
-    <button class="like" v-if="showCollectBtn" @click="handleCollect">
+    <button class="btn like" v-if="showCollectBtn" @click="handleCollect">
       <span class="active icon iconfont" v-if="collected">&#xe601;</span>
       <span class="icon iconfont" v-else>&#xe603;</span>
       <span>收藏套牌</span>
     </button>
     <div class="separator" v-if="showSubscribe"></div>
-    <button v-if="showSubscribe" @click="handleSubscribe">
+    <button class="btn" v-if="showSubscribe" @click="handleSubscribe">
       <span class="icon iconfont">&#xe6ad;</span>
       <span>订阅周报</span>
     </button>
     <div class="separator" v-if="link"></div>
-    <button v-if="link" @click="handleCopyLink">
+    <button class="btn" v-if="link" @click="handleCopyLink">
       <span class="icon iconfont">&#xe789;</span>
       <span>复制网页地址</span>
     </button>
@@ -136,7 +136,7 @@ export default {
     height: 90rpx;
     width: 240rpx;
   }
-  button {
+  .btn {
     width: 240rpx;
     height: 90rpx;
     line-height: 90rpx;

@@ -22,7 +22,7 @@
               <p class="ename">{{item.ename}}</p>
             </div>
           </div>
-          <div class="table-td text-center col-other"><span>{{item.games}}</span></div>
+          <div class="table-td text-center col-other"><span>{{item.format_games}}</span></div>
           <div class="table-td text-center col-other"><span>{{item.popularity}}%</span></div>
           <div class="table-td text-center col-other col-last color-green" :class="{'color-red': item.winrate<50}">
             <span :style="{'font-weight': 'bold'}">{{item.winrate}}%</span>
@@ -30,7 +30,7 @@
       </div>
     </div>
   <div class="zan-loadmore zan-loadmore--nodata" style="margin-top:100rpx;" v-else>
-    <div class="zan-loadmore__tips">{{ nodata_str || '暂无数据' }}</div>
+    <div class="zan-loadmore__tips">{{ nodata_str || '缺少有效数据' }}</div>
   </div>
 </div>
 </template>
@@ -56,6 +56,9 @@ export default {
     ]),
     genTableData() {
       this.sortTableData()
+      this.tableData.map(item => {
+        item.format_games = utils.toThousands(item.games)
+      })
       return this.tableData
     },
     genFactionIcon() {
@@ -89,7 +92,7 @@ export default {
         this.tableData.sort(this.compareFunction(this.orderBy))
       }
     }
-  },
+  }
 }
 </script>
 <style lang="scss" scoped>

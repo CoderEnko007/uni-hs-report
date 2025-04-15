@@ -6,7 +6,7 @@
       <button v-if="!userInfo.openid" open-type="getUserInfo" @getuserinfo="userInfoHandler">点击登录</button>
       <p v-else>{{userInfo.nickname}}</p>
     </div>
-    <div class="panel nga-block">
+    <!-- <div class="panel nga-block">
       <div class="left-block">
         <p class="text">NGA炉石专区</p>
         <p class="desc">更专业的原创内容，更全面的炉石资讯</p>
@@ -14,7 +14,7 @@
       <div class="logo">
         <img :src="logo" mode="aspectFill">
       </div>
-    </div>
+    </div> -->
     <div class="panel" @click="handleCollectionClick">
       <span class="text">我的收藏</span>
       <span class="iconfont arrowIcon">&#xe600;</span>
@@ -31,7 +31,7 @@
       <span class="text">激活码去广告</span>
       <span class="iconfont arrowIcon">&#xe600;</span>
     </div>
-    <div class="panel" style="display: flex;align-items: center;justify-content: space-between;flex-wrap: nowrap;" v-else>
+    <div class="panel" v-if="vipObj.isVip" style="display: flex;align-items: center;justify-content: space-between;flex-wrap: nowrap;" v-else>
       <div class="state" @click="handleRefreshVIP">
         <span class="text">激活状态：</span>
         <span class="text" v-if="vipObj.isVip">{{vipObj.timesString}}</span>
@@ -43,15 +43,16 @@
       <!--<span class="iconfont playIcon">&#xe697;</span>-->
       <!--<span class="text" style="margin-left:5px;">点击播放激励视频给作者加鸡腿（15秒）</span>-->
     <!--</div>-->
+    <!--
     <div class="code">
       <h1 class="text">赞赏作者</h1>
-      <!-- <div class="capsule" @click="handleCopyBtn"><span>支付宝推广红包</span></div> -->
       <div class="content" @click="handleClickCodeImg">
         <p>「炉石传说情报站」小程序由个人独立开发，源于兴趣，旨在免费为大家提供及时的卡组数据。</p>
         <p>您的赞助将用于支付昂贵的服务器费用并使小程序变得更好，感谢您的支持</p>
         <p style="font-weight: bold">点击此处打开赞赏码，长按扫描随意打赏</p>
       </div>
     </div>
+    -->
     <div class="feedback">
       <button open-type="feedback">问题反馈 | 意见建议</button>
     </div>

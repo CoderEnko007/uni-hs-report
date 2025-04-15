@@ -168,7 +168,7 @@ export default {
   },
   onShareAppMessage(res) {
     return {
-      title: '炉石传说情报站',
+      title: 'HS石炉之家',
       path: '/pages/mine/about/index'
     }
   }

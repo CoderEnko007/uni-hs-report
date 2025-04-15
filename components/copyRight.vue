@@ -11,6 +11,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .copyright {
+  height:70rpx;
   text-align:center;
   color:#ccc;
   font-size:24rpx;

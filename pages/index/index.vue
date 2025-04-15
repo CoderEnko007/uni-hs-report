@@ -1,17 +1,7 @@
 <template>
   <div class="container">
     <nav-bar></nav-bar>
-    <!-- <div class="panel-tab">
-      <block v-for="(item,index) in tabbar" :key="item.id">
-        <div :id="index" :class="{'tab-item': true, 'tab-item-active': activeIndex==index}" @click="handleTabBarClick">
-          {{item.text}}
-        </div>
-      </block>
-    </div> -->
-    <div class="tab-container" v-if="ifanrSettings.fuck_up_flag==0 || (ifanrSettings.fuck_up_flag==1 && user_fuck_up_flag==true)">
-     <!-- <swiper class="content" :easing-function="easeInOutCubic" :duration="100" :style="'height:'+contentHeight" @change="swiperChange"
-       :current="currentTab"> -->
-       <!-- <swiper-item> -->
+    <div class="tab-container">
       <div class="swiper-block">
         <div class="notice-bar" v-show="noticeContent.display">
           <cmd-notice-bar scrollable :text="noticeText.text" mode="close" @click="handleNoticeClick"></cmd-notice-bar>
@@ -21,52 +11,35 @@
       <div class="rank-panel">
         <div class="headline">
           <span class="title">职业排名</span>
-          <!-- 
-          <div class="head-picker">
-            <picker mode="selector" :value="modeFilter.selectedItem" :range="modePickerList" @change="handleModeChange">
-              <span class='selector-item'>{{modeFilter.list[modeFilter.selectedItem].text}}</span>
+          <div class="game-type-picker">
+            <img class="btn-img" :src="rankMode[gameTypePicker.selectedItem].active_icon" mode="aspectFit">
+            <picker class="mode-picker" mode="selector" :value="gameTypePicker.selectedItem" :range="gameTypePickerList" @change="handleGameTypeChange">
+              <span class='selector-item'>{{gameTypePicker.list[gameTypePicker.selectedItem].text}}</span>
               <span class="iconfont" :style="{'vertical-align': 'middle'}">&#xe668;</span>
             </picker>
           </div>
-          -->
-          <!-- 
-          <div class="btn-group">
-                <div class="btn-block" v-for="(item, index) in rankMode" :key="item.name" @click="modeBtnClick(rankMode[index])">
-                  <img class="btn-img" :src="selectedGameType===item.mode?item.active_icon:item.icon" mode="aspectFit">
-                  <div class="c-button" :class="selectedGameType===item.mode?'btn-active':''">{{item.text}}</div>
-                  <div class="separator" v-if="index !== 4">|</div>
-                </div>
-              </div>
-           -->
-          <div class="game-type-picker">
-          <img class="btn-img" :src="rankMode[gameTypePicker.selectedItem].active_icon" mode="aspectFit">
-          <picker class="mode-picker" mode="selector" :value="gameTypePicker.selectedItem" :range="gameTypePickerList" @change="handleGameTypeChange">
-            <span class='selector-item'>{{gameTypePicker.list[gameTypePicker.selectedItem].text}}</span>
-            <span class="iconfont" :style="{'vertical-align': 'middle'}">&#xe668;</span>
-          </picker>
+        </div>
+        <div class="content">
+          <RankBoard :list="rankData[selectedGameType]" :mode="modeFilter.list[modeFilter.selectedItem].value"></RankBoard>
+        </div>
+        <div class="extra-btn" v-if="showBtn">
+          <div class="data-vision" @click="handleHSVisionClick">
+            <img class="btn-img" src="/static/icons-v2/trending.png" mode="aspectFit">
+            <span class="text">强度趋势</span>
+            <!-- <span class="iconfont">&#xe600;</span> -->
+          </div>
+          <div class="data-vision" @click="handleTrendingClick">
+            <img src="/static/icons-v2/trending1.png" class="btn-img" mode="aspectFit">
+            <span class="text">热门卡组</span>
+            <!-- <span class="iconfont">&#xe600;</span> -->
+          </div>
+          <div class="data-vision" @click="handleRevealClick" v-if="newCardBtnIcon">
+            <img class="btn-img" :src="newCardBtnIcon" style="width:42rpx" mode="aspectFit">
+            <span class="text">新卡发布</span>
+            <!-- <span class="iconfont">&#xe600;</span> -->
+          </div>
         </div>
       </div>
-      <div class="content">
-      <RankBoard :list="rankData[selectedGameType]" :mode="modeFilter.list[modeFilter.selectedItem].value"></RankBoard>
-      </div>
-      <div class="extra-btn" v-if="showBtn">
-        <div class="data-vision" @click="handleHSVisionClick">
-          <img class="btn-img" src="/static/icons-v2/trending.png" mode="aspectFit">
-          <span class="text">强度趋势</span>
-          <!-- <span class="iconfont">&#xe600;</span> -->
-        </div>
-        <div class="data-vision" @click="handleTrendingClick">
-          <img src="/static/icons-v2/trending1.png" class="btn-img" mode="aspectFit">
-          <span class="text">热门卡组</span>
-          <!-- <span class="iconfont">&#xe600;</span> -->
-        </div>
-        <div class="data-vision" @click="handleRevealClick" v-if="newCardBtnIcon">
-          <img class="btn-img" :src="newCardBtnIcon" style="width:42rpx" mode="aspectFit">
-          <span class="text">新卡发布</span>
-          <!-- <span class="iconfont">&#xe600;</span> -->
-        </div>
-      </div>
-    </div>
       <div class="ads" style="margin: 15upx 0 0 0;" v-if="adsOpenFlag&&adsType!=='video'">
         <ad unit-id="adunit-900bbac5f4c50939" @error="handleAdError" @load="handleBannerAdLoaded"></ad>
       </div>
@@ -90,35 +63,11 @@
         <div class="tier-content">
           <div class="tier-block" v-for="(tier, index) in tierList" :key="tier.name">
             <TierList :tierData="tier" @itemClick="handleTierClick" @onCollapse="handleCollapse"></TierList>
-           <!-- <div class="video-ads" style="margin: 10rpx 30rpx;" v-if="index===0 && adsType==='video'">
-              <ad unit-id="adunit-03a8570563bafc46" ad-type="video" ad-theme="white" @load="handleVideoAdLoaded"></ad>
-            </div> -->
           </div>
         </div>
       </div>
       <copyRight></copyRight>
     </div> 
-    <div style="{position: relative; width: 100%}" v-else-if="ifanrSettings.fuck_up_flag==1 && user_fuck_up_flag==false">
-      <div class="notice-bar">
-        <cmd-notice-bar scrollable :text="noticeText.text" mode="close" @click="handleNoticeClick"></cmd-notice-bar>
-      </div>
-      <div class="fuckup_panel">
-        <h1 class="fuckup_title">紧急通知</h1>
-        <FuckupBtn></FuckupBtn>
-        <copyRight></copyRight>
-      </div>
-    </div>
-    <div class="fuckup_panel" v-else="ifanrSettings.fuck_up_flag==2 && user_fuck_up_flag==false">
-      <h1 class="fuckup_title">紧急通知</h1>
-      <p>由于微信服务类目要求变更，暂时无法提供相应数据展示，目前正在办理相应的主体变更手续，希望小程序能尽快恢复正常，对您带来的不便敬请谅解。</p>
-      <copyRight></copyRight>
-    </div>
-    
-        <!-- </swiper-item> -->
-         <!-- <swiper-item>
-            <articlePage ref="articlePage"></articlePage>
-          </swiper-item>
-        </swiper> -->
     <x-modal :text='noticeText.text' :no-cancel='true' :no-title='true' confirm-text='朕知道了' :hidden.sync='hideModal'></x-modal>
     <div style="position: fixed; top: 9999999999999px; overflow: hidden">
         <canvas :style="{width: canvasWidth+'px', height: canvasHeight+'px'}" canvas-id="dailyReport"></canvas>
@@ -137,7 +86,6 @@
   import xModal from "@/components/x-modal/x-modal.vue"
   import RankBoard from '@/components/RankBoard'
   import TierList from '@/components/TierList'
-  import articlePage from './components/articlePage'
   import copyRight from '@/components/copyRight'
   import FuckupBtn from '@/components/FuckupBtn'
 
@@ -149,7 +97,6 @@
       xModal,
       RankBoard,
       TierList,
-      articlePage,
       copyRight,
       FuckupBtn
     },
@@ -163,13 +110,6 @@
           text: '',
           animationData: []
         },
-        // tab切换参数
-        tabbar: [
-          {id: 'report', text: '日报' },
-          {id: 'article', text: '周报&资讯' }
-        ],
-        activeIndex: 0,
-        currentTab: 0,
         // rank list参数
         rankMode: utils.gameMode,
         origRankList: [],
@@ -178,7 +118,8 @@
           'wild': [],
           'arena': [],
           'classic': [],
-          'duels': []
+          'duels': [],
+          'twist': []
         },
         modeFilter: {
           selectedItem: 0,
@@ -211,9 +152,7 @@
           list: [
             {text: '标准模式', value: 'standard'},
             {text: '狂野模式', value: 'wild'},
-            {text: '经典模式', value: 'classic'},
             {text: '竞技场', value: 'arena'},
-            {text: '对决模式', value: 'duels'},
           ]
         },
         tempSelectedItem: 0,
@@ -240,19 +179,6 @@
         'ifanrSettings',
         'user_fuck_up_flag'
       ]),
-      contentHeight() {
-        let ratio = this.winWidth/750
-        let navHeight = uni.upx2px(this.navHeight)+this.barHeight
-        let adsHeight = this.adHeight
-        if (!this.adsOpenFlag) {
-          adsHeight = 40
-        }
-        if (this.activeIndex == 0) {
-          return 335*ratio + (96+390+90+20)*ratio + adsHeight + 96*ratio + 80*ratio*4 + 120*ratio*this.tierListNum + 60*ratio - this.collapseHeight + 'px'
-        } else {
-          return this.winHeight - navHeight - uni.upx2px(82) + "px"
-        }
-      },
       modePickerList() {
         return this.modeFilter.list.map(item => {
           return item.text
@@ -311,7 +237,7 @@
               duration: 2500
             })
           })
-        }
+        }f
       },
       async playVideoAds(index) {
         this.tempSelectedItem = index
@@ -367,7 +293,8 @@
           'wild': [],
           'classic': [],
           'arena': [],
-          'duels': []
+          'duels': [],
+          'twist': []
         }
       },
       sortRankData(data) {
@@ -385,7 +312,10 @@
               val.win_rate = parseFloat(val.win_rate).toFixed(1)
               val.popularity = parseFloat(val.popularity).toFixed(1)
             })
-            if (this.rankData[index].length % 10) {
+            // if (this.rankData[index].length % 10) {
+            //   this.rankData[index].push({})
+            // }
+            while(this.rankData[index].length<12) {
               this.rankData[index].push({})
             }
           }
@@ -457,23 +387,8 @@
       		// console.log('setSystemSetting', res)
       	})
       },
-      handleBannerClick(item) {
-        if (item.articleID) {
-          uni.navigateTo({
-            url: `/pages/index/articleDetail/index?group_id=${item.articleGroupID}&id=${item.articleID}`
-          })
-        }
-      },
       handleNoticeClick() {
         this.hideModal = false
-      },
-      handleTabBarClick(e) {
-        this.activeIndex = e.currentTarget.id;
-        this.currentTab = this.activeIndex;
-      },
-      swiperChange(e) {
-        this.currentTab = e.mp.detail.current;
-        this.activeIndex = this.currentTab;
       },
       handleModeChange(e) {
         this.modeFilter.selectedItem = e.mp.detail.value
@@ -483,6 +398,7 @@
         this.selectedGameType = item.mode
       },
       handleRankRangeChange(e) {
+        //console.log('aaaaa',e.mp.detail.value, this.rangePicker.selectedItem,this.adsOpenFlag)
         if (e.mp.detail.value!=='0' && e.mp.detail.value!==this.rangePicker.selectedItem && this.adsOpenFlag) {
           try {
             let value = wx.getStorageSync('ads_video_date')
@@ -637,7 +553,7 @@
         ctx.font = 'normal bold 12px sans-serif';
         ctx.setFillStyle('#433e88')
         ctx.textAlign = 'center'
-        ctx.fillText('微信小程序：HS炉石情报站', this.canvasWidth/2, 20)
+        ctx.fillText('微信小程序：HS石炉之家', this.canvasWidth/2, 20)
         ctx.setFillStyle('#000')
         ctx.font = 'normal bold 16px sans-serif';
         ctx.fillText('卡组强度排行', this.canvasWidth/2, 45)
@@ -683,7 +599,8 @@
           {name: '第4梯队', height:0, num: 0},
         ]
         let factionColor = {'Druid': '#EE7B20', 'Hunter': '#9bbb56', 'Mage': '#6AC8EC', 'Paladin': '#EF8BB7', 'Priest': '#e5e5e5', 
-                            'Rogue': '#ffff01', 'Shaman': '#246CB4', 'Warlock': '#9283BC', 'Warrior': '#C79C6F', 'DemonHunter': '#16debc'}
+                            'Rogue': '#ffff01', 'Shaman': '#246CB4', 'Warlock': '#9283BC', 'Warrior': '#C79C6F', 'DemonHunter': '#16debc',
+                            'DeathKnight': '#C41F3B'}
         let listHeight = 0
         let itemHeight = 25
         let winrateGColor = gradientColor('#239c15', '#297607', this.tierList[0].list.length+this.tierList[1].list.length)
@@ -844,7 +761,6 @@
       this.genArchetypeList()
       this.genNotice()
       this.initVideoAds()
-      // this.$refs.articlePage.genDataList(true)
     },
     onPullDownRefresh() {
       this.getSystemSetting()
@@ -853,11 +769,7 @@
       this.genRankData()
       this.genArchetypeList()
       this.genNotice()
-      // this.$refs.articlePage.genDataList(true)
       this.$store.dispatch('getDecksName')
-    },
-    onShow() {
-      // this.$refs.articlePage.genDataList(true)
     },
     onShareAppMessage(res) {
       return {
@@ -929,6 +841,8 @@
     }
   }
   .rank-panel {
+    width: 100%;
+    box-sizing: border-box;
     padding: 0 30rpx;
     .headline {
 	  position: relative;

@@ -40,7 +40,7 @@
                 <p class="ename">{{item.ename}}</p>
               </div>
             </div>
-            <div class="table-td text-center col-other"><span>{{item.games}}</span></div>
+            <div class="table-td text-center col-other"><span>{{item.format_games}}</span></div>
             <div class="table-td text-center col-other"><span>{{item.popularity}}%</span></div>
             <div class="table-td text-center col-other col-last color-green" :class="{'color-red': item.winrate<50}">
               <span :style="{'font-weight': 'bold'}">{{item.winrate}}%</span>
@@ -71,7 +71,7 @@
     },
     data() {
       return {
-        orderBy: '',
+        orderBy: '-games',
         normalOrder: '/static/icons-v2/rank-normal.png',
         upOrder: '/static/icons-v2/rank-up.png',
         downOrder: '/static/icons-v2/rank-down.png',
@@ -255,6 +255,7 @@
                 deckName: name ? name.cname : res[index].archetype,
                 ename: res[index].archetype,
                 games: res[index].games,
+                format_games: utils.toThousands(res[index].games),
                 winrate: res[index].winrate.toFixed(1),
                 popularity: res[index].popularity.toFixed(1)
               }

@@ -245,8 +245,12 @@
             // let image = utils.genCardsImageURL(item.hsId)
             // let image = item.img_card_link
             let image = ''
-            if (item.use_backup_img === true) {
+            if (item.use_backup_img === true || this.card_resource === 'cn') {
+              if (item.img_card_link!=null && item.img_card_link.length>0){
                 image = item.img_card_link
+              } else{
+                image = utils.genCardsImageURL(item.hsId)
+              }
             } else if (this.card_resource === 'fbi') {
               image = this.genCardImage(item.hsId)
             } else if (this.card_resource === 'hsreplay') {

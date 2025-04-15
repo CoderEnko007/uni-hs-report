@@ -8,7 +8,7 @@
          :style="{width: colNum?'100%':'330rpx', 'margin-top': smallSpacing?20+'rpx':5+'rpx'}">
       <div class="frame" :class="{'display-none': !card.diffFlag}"></div>
       <div :class="['card-gem', {
-        'rarity-common': card.rarity==='FREE'||card.rarity==='COMMON',
+        'rarity-common': card.rarity==='FREE'||card.rarity==='COMMON'||card.rarity==='',
         'rarity-rare': card.rarity==='RARE',
         'rarity-epic': card.rarity==='EPIC',
         'rarity-legendary': card.rarity==='LEGENDARY',
@@ -26,7 +26,7 @@
         </div>
         <span class="card-name">{{card.cname}}</span>
         <div class="card-countbox" v-if="card.count && card.count!==1" style="width: 44rpx;">
-          <span class="card-count">{{card.count}}</span>
+          <span class="card-count">{{Number(card.count).toLocaleString()}}</span>
         </div>
         <div class="card-countbox" v-else-if="card.count && card.count===1 && card.rarity === 'LEGENDARY'" style="width: 44rpx;">
           <span class="card-count">★</span>
@@ -44,7 +44,8 @@ export default {
   props: ['cards', 'colNum', 'ifanrTile', 'smallSpacing', 'mulligan'],
   computed: {
     ...mapGetters([
-      'deck_tile_resource'
+      'deck_tile_resource',
+      'card_resource'
     ])
   },
   data() {
@@ -79,8 +80,20 @@ export default {
           // } else {
           //   card['img'] = this.genTileImage(card.card_hsid)
           // }
-          if (this.ifanrTile) {
-            card['img'] = card.img_tile_link
+          
+          // if (this.ifanrTile) {
+          //   card['img'] = card.img_tile_link
+          // } else {
+          //   card['img'] = this.genTileImage(card.card_hsid, this.deck_tile_resource)
+          // }
+          if (this.card_resource === 'cn' || this.ifanrTile) {
+            if (card.img_tile_link != null && card.img_tile_link.length>0) {
+              card['img'] = card.img_tile_link
+            } else if (card.tile != null && card.tile.length>0) {
+              card['img'] = card.tile  
+            } else {
+              card['img'] = this.genTileImage(card.card_hsid, this.deck_tile_resource)
+            }
           } else {
             card['img'] = this.genTileImage(card.card_hsid, this.deck_tile_resource)
           }

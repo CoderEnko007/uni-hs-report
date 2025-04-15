@@ -62,11 +62,14 @@
         this.$emit('scrollToTop')
       },
     },
-    watch: {
-      last_30_days(val1, val2) {
-        console.log(val1, val2)
-      },
-    }
+    // mounted() {
+    //   console.log('mounted', this.list)
+    // },
+    // watch: {
+    //   list(val1, val2) {
+    //     console.log(val1, val2)
+    //   },
+    // }
   }
 </script>
 <style lang="scss" scoped>
@@ -112,6 +115,7 @@
         .deckName {
           position: absolute;
           display: inline-block;
+          width: 190rpx;
           top: 50%;
           transform: translateY(-50%);
           margin-left: 90rpx;

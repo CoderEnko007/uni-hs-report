@@ -72,7 +72,7 @@ const cards = {
       return new Promise((resolve, reject) => {
         getHeroSkinID().then(res => {
           let heroesID = {'Druid': [], 'Hunter': [], 'Mage': [], 'Paladin': [], 'Priest': [], 
-                          'Rogue': [], 'Shaman': [], 'Warlock': [], 'Warrior': [], 'DemonHunter': []}
+                          'Rogue': [], 'Shaman': [], 'Warlock': [], 'Warrior': [], 'DemonHunter': [], 'DeathKnight': []}
           for (let key in heroesID) {
             if (heroesID.hasOwnProperty(key)) {
               heroesID[key] = res.filter(v => {
